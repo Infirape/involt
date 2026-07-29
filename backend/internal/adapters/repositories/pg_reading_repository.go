@@ -245,9 +245,8 @@ func (r *PostgresReadingRepository) ListAll(ctx context.Context) ([]domain.Readi
 	return readings, err
 }
 
-// UpdatePaymentStatus updates the is_paid flag for a single reading.
 func (r *PostgresReadingRepository) UpdatePaymentStatus(ctx context.Context, readingID string, isPaid bool) error {
-	query := `UPDATE readings SET is_paid = $1 WHERE id = $2`
+	query := `UPDATE readings SET is_paid = $1, payment_date = CASE WHEN $1 = TRUE THEN NOW() ELSE NULL END WHERE id = $2`
 	_, err := r.db.ExecContext(ctx, query, isPaid, readingID)
 	if err != nil {
 		return fmt.Errorf("error updating payment status: %w", err)

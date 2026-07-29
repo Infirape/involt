@@ -98,7 +98,7 @@ func (g *MarotoGenerator) drawSmiley(img *image.RGBA, x0, y0, r int, happy bool)
 	}
 }
 
-func (g *MarotoGenerator) generateSmileysImage(history []domain.Reading) []byte {
+func (g *MarotoGenerator) generateSmileysImage(history []domain.Reading, settings *domain.Settings) []byte {
 	width := 120
 	height := 30
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
@@ -110,11 +110,18 @@ func (g *MarotoGenerator) generateSmileysImage(history []domain.Reading) []byte 
 		}
 	}
 
+	now := time.Now().UTC()
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+
 	n := len(history)
 	for i := 0; i < 3; i++ {
 		idx := n - 3 + i
 		if idx >= 0 && idx < n {
-			happy := history[idx].IsPaid
+			g.enrichReadingDates(&history[idx], settings)
+			happy := true
+			if !history[idx].IsPaid && today.After(history[idx].ExpirationDate) {
+				happy = false
+			}
 			x0 := 20 + i*40
 			y0 := 15
 			g.drawSmiley(img, x0, y0, 10, happy)
@@ -444,7 +451,7 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 			smileysHistory = append(smileysHistory, r)
 		}
 	}
-	smileysBytes := g.generateSmileysImage(smileysHistory)
+	smileysBytes := g.generateSmileysImage(smileysHistory, settings)
 
 	m.AddRows(
 		row.New(6).Add(

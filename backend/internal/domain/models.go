@@ -95,6 +95,7 @@ type Reading struct {
 	Observation      string    `db:"observation"`
 	CustomerName     string    `db:"-"`
 	IsPaid           bool      `db:"is_paid"`
+	PaymentDate      *time.Time `db:"payment_date"`
 }
 
 // AppConfig contains remote configuration.

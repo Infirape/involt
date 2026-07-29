@@ -86,7 +86,8 @@ CREATE TABLE IF NOT EXISTS readings (
     expiration_date DATE NOT NULL,  -- Fecha de vencimiento
     period VARCHAR(10),
     observation TEXT,
-    is_paid BOOLEAN NOT NULL DEFAULT FALSE
+    is_paid BOOLEAN NOT NULL DEFAULT FALSE,
+    payment_date TIMESTAMPTZ
 );
 
 -- Initial Mock Data for Testing

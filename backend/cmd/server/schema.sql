@@ -87,7 +87,8 @@ CREATE TABLE IF NOT EXISTS readings (
     expiration_date date DEFAULT CURRENT_DATE NOT NULL,
     period character varying(10),
     observation text,
-    is_paid boolean DEFAULT false NOT NULL
+    is_paid boolean DEFAULT false NOT NULL,
+    payment_date timestamp with time zone
 );
 
 -- Settings
