@@ -462,26 +462,14 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 	)
 
 	m.AddRows(
-		row.New(20).Add(
-			col.New(1).Add().WithStyle(&props.Cell{BorderType: border.Left, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
-
-			col.New(6).Add(
+		row.New(18).Add(
+			col.New(12).Add(
 				mimage.NewFromBytes(chartBytes, extension.Png, props.Rect{
+					Center:  true,
 					Percent: 100,
 					Top:     0.5,
 				}),
-			),
-
-			col.New(1).Add(),
-
-			col.New(4).Add(
-				mimage.NewFromBytes(smileysBytes, extension.Png, props.Rect{
-					Center:  true,
-					Percent: 80,
-					Top:     0.5,
-				}),
-				text.New("Estado de Pago (Últimos 3 Meses)", props.Text{Top: 14, Size: 6.0, Align: align.Center, Style: fontstyle.Italic}),
-			).WithStyle(&props.Cell{BorderType: border.Right, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
+			).WithStyle(&props.Cell{BorderType: border.Left | border.Right, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
 		),
 	)
 
@@ -504,15 +492,29 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 
 	m.AddRows(
 		row.New(4).Add(
-			col.New(1).Add().WithStyle(&props.Cell{BorderType: border.Left, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
-			col.New(1).Add(text.New(monthLabels[0], props.Text{Size: 5.5, Align: align.Center})),
-			col.New(1).Add(text.New(monthLabels[1], props.Text{Size: 5.5, Align: align.Center})),
-			col.New(1).Add(text.New(monthLabels[2], props.Text{Size: 5.5, Align: align.Center})),
-			col.New(1).Add(text.New(monthLabels[3], props.Text{Size: 5.5, Align: align.Center})),
-			col.New(1).Add(text.New(monthLabels[4], props.Text{Size: 5.5, Align: align.Center})),
-			col.New(1).Add(text.New(monthLabels[5], props.Text{Size: 5.5, Align: align.Center})),
-			col.New(1).Add(),
-			col.New(4).Add().WithStyle(&props.Cell{BorderType: border.Right, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
+			col.New(2).Add(text.New(monthLabels[0], props.Text{Size: 5.5, Align: align.Center})).WithStyle(&props.Cell{BorderType: border.Left, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
+			col.New(2).Add(text.New(monthLabels[1], props.Text{Size: 5.5, Align: align.Center})),
+			col.New(2).Add(text.New(monthLabels[2], props.Text{Size: 5.5, Align: align.Center})),
+			col.New(2).Add(text.New(monthLabels[3], props.Text{Size: 5.5, Align: align.Center})),
+			col.New(2).Add(text.New(monthLabels[4], props.Text{Size: 5.5, Align: align.Center})),
+			col.New(2).Add(text.New(monthLabels[5], props.Text{Size: 5.5, Align: align.Center})).WithStyle(&props.Cell{BorderType: border.Right, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
+		),
+	)
+
+	m.AddRows(row.New(1).Add(col.New(12).WithStyle(&props.Cell{BorderType: border.Left | border.Right, BorderThickness: borderThick, BorderColor: defaultBorderColor})))
+
+	m.AddRows(
+		row.New(8).Add(
+			col.New(6).Add(
+				text.New("Estado de Pago (Últimos 3 Meses):", props.Text{Left: 3, Top: 2, Size: fontSmall, Style: fontstyle.Bold}),
+			).WithStyle(&props.Cell{BorderType: border.Left, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
+			col.New(6).Add(
+				mimage.NewFromBytes(smileysBytes, extension.Png, props.Rect{
+					Center:  true,
+					Percent: 50,
+					Top:     0.5,
+				}),
+			).WithStyle(&props.Cell{BorderType: border.Right, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
 		),
 	)
 
