@@ -11,6 +11,9 @@ import (
 	"time"
 
 	"github.com/infira/involt/backend/internal/domain"
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/basicfont"
+	"golang.org/x/image/math/fixed"
 	"github.com/johnfercher/maroto/v2"
 	"github.com/johnfercher/maroto/v2/pkg/components/col"
 	mimage "github.com/johnfercher/maroto/v2/pkg/components/image"
@@ -133,9 +136,19 @@ func (g *MarotoGenerator) generateSmileysImage(history []domain.Reading, setting
 	return buf.Bytes()
 }
 
+func drawText(img *image.RGBA, x, y int, text string, c color.Color) {
+	d := &font.Drawer{
+		Dst:  img,
+		Src:  &image.Uniform{C: c},
+		Face: basicfont.Face7x13,
+		Dot:  fixed.Point26_6{X: fixed.I(x), Y: fixed.I(y)},
+	}
+	d.DrawString(text)
+}
+
 func (g *MarotoGenerator) generateChartImage(history []domain.Reading) []byte {
 	width := 240
-	height := 80
+	height := 95
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
 
 	white := color.RGBA{R: 255, G: 255, B: 255, A: 255}
@@ -196,6 +209,23 @@ func (g *MarotoGenerator) generateChartImage(history []domain.Reading) []byte {
 				img.Set(x, y, magenta)
 			}
 		}
+
+		// Draw month label centered under the bar (baseline at y=85)
+		var monthLabel string
+		if t, err := time.Parse("2006-01", r.Period); err == nil {
+			monthLabel = shortMonthName(t.Month())
+		} else {
+			monthLabel = "-"
+		}
+		textWidth := len(monthLabel) * 7
+		xLabelStart := slotIdx*40 + 20 - (textWidth / 2)
+		drawText(img, xLabelStart, 85, monthLabel, color.RGBA{R: 0, G: 0, B: 0, A: 255})
+	}
+
+	// Draw hyphens for empty slots
+	for slotIdx := 0; slotIdx < 6-len(hist); slotIdx++ {
+		xLabelStart := slotIdx*40 + 20 - (7 / 2)
+		drawText(img, xLabelStart, 85, "-", color.RGBA{R: 0, G: 0, B: 0, A: 255})
 	}
 
 	var buf bytes.Buffer
@@ -462,58 +492,22 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 	)
 
 	m.AddRows(
-		row.New(18).Add(
-			col.New(12).Add(
+		row.New(22).Add(
+			col.New(8).Add(
 				mimage.NewFromBytes(chartBytes, extension.Png, props.Rect{
 					Center:  true,
 					Percent: 100,
 					Top:     0.5,
 				}),
-			).WithStyle(&props.Cell{BorderType: border.Left | border.Right, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
-		),
-	)
-
-	n := len(history)
-	if n > 6 {
-		n = 6
-	}
-	hist := make([]domain.Reading, n)
-	for i := 0; i < n; i++ {
-		hist[i] = history[n-1-i]
-	}
-
-	monthLabels := []string{"-", "-", "-", "-", "-", "-"}
-	for i, r := range hist {
-		slotIdx := 6 - len(hist) + i
-		if t, err := time.Parse("2006-01", r.Period); err == nil {
-			monthLabels[slotIdx] = shortMonthName(t.Month())
-		}
-	}
-
-	m.AddRows(
-		row.New(4).Add(
-			col.New(2).Add(text.New(monthLabels[0], props.Text{Size: 5.5, Align: align.Center})).WithStyle(&props.Cell{BorderType: border.Left, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
-			col.New(2).Add(text.New(monthLabels[1], props.Text{Size: 5.5, Align: align.Center})),
-			col.New(2).Add(text.New(monthLabels[2], props.Text{Size: 5.5, Align: align.Center})),
-			col.New(2).Add(text.New(monthLabels[3], props.Text{Size: 5.5, Align: align.Center})),
-			col.New(2).Add(text.New(monthLabels[4], props.Text{Size: 5.5, Align: align.Center})),
-			col.New(2).Add(text.New(monthLabels[5], props.Text{Size: 5.5, Align: align.Center})).WithStyle(&props.Cell{BorderType: border.Right, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
-		),
-	)
-
-	m.AddRows(row.New(1).Add(col.New(12).WithStyle(&props.Cell{BorderType: border.Left | border.Right, BorderThickness: borderThick, BorderColor: defaultBorderColor})))
-
-	m.AddRows(
-		row.New(8).Add(
-			col.New(6).Add(
-				text.New("Estado de Pago (Últimos 3 Meses):", props.Text{Left: 3, Top: 2, Size: fontSmall, Style: fontstyle.Bold}),
 			).WithStyle(&props.Cell{BorderType: border.Left, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
-			col.New(6).Add(
+
+			col.New(4).Add(
 				mimage.NewFromBytes(smileysBytes, extension.Png, props.Rect{
 					Center:  true,
-					Percent: 50,
+					Percent: 80,
 					Top:     0.5,
 				}),
+				text.New("Estado de Pago (Últimos 3 Meses)", props.Text{Top: 15, Size: 6.0, Align: align.Center, Style: fontstyle.Italic}),
 			).WithStyle(&props.Cell{BorderType: border.Right, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
 		),
 	)
