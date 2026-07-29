@@ -491,6 +491,20 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 		),
 	)
 
+	smileysCol := col.New(4).WithStyle(&props.Cell{BorderType: border.Right, BorderThickness: borderThick, BorderColor: defaultBorderColor})
+	smileysCol.Add(
+		mimage.NewFromBytes(smileysBytes, extension.Png, props.Rect{
+			Center:  true,
+			Percent: 80,
+			Top:     0.5,
+		}),
+	)
+	if len(smileysHistory) > 0 {
+		smileysCol.Add(
+			text.New("Estado de Pago (Últimos 3 Meses)", props.Text{Top: 15, Size: 6.0, Align: align.Center, Style: fontstyle.Italic}),
+		)
+	}
+
 	m.AddRows(
 		row.New(22).Add(
 			col.New(8).Add(
@@ -501,14 +515,7 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 				}),
 			).WithStyle(&props.Cell{BorderType: border.Left, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
 
-			col.New(4).Add(
-				mimage.NewFromBytes(smileysBytes, extension.Png, props.Rect{
-					Center:  true,
-					Percent: 80,
-					Top:     0.5,
-				}),
-				text.New("Estado de Pago (Últimos 3 Meses)", props.Text{Top: 15, Size: 6.0, Align: align.Center, Style: fontstyle.Italic}),
-			).WithStyle(&props.Cell{BorderType: border.Right, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
+			smileysCol,
 		),
 	)
 
