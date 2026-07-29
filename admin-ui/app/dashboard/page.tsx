@@ -115,7 +115,7 @@ export default function DashboardPage() {
             </span>
           </div>
           <h1 className="text-6xl font-black tracking-tighter leading-none">
-            Dashboard <span className="text-primary italic">InVolt</span>
+            Dashboard
           </h1>
           <p className="text-muted-foreground/40 font-bold uppercase text-[10px] tracking-[0.3em]">
             Gestión de Suministro Eléctrico • Chetilla, Cajamarca
