@@ -89,7 +89,7 @@ func main() {
 
         <div style="text-align:right">
             MUNICIPALIDAD DISTRITAL DE CHETILLA<br>
-            HIDROELECTRICA QARWAQIRU
+            HIDROELECTRICA QARWAQIRU MICHAY
         </div>
     </div>
 

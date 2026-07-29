@@ -50,11 +50,19 @@ func TestMarotoGenerator_Generate(t *testing.T) {
 	settings := &domain.Settings{
 		TarifaKWh:     0.2500,
 		Municipalidad: "MUNICIPALIDAD DISTRITAL DE CHETILLA",
-		Empresa:       "HIDROELECTRICA QARWAQIRU",
+		Empresa:       "HIDROELECTRICA QARWAQIRU MICHAY",
 		Mantenimiento: 0.00,
 	}
 
-	pdfData, err := gen.Generate(ctx, reading, customer, settings, "Chetilla", "TAMBILLO A")
+	history := []domain.Reading{
+		{Period: "2025-12", Consumption: 15, IsPaid: true},
+		{Period: "2026-01", Consumption: 22, IsPaid: true},
+		{Period: "2026-02", Consumption: 18, IsPaid: false},
+		{Period: "2026-03", Consumption: 30, IsPaid: true},
+		{Period: "2026-04", Consumption: 25, IsPaid: true},
+	}
+
+	pdfData, err := gen.Generate(ctx, reading, customer, settings, "Chetilla", "TAMBILLO A", history)
 	if err != nil {
 		t.Fatalf("Failed to generate PDF: %v", err)
 	}
@@ -87,11 +95,19 @@ func TestMarotoGenerator_GenerateBatch(t *testing.T) {
 	settings := &domain.Settings{
 		TarifaKWh:     0.2500,
 		Municipalidad: "MUNICIPALIDAD DISTRITAL DE CHETILLA",
-		Empresa:       "HIDROELECTRICA QARWAQIRU",
+		Empresa:       "HIDROELECTRICA QARWAQIRU MICHAY",
 		Mantenimiento: 0.00,
 	}
 
-	pdfData, err := gen.GenerateBatch(ctx, readings, customers, settings)
+	historyMap := map[string][]domain.Reading{
+		"C1": {
+			{Period: "2025-12", Consumption: 15, IsPaid: true},
+			{Period: "2026-01", Consumption: 22, IsPaid: true},
+			{Period: "2026-02", Consumption: 18, IsPaid: false},
+		},
+	}
+
+	pdfData, err := gen.GenerateBatch(ctx, readings, customers, settings, historyMap)
 	if err != nil {
 		t.Fatalf("Failed to generate batch PDF: %v", err)
 	}

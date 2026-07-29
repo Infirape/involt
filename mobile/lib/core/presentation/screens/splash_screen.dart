@@ -167,9 +167,9 @@ class _SplashScreenState extends State<SplashScreen>
                       ).createShader(bounds);
                     },
                     child: const Text(
-                      'QARWAQIRU',
+                      'QARWAQIRU MICHAY',
                       style: TextStyle(
-                        fontSize: 64,
+                        fontSize: 40,
                         fontWeight: FontWeight.w900,
                         letterSpacing: -1,
                         color: Colors.white,

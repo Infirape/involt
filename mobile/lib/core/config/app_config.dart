@@ -9,7 +9,7 @@ class AppConfig {
         ? 'http://10.0.2.2:8080'
         : 'https://involt.infira.pe',
   );
-  static const String appName = 'Hidroeléctrica Qarwaqiru';
+  static const String appName = 'Hidroeléctrica Qarwaqiru Michay';
   static const String brandName = 'InVolt';
   static const String creditsName = 'INFIRA';
 }

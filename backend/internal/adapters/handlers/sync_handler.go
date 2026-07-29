@@ -264,12 +264,31 @@ func (h *SyncHandler) PushReadings(
 		alumbrado := 0.0
 		mantenimiento := 0.0
 
+		var periodStart, periodEnd, expirationDate time.Time
 		if period, err := h.periodRepo.GetByID(ctx, reading.Period); err == nil && period != nil {
+			periodStart = period.StartDate
+			periodEnd = period.EndDate
 			if period.IsBillingPeriod {
 				cargoFijo = settings.CargoFijo
 				alumbrado = settings.Alumbrado
 				mantenimiento = settings.Mantenimiento
 			}
+		} else {
+			// Parse from YYYY-MM fallback
+			if t, err := time.Parse("2006-01", reading.Period); err == nil {
+				periodStart = time.Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, time.UTC)
+				periodEnd = periodStart.AddDate(0, 1, -1)
+			}
+		}
+
+		if !periodStart.IsZero() {
+			// Use DiasVencimiento as the day of the month, defaulting to 15
+			dueDay := settings.DiasVencimiento
+			if dueDay <= 0 || dueDay > 28 {
+				dueDay = 15
+			}
+			nextMonth := periodStart.AddDate(0, 1, 0)
+			expirationDate = time.Date(nextMonth.Year(), nextMonth.Month(), dueDay, 0, 0, 0, 0, time.UTC)
 		}
 
 		// Final totals
@@ -283,6 +302,9 @@ func (h *SyncHandler) PushReadings(
 		reading.Consumption = consumption
 		reading.Subtotal = subtotal
 		reading.TotalToPay = total
+		reading.PeriodStart = periodStart
+		reading.PeriodEnd = periodEnd
+		reading.ExpirationDate = expirationDate
 
 		if err := h.readingRepo.Save(ctx, reading); err != nil {
 			log.Printf("⚠️ Error saving reading %s: %v", r.Id, err)
@@ -352,7 +374,21 @@ func (h *SyncHandler) DownloadReceipt(
 		}
 	}
 
-	pdfData, err := h.pdfGen.Generate(ctx, reading, customer, settings, commName, sectName)
+	allHistory, _, err := h.readingRepo.List(ctx, reading.CustomerID, "", "", 50, 0)
+	if err != nil {
+		allHistory = []domain.Reading{}
+	}
+	var history []domain.Reading
+	for _, r := range allHistory {
+		if r.Period <= reading.Period {
+			history = append(history, r)
+			if len(history) == 6 {
+				break
+			}
+		}
+	}
+
+	pdfData, err := h.pdfGen.Generate(ctx, reading, customer, settings, commName, sectName, history)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("failed to generate PDF: %w", err))
 	}

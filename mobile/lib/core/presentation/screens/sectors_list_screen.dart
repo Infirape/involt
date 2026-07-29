@@ -104,7 +104,7 @@ class _SectorsListScreenState extends State<SectorsListScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
-              'Hidroeléctrica Qarwaqiru',
+              'Hidroeléctrica Qarwaqiru Michay',
               style: TextStyle(
                 color: AppColors.textPrimary,
                 fontWeight: FontWeight.bold,

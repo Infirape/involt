@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                               ).createShader(bounds);
                             },
                             child: const Text(
-                              'QARWAQIRU',
+                              'QARWAQIRU MICHAY',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 32,

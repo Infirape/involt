@@ -983,7 +983,21 @@ func (h *AdminHandler) DownloadReadingPDF(w http.ResponseWriter, r *http.Request
 		}
 	}
 
-	pdfData, err := h.pdfGen.Generate(ctx, reading, customer, settings, commName, sectName)
+	allHistory, _, err := h.readingRepo.List(ctx, reading.CustomerID, "", "", 50, 0)
+	if err != nil {
+		allHistory = []domain.Reading{}
+	}
+	var history []domain.Reading
+	for _, r := range allHistory {
+		if r.Period <= reading.Period {
+			history = append(history, r)
+			if len(history) == 6 {
+				break
+			}
+		}
+	}
+
+	pdfData, err := h.pdfGen.Generate(ctx, reading, customer, settings, commName, sectName, history)
 	if err != nil {
 		http.Error(w, "Error generating PDF", http.StatusInternalServerError)
 		return
@@ -1117,8 +1131,25 @@ func (h *AdminHandler) BulkPDF(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	historyMap := make(map[string][]domain.Reading)
+	for _, r := range readings {
+		if _, ok := historyMap[r.CustomerID]; !ok {
+			allHist, _, _ := h.readingRepo.List(ctx, r.CustomerID, "", "", 50, 0)
+			var history []domain.Reading
+			for _, h := range allHist {
+				if h.Period <= r.Period {
+					history = append(history, h)
+					if len(history) == 6 {
+						break
+					}
+				}
+			}
+			historyMap[r.CustomerID] = history
+		}
+	}
+
 	if sectorID != "" {
-		pdfData, err := h.pdfGen.GenerateBatch(ctx, readings, customerMap, settings)
+		pdfData, err := h.pdfGen.GenerateBatch(ctx, readings, customerMap, settings, historyMap)
 		if err != nil {
 			http.Error(w, "Error generating PDF", http.StatusInternalServerError)
 			return
@@ -1138,7 +1169,7 @@ func (h *AdminHandler) BulkPDF(w http.ResponseWriter, r *http.Request) {
 				sName = sID
 			}
 
-			pdfData, err := h.pdfGen.GenerateBatch(ctx, rs, customerMap, settings)
+			pdfData, err := h.pdfGen.GenerateBatch(ctx, rs, customerMap, settings, historyMap)
 			if err != nil {
 				continue
 			}

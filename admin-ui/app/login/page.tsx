@@ -67,8 +67,8 @@ export default function LoginPage() {
               <div className="absolute -inset-1 bg-linear-to-r from-primary/50 to-primary/20 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
               <div className="relative p-1 rounded-2xl bg-black/40 border border-white/5 shadow-inner">
                 <Image
-                  src="/assets/logo.png"
-                  alt="Hidroeléctrica QARWAQIRU"
+                  src="/assets/logo_chetilla.png"
+                  alt="Hidroeléctrica QARWAQIRU MICHAY"
                   width={80}
                   height={80}
                   className="rounded-xl transition-transform duration-500 group-hover:scale-110"
@@ -78,7 +78,7 @@ export default function LoginPage() {
           </div>
           <CardTitle className="text-3xl font-black tracking-tighter bg-linear-to-br from-white to-white/60 bg-clip-text text-transparent uppercase leading-tight">
             Hidroeléctrica <br />
-            <span className="text-primary tracking-normal">QARWAQIRU</span>
+            <span className="text-primary tracking-normal">QARWAQIRU MICHAY</span>
           </CardTitle>
           <CardDescription className="text-muted-foreground/60 font-medium">
             Portal de Gestión

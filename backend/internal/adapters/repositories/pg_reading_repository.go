@@ -227,7 +227,7 @@ func (r *PostgresReadingRepository) List(ctx context.Context, customerID, sector
 	// Get paginated data
 	query := fmt.Sprintf(`SELECT r.* FROM readings r
 	                       JOIN customers c ON r.customer_id = c.id
-	                       WHERE %s ORDER BY r.timestamp DESC LIMIT $%d OFFSET $%d`, where, argIdx, argIdx+1)
+	                       WHERE %s ORDER BY r.period DESC, r.timestamp DESC LIMIT $%d OFFSET $%d`, where, argIdx, argIdx+1)
 	
 	args = append(args, limit, offset)
 	err = r.db.SelectContext(ctx, &readings, query, args...)

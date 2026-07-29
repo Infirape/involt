@@ -116,16 +116,21 @@ func main() {
 
 	// 5. Start Server with h2c (HTTP/2 Cleartext) and CORS
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:3001", "http://localhost:3002"},
+		AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:3001", "http://localhost:3002", "http://localhost:3008"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Connect-Protocol-Version", "Content-Type", "Authorization"},
 		ExposedHeaders:   []string{"Connect-Protocol-Version", "Content-Disposition"},
 		AllowCredentials: true,
 	})
 
-	log.Println("🚀 InVolt Backend running on http://localhost:8080")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Printf("🚀 InVolt Backend running on http://localhost:%s\n", port)
 	err = http.ListenAndServe(
-		"0.0.0.0:8080",
+		"0.0.0.0:"+port,
 		c.Handler(h2c.NewHandler(mux, &http2.Server{})),
 	)
 	if err != nil {
