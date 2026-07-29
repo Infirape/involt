@@ -149,13 +149,13 @@ func (g *MarotoGenerator) generateChartImage(history []domain.Reading) []byte {
 	darkGrey := color.RGBA{R: 100, G: 130, B: 160, A: 255} // Match defaultBorderColor
 	magenta := color.RGBA{R: 255, G: 0, B: 255, A: 255}
 
-	for x := 10; x < width-10; x++ {
+	for x := 15; x < width-15; x++ {
 		img.Set(x, 15, grey)
 		img.Set(x, 35, grey)
 		img.Set(x, 55, grey)
 	}
 
-	for x := 10; x < width-10; x++ {
+	for x := 15; x < width-15; x++ {
 		img.Set(x, 70, darkGrey)
 	}
 
@@ -186,7 +186,7 @@ func (g *MarotoGenerator) generateChartImage(history []domain.Reading) []byte {
 		}
 
 		slotIdx := 6 - len(hist) + i
-		xStart := 10 + slotIdx*36 + 8
+		xStart := slotIdx*40 + 10
 		xEnd := xStart + 20
 		yEnd := 70
 		yStart := yEnd - barHeight
@@ -463,13 +463,16 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 
 	m.AddRows(
 		row.New(20).Add(
-			col.New(8).Add(
+			col.New(1).Add().WithStyle(&props.Cell{BorderType: border.Left, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
+
+			col.New(6).Add(
 				mimage.NewFromBytes(chartBytes, extension.Png, props.Rect{
-					Center:  true,
-					Percent: 95,
+					Percent: 100,
 					Top:     0.5,
 				}),
-			).WithStyle(&props.Cell{BorderType: border.Left, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
+			),
+
+			col.New(1).Add(),
 
 			col.New(4).Add(
 				mimage.NewFromBytes(smileysBytes, extension.Png, props.Rect{
