@@ -1,0 +1,66 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: involt_db_prod
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-involt_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-involt_password}
+      POSTGRES_DB: ${DB_NAME:-involt_db}
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-involt_user} -d ${DB_NAME:-involt_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - involt-net-prod
+
+  backend:
+    image: ghcr.io/infirape/involt/backend:latest
+    container_name: involt_backend_prod
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://${DB_USER:-involt_user}:${DB_PASSWORD:-involt_password}@db:5432/${DB_NAME:-involt_db}?sslmode=disable
+      PORT: 8080
+    networks:
+      - involt-net-prod
+
+  admin:
+    image: ghcr.io/infirape/involt/admin:latest
+    container_name: involt_admin_prod
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://involt.infira.pe}
+      PORT: 3000
+    networks:
+      - involt-net-prod
+
+  nginx:
+    image: nginx:alpine
+    container_name: involt_nginx_prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - admin
+      - backend
+    networks:
+      - involt-net-prod
+
+volumes:
+  postgres_data_prod:
+
+networks:
+  involt-net-prod:
+    driver: bridge
