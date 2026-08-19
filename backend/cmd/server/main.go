@@ -20,6 +20,7 @@ import (
 	"github.com/infira/involt/backend/internal/adapters/repositories"
 	"github.com/infira/involt/backend/internal/gen/involt/v1/involtv1connect"
 	"github.com/rs/cors"
+	"strings"
 )
 
 func main() {
@@ -115,8 +116,15 @@ func main() {
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsDir))))
 
 	// 5. Start Server with h2c (HTTP/2 Cleartext) and CORS
+	allowedOrigins := []string{"http://localhost:3000", "http://localhost:3001", "http://localhost:3002", "http://localhost:3008"}
+	if envOrigins := os.Getenv("ALLOWED_ORIGINS"); envOrigins != "" {
+		for _, origin := range strings.Split(envOrigins, ",") {
+			allowedOrigins = append(allowedOrigins, strings.TrimSpace(origin))
+		}
+	}
+
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:3001", "http://localhost:3002", "http://localhost:3008"},
+		AllowedOrigins:   allowedOrigins,
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Connect-Protocol-Version", "Content-Type", "Authorization"},
 		ExposedHeaders:   []string{"Connect-Protocol-Version", "Content-Disposition"},
