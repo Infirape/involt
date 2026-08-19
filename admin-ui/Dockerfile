@@ -12,7 +12,8 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
-ENV NEXT_PUBLIC_API_URL=https://involt.infira.pe
+ARG NEXT_PUBLIC_API_URL=https://involt.infira.pe
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
 RUN npm run build
 
