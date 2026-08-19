@@ -122,6 +122,7 @@ func main() {
 			allowedOrigins = append(allowedOrigins, strings.TrimSpace(origin))
 		}
 	}
+	log.Printf("🔒 CORS Allowed Origins: %v\n", allowedOrigins)
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   allowedOrigins,
