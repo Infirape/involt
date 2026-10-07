@@ -134,7 +134,7 @@ wsl -u root service docker start
 Start-Sleep -Seconds 5
 
 # 2. Asegurar que los contenedores de la aplicación estén encendidos
-wsl bash -c "cd ~/involt && docker compose up -d"
+wsl bash -c "cd ~/projects/involt && docker compose up -d"
 
 # 3. Obtener la IP interna de WSL y configurar la redirección de puertos
 $wsl_ip = (wsl hostname -I).Trim().Split(" ")[0]
