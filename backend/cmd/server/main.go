@@ -169,5 +169,10 @@ var schemaSQL string
 
 func initSchema(db *sqlx.DB) error {
 	_, err := db.Exec(schemaSQL)
-	return err
+	if err != nil {
+		log.Printf("⚠️ Notice during initSchema: %v", err)
+	}
+	_, _ = db.Exec(`ALTER TABLE readings ADD COLUMN IF NOT EXISTS is_paid BOOLEAN NOT NULL DEFAULT FALSE;`)
+	_, _ = db.Exec(`ALTER TABLE readings ADD COLUMN IF NOT EXISTS payment_date TIMESTAMPTZ;`)
+	return nil
 }
