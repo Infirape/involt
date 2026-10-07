@@ -54,11 +54,17 @@ func (r *PostgresMetadataRepository) SaveSectors(ctx context.Context, sectors []
 }
 
 func (r *PostgresMetadataRepository) DeleteSector(ctx context.Context, id string) error {
+	// Desvincular suministros (por ejemplo, eliminados lógicamente) de este sector para no violar la FK
+	_, _ = r.db.ExecContext(ctx, "UPDATE customers SET sector_id = NULL WHERE sector_id = $1", id)
+	_, _ = r.db.ExecContext(ctx, "DELETE FROM user_sectors WHERE sector_id = $1", id)
 	_, err := r.db.ExecContext(ctx, "DELETE FROM sectors WHERE id = $1", id)
 	return err
 }
 
 func (r *PostgresMetadataRepository) DeleteCommunity(ctx context.Context, id string) error {
+	// Desvincular sectores y suministros de esta comunidad para no violar la FK
+	_, _ = r.db.ExecContext(ctx, "UPDATE customers SET community_id = NULL WHERE community_id = $1", id)
+	_, _ = r.db.ExecContext(ctx, "UPDATE sectors SET community_id = NULL WHERE community_id = $1", id)
 	_, err := r.db.ExecContext(ctx, "DELETE FROM communities WHERE id = $1", id)
 	return err
 }
