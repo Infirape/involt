@@ -8,6 +8,7 @@ import {
   type Sector,
 } from "@/app/gen/involt/v1/models_pb";
 import { adminClient } from "@/lib/rpc";
+import { generateUUID } from "@/lib/utils";
 
 export function useCustomers(initialSectorId = "") {
   const [isPending, startTransition] = useTransition();
@@ -91,7 +92,7 @@ export function useCustomers(initialSectorId = "") {
       setIsEditing(isEdit);
 
       const defaultCustomer: Partial<Customer> = {
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         name: "",
         code: "",
         address: "",
