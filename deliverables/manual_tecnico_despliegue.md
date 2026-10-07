@@ -129,8 +129,14 @@ Este script se ejecuta en PowerShell de Windows al arrancar y realiza las siguie
 
 **Código del script:**
 ```powershell
+# 1. Iniciar el demonio de Docker en WSL como root
 wsl -u root service docker start
 Start-Sleep -Seconds 5
+
+# 2. Asegurar que los contenedores de la aplicación estén encendidos
+wsl bash -c "cd ~/involt && docker compose up -d"
+
+# 3. Obtener la IP interna de WSL y configurar la redirección de puertos
 $wsl_ip = (wsl hostname -I).Trim().Split(" ")[0]
 netsh interface portproxy reset
 netsh interface portproxy add v4tov4 listenport=3034 listenaddress=0.0.0.0 connectport=3034 connectaddress=$wsl_ip
