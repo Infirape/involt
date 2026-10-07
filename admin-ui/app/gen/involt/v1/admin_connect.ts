@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ClosePeriodRequest, ClosePeriodResponse, DeleteCustomerRequest, DeleteCustomerResponse, GetCollectionsRequest, GetCollectionsResponse, GetCommunitiesRequest, GetCommunitiesResponse, GetCustomersRequest, GetCustomersResponse, GetDashboardStatsRequest, GetDashboardStatsResponse, GetPeriodStatsRequest, GetPeriodStatsResponse, GetReadingsRequest, GetReadingsResponse, GetSectorsRequest, GetSectorsResponse, GetSettingsRequest, GetSettingsResponse, GetUsersRequest, GetUsersResponse, ListPeriodsRequest, ListPeriodsResponse, LoginRequest, LoginResponse, OpenPeriodRequest, OpenPeriodResponse, TogglePaymentStatusRequest, TogglePaymentStatusResponse, UpdateSettingsRequest, UpdateSettingsResponse, UpsertCommunityRequest, UpsertCommunityResponse, UpsertCustomerRequest, UpsertCustomerResponse, UpsertSectorRequest, UpsertSectorResponse, UpsertUserRequest, UpsertUserResponse } from "./admin_pb";
+import { ClosePeriodRequest, ClosePeriodResponse, DeleteCommunityRequest, DeleteCommunityResponse, DeleteCustomerRequest, DeleteCustomerResponse, DeleteSectorRequest, DeleteSectorResponse, GetCollectionsRequest, GetCollectionsResponse, GetCommunitiesRequest, GetCommunitiesResponse, GetCustomersRequest, GetCustomersResponse, GetDashboardStatsRequest, GetDashboardStatsResponse, GetPeriodStatsRequest, GetPeriodStatsResponse, GetReadingsRequest, GetReadingsResponse, GetSectorsRequest, GetSectorsResponse, GetSettingsRequest, GetSettingsResponse, GetUsersRequest, GetUsersResponse, ListPeriodsRequest, ListPeriodsResponse, LoginRequest, LoginResponse, OpenPeriodRequest, OpenPeriodResponse, TogglePaymentStatusRequest, TogglePaymentStatusResponse, UpdateSettingsRequest, UpdateSettingsResponse, UpsertCommunityRequest, UpsertCommunityResponse, UpsertCustomerRequest, UpsertCustomerResponse, UpsertSectorRequest, UpsertSectorResponse, UpsertUserRequest, UpsertUserResponse } from "./admin_pb";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -202,6 +202,17 @@ export const AdminService = {
       kind: MethodKind.Unary,
     },
     /**
+     * DeleteSector removes a sector.
+     *
+     * @generated from rpc involt.v1.AdminService.DeleteSector
+     */
+    deleteSector: {
+      name: "DeleteSector",
+      I: DeleteSectorRequest,
+      O: DeleteSectorResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
      * UpsertCommunity creates or updates a community.
      *
      * @generated from rpc involt.v1.AdminService.UpsertCommunity
@@ -210,6 +221,17 @@ export const AdminService = {
       name: "UpsertCommunity",
       I: UpsertCommunityRequest,
       O: UpsertCommunityResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * DeleteCommunity removes a community.
+     *
+     * @generated from rpc involt.v1.AdminService.DeleteCommunity
+     */
+    deleteCommunity: {
+      name: "DeleteCommunity",
+      I: DeleteCommunityRequest,
+      O: DeleteCommunityResponse,
       kind: MethodKind.Unary,
     },
     /**

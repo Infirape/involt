@@ -38,7 +38,9 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
   $async.Future<$1.OpenPeriodResponse> openPeriod($pb.ServerContext ctx, $1.OpenPeriodRequest request);
   $async.Future<$1.ClosePeriodResponse> closePeriod($pb.ServerContext ctx, $1.ClosePeriodRequest request);
   $async.Future<$1.UpsertSectorResponse> upsertSector($pb.ServerContext ctx, $1.UpsertSectorRequest request);
+  $async.Future<$1.DeleteSectorResponse> deleteSector($pb.ServerContext ctx, $1.DeleteSectorRequest request);
   $async.Future<$1.UpsertCommunityResponse> upsertCommunity($pb.ServerContext ctx, $1.UpsertCommunityRequest request);
+  $async.Future<$1.DeleteCommunityResponse> deleteCommunity($pb.ServerContext ctx, $1.DeleteCommunityRequest request);
   $async.Future<$1.TogglePaymentStatusResponse> togglePaymentStatus($pb.ServerContext ctx, $1.TogglePaymentStatusRequest request);
   $async.Future<$1.GetCollectionsResponse> getCollections($pb.ServerContext ctx, $1.GetCollectionsRequest request);
 
@@ -61,7 +63,9 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'OpenPeriod': return $1.OpenPeriodRequest();
       case 'ClosePeriod': return $1.ClosePeriodRequest();
       case 'UpsertSector': return $1.UpsertSectorRequest();
+      case 'DeleteSector': return $1.DeleteSectorRequest();
       case 'UpsertCommunity': return $1.UpsertCommunityRequest();
+      case 'DeleteCommunity': return $1.DeleteCommunityRequest();
       case 'TogglePaymentStatus': return $1.TogglePaymentStatusRequest();
       case 'GetCollections': return $1.GetCollectionsRequest();
       default: throw $core.ArgumentError('Unknown method: $methodName');
@@ -87,7 +91,9 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'OpenPeriod': return this.openPeriod(ctx, request as $1.OpenPeriodRequest);
       case 'ClosePeriod': return this.closePeriod(ctx, request as $1.ClosePeriodRequest);
       case 'UpsertSector': return this.upsertSector(ctx, request as $1.UpsertSectorRequest);
+      case 'DeleteSector': return this.deleteSector(ctx, request as $1.DeleteSectorRequest);
       case 'UpsertCommunity': return this.upsertCommunity(ctx, request as $1.UpsertCommunityRequest);
+      case 'DeleteCommunity': return this.deleteCommunity(ctx, request as $1.DeleteCommunityRequest);
       case 'TogglePaymentStatus': return this.togglePaymentStatus(ctx, request as $1.TogglePaymentStatusRequest);
       case 'GetCollections': return this.getCollections(ctx, request as $1.GetCollectionsRequest);
       default: throw $core.ArgumentError('Unknown method: $methodName');

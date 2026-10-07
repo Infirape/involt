@@ -1,15 +1,26 @@
 "use client";
 
-import { MapPin, Plus, Search, X, Edit2, Users, ChevronDown, ChevronRight, FileSpreadsheet } from "lucide-react";
-import { useEffect, useState, useRef, Fragment } from "react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Edit2,
+  FileSpreadsheet,
+  MapPin,
+  Plus,
+  Search,
+  Trash2,
+  Users,
+  X,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { CustomerTable, type CustomerTableHandle } from "@/components/dashboard/CustomerTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { useRouter } from "next/navigation";
-import { useCommunities } from "./hooks/useCommunities";
-import { CustomerTable, type CustomerTableHandle } from "@/components/dashboard/CustomerTable";
 import { CommunityModal } from "./components/CommunityModal";
+import { useCommunities } from "./hooks/useCommunities";
 
 export default function CommunitiesPage() {
   const { isAdmin, loading: authLoading } = useAuth();
@@ -29,6 +40,7 @@ export default function CommunitiesPage() {
     setSearchQuery,
     handleOpenModal,
     handleSave,
+    deleteSector,
     downloadSectorCSV,
   } = useCommunities({
     onSaveSuccess: (newSectors) => {
@@ -43,9 +55,7 @@ export default function CommunitiesPage() {
     name: string;
   } | null>(null);
   const tableRef = useRef<CustomerTableHandle>(null);
-  const [expandedCommunities, setExpandedCommunities] = useState<
-    Record<string, boolean>
-  >({});
+  const [expandedCommunities, setExpandedCommunities] = useState<Record<string, boolean>>({});
 
   const toggleExpand = (communityId: string) => {
     setExpandedCommunities((prev) => ({
@@ -126,10 +136,7 @@ export default function CommunitiesPage() {
                   ))
                 ) : data.communities.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan={5}
-                      className="px-6 py-12 text-center text-muted-foreground italic"
-                    >
+                    <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground italic">
                       No se encontraron comunidades
                     </td>
                   </tr>
@@ -156,9 +163,7 @@ export default function CommunitiesPage() {
                             <div className="w-10 h-10 rounded-full bg-linear-to-br from-primary/20 to-secondary/20 flex items-center justify-center border border-white/5">
                               <MapPin className="w-5 h-5 text-primary" />
                             </div>
-                            <span className="font-bold text-sm tracking-tight">
-                              {c.name}
-                            </span>
+                            <span className="font-bold text-sm tracking-tight">{c.name}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -232,15 +237,22 @@ export default function CommunitiesPage() {
                                         >
                                           <Users className="w-4 h-4" />
                                         </Button>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          onClick={() => deleteSector(s.id)}
+                                          className="w-8 h-8 rounded-lg hover:bg-red-500/10 text-red-500/60 hover:text-red-500 transition-all"
+                                          title={`Eliminar sector ${s.name}`}
+                                        >
+                                          <Trash2 className="w-4 h-4" />
+                                        </Button>
                                       </div>
                                     </div>
                                   ))}
-                                {data.sectors.filter(
-                                  (s) => s.communityId === c.id,
-                                ).length === 0 && (
+                                {data.sectors.filter((s) => s.communityId === c.id).length ===
+                                  0 && (
                                   <p className="text-xs text-muted-foreground italic col-span-full">
-                                    No hay sectores registrados para esta
-                                    comunidad.
+                                    No hay sectores registrados para esta comunidad.
                                   </p>
                                 )}
                               </div>
@@ -302,11 +314,7 @@ export default function CommunitiesPage() {
               </div>
             </div>
             <div className="p-8 overflow-y-auto flex-1">
-              <CustomerTable
-                ref={tableRef}
-                sectorId={viewingSector.id}
-                hideHeaderButtons
-              />
+              <CustomerTable ref={tableRef} sectorId={viewingSector.id} hideHeaderButtons />
             </div>
           </Card>
         </div>

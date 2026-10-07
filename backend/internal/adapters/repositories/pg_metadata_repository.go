@@ -53,6 +53,16 @@ func (r *PostgresMetadataRepository) SaveSectors(ctx context.Context, sectors []
 	return err
 }
 
+func (r *PostgresMetadataRepository) DeleteSector(ctx context.Context, id string) error {
+	_, err := r.db.ExecContext(ctx, "DELETE FROM sectors WHERE id = $1", id)
+	return err
+}
+
+func (r *PostgresMetadataRepository) DeleteCommunity(ctx context.Context, id string) error {
+	_, err := r.db.ExecContext(ctx, "DELETE FROM communities WHERE id = $1", id)
+	return err
+}
+
 func (r *PostgresMetadataRepository) GetAppConfig(ctx context.Context) (*domain.AppConfig, error) {
 	var config domain.AppConfig
 	query := "SELECT id, map_url_template, map_user_agent FROM app_configs LIMIT 1"

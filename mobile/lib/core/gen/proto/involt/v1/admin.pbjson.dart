@@ -652,6 +652,54 @@ final $typed_data.Uint8List collectionCustomerDescriptor = $convert.base64Decode
     '9tZXJSCGN1c3RvbWVyEi4KCHJlYWRpbmdzGAIgAygLMhIuaW52b2x0LnYxLlJlYWRpbmdSCHJl'
     'YWRpbmdz');
 
+@$core.Deprecated('Use deleteSectorRequestDescriptor instead')
+const DeleteSectorRequest$json = {
+  '1': 'DeleteSectorRequest',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+  ],
+};
+
+/// Descriptor for `DeleteSectorRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteSectorRequestDescriptor = $convert.base64Decode(
+    'ChNEZWxldGVTZWN0b3JSZXF1ZXN0Eg4KAmlkGAEgASgJUgJpZA==');
+
+@$core.Deprecated('Use deleteSectorResponseDescriptor instead')
+const DeleteSectorResponse$json = {
+  '1': 'DeleteSectorResponse',
+  '2': [
+    {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
+  ],
+};
+
+/// Descriptor for `DeleteSectorResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteSectorResponseDescriptor = $convert.base64Decode(
+    'ChREZWxldGVTZWN0b3JSZXNwb25zZRIYCgdzdWNjZXNzGAEgASgIUgdzdWNjZXNz');
+
+@$core.Deprecated('Use deleteCommunityRequestDescriptor instead')
+const DeleteCommunityRequest$json = {
+  '1': 'DeleteCommunityRequest',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+  ],
+};
+
+/// Descriptor for `DeleteCommunityRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteCommunityRequestDescriptor = $convert.base64Decode(
+    'ChZEZWxldGVDb21tdW5pdHlSZXF1ZXN0Eg4KAmlkGAEgASgJUgJpZA==');
+
+@$core.Deprecated('Use deleteCommunityResponseDescriptor instead')
+const DeleteCommunityResponse$json = {
+  '1': 'DeleteCommunityResponse',
+  '2': [
+    {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
+  ],
+};
+
+/// Descriptor for `DeleteCommunityResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteCommunityResponseDescriptor = $convert.base64Decode(
+    'ChdEZWxldGVDb21tdW5pdHlSZXNwb25zZRIYCgdzdWNjZXNzGAEgASgIUgdzdWNjZXNz');
+
 const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
   '1': 'AdminService',
   '2': [
@@ -672,7 +720,9 @@ const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
     {'1': 'OpenPeriod', '2': '.involt.v1.OpenPeriodRequest', '3': '.involt.v1.OpenPeriodResponse'},
     {'1': 'ClosePeriod', '2': '.involt.v1.ClosePeriodRequest', '3': '.involt.v1.ClosePeriodResponse'},
     {'1': 'UpsertSector', '2': '.involt.v1.UpsertSectorRequest', '3': '.involt.v1.UpsertSectorResponse'},
+    {'1': 'DeleteSector', '2': '.involt.v1.DeleteSectorRequest', '3': '.involt.v1.DeleteSectorResponse'},
     {'1': 'UpsertCommunity', '2': '.involt.v1.UpsertCommunityRequest', '3': '.involt.v1.UpsertCommunityResponse'},
+    {'1': 'DeleteCommunity', '2': '.involt.v1.DeleteCommunityRequest', '3': '.involt.v1.DeleteCommunityResponse'},
     {'1': 'TogglePaymentStatus', '2': '.involt.v1.TogglePaymentStatusRequest', '3': '.involt.v1.TogglePaymentStatusResponse'},
     {'1': 'GetCollections', '2': '.involt.v1.GetCollectionsRequest', '3': '.involt.v1.GetCollectionsResponse'},
   ],
@@ -723,8 +773,12 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> AdminServi
   '.involt.v1.ClosePeriodResponse': ClosePeriodResponse$json,
   '.involt.v1.UpsertSectorRequest': UpsertSectorRequest$json,
   '.involt.v1.UpsertSectorResponse': UpsertSectorResponse$json,
+  '.involt.v1.DeleteSectorRequest': DeleteSectorRequest$json,
+  '.involt.v1.DeleteSectorResponse': DeleteSectorResponse$json,
   '.involt.v1.UpsertCommunityRequest': UpsertCommunityRequest$json,
   '.involt.v1.UpsertCommunityResponse': UpsertCommunityResponse$json,
+  '.involt.v1.DeleteCommunityRequest': DeleteCommunityRequest$json,
+  '.involt.v1.DeleteCommunityResponse': DeleteCommunityResponse$json,
   '.involt.v1.TogglePaymentStatusRequest': TogglePaymentStatusRequest$json,
   '.involt.v1.TogglePaymentStatusResponse': TogglePaymentStatusResponse$json,
   '.involt.v1.GetCollectionsRequest': GetCollectionsRequest$json,
@@ -758,10 +812,13 @@ final $typed_data.Uint8List adminServiceDescriptor = $convert.base64Decode(
     '5PcGVuUGVyaW9kUmVxdWVzdBodLmludm9sdC52MS5PcGVuUGVyaW9kUmVzcG9uc2USTAoLQ2xv'
     'c2VQZXJpb2QSHS5pbnZvbHQudjEuQ2xvc2VQZXJpb2RSZXF1ZXN0Gh4uaW52b2x0LnYxLkNsb3'
     'NlUGVyaW9kUmVzcG9uc2USTwoMVXBzZXJ0U2VjdG9yEh4uaW52b2x0LnYxLlVwc2VydFNlY3Rv'
-    'clJlcXVlc3QaHy5pbnZvbHQudjEuVXBzZXJ0U2VjdG9yUmVzcG9uc2USWAoPVXBzZXJ0Q29tbX'
-    'VuaXR5EiEuaW52b2x0LnYxLlVwc2VydENvbW11bml0eVJlcXVlc3QaIi5pbnZvbHQudjEuVXBz'
-    'ZXJ0Q29tbXVuaXR5UmVzcG9uc2USZAoTVG9nZ2xlUGF5bWVudFN0YXR1cxIlLmludm9sdC52MS'
-    '5Ub2dnbGVQYXltZW50U3RhdHVzUmVxdWVzdBomLmludm9sdC52MS5Ub2dnbGVQYXltZW50U3Rh'
-    'dHVzUmVzcG9uc2USVQoOR2V0Q29sbGVjdGlvbnMSIC5pbnZvbHQudjEuR2V0Q29sbGVjdGlvbn'
-    'NSZXF1ZXN0GiEuaW52b2x0LnYxLkdldENvbGxlY3Rpb25zUmVzcG9uc2U=');
+    'clJlcXVlc3QaHy5pbnZvbHQudjEuVXBzZXJ0U2VjdG9yUmVzcG9uc2USTwoMRGVsZXRlU2VjdG'
+    '9yEh4uaW52b2x0LnYxLkRlbGV0ZVNlY3RvclJlcXVlc3QaHy5pbnZvbHQudjEuRGVsZXRlU2Vj'
+    'dG9yUmVzcG9uc2USWAoPVXBzZXJ0Q29tbXVuaXR5EiEuaW52b2x0LnYxLlVwc2VydENvbW11bm'
+    'l0eVJlcXVlc3QaIi5pbnZvbHQudjEuVXBzZXJ0Q29tbXVuaXR5UmVzcG9uc2USWAoPRGVsZXRl'
+    'Q29tbXVuaXR5EiEuaW52b2x0LnYxLkRlbGV0ZUNvbW11bml0eVJlcXVlc3QaIi5pbnZvbHQudj'
+    'EuRGVsZXRlQ29tbXVuaXR5UmVzcG9uc2USZAoTVG9nZ2xlUGF5bWVudFN0YXR1cxIlLmludm9s'
+    'dC52MS5Ub2dnbGVQYXltZW50U3RhdHVzUmVxdWVzdBomLmludm9sdC52MS5Ub2dnbGVQYXltZW'
+    '50U3RhdHVzUmVzcG9uc2USVQoOR2V0Q29sbGVjdGlvbnMSIC5pbnZvbHQudjEuR2V0Q29sbGVj'
+    'dGlvbnNSZXF1ZXN0GiEuaW52b2x0LnYxLkdldENvbGxlY3Rpb25zUmVzcG9uc2U=');
 

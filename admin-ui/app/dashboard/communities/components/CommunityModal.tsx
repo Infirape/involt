@@ -1,13 +1,13 @@
 "use client";
 
-import { X, Plus, Trash2 } from "lucide-react";
+import { create } from "@bufbuild/protobuf";
+import { Plus, Trash2, X } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { type Community, CommunitySchema, type Sector } from "@/app/gen/involt/v1/models_pb";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Community, CommunitySchema, Sector } from "@/app/gen/involt/v1/models_pb";
-import { create } from "@bufbuild/protobuf";
 
 interface CommunityModalProps {
   isOpen: boolean;
@@ -40,7 +40,7 @@ export function CommunityModal({
     if (isOpen) {
       sectorsEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
-  }, [editingSectors.length, isOpen]);
+  }, [isOpen]);
 
   if (!isOpen || !editingCommunity) return null;
 
@@ -78,7 +78,7 @@ export function CommunityModal({
                 value={editingCommunity.name}
                 onChange={(e) =>
                   setEditingCommunity((prev) =>
-                    prev ? create(CommunitySchema, { ...prev, name: e.target.value }) : null
+                    prev ? create(CommunitySchema, { ...prev, name: e.target.value }) : null,
                   )
                 }
                 className="bg-white/5 border-white/5 focus:border-primary/30 rounded-xl h-11"
@@ -110,7 +110,7 @@ export function CommunityModal({
                   </p>
                 ) : (
                   editingSectors.map((s, index) => (
-                    <div key={index} className="flex items-center gap-2">
+                    <div key={s.id || `sector-${index}`} className="flex items-center gap-2">
                       <Input
                         required
                         value={s.name}

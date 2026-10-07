@@ -1,13 +1,13 @@
-import { useState, useEffect, useCallback, useTransition } from "react";
-import { adminClient } from "@/lib/rpc";
+import { create } from "@bufbuild/protobuf";
+import { useCallback, useEffect, useState, useTransition } from "react";
+import { toast } from "sonner";
 import {
-  Community,
+  type Community,
   CommunitySchema,
-  Sector,
+  type Sector,
   SectorSchema,
 } from "@/app/gen/involt/v1/models_pb";
-import { create } from "@bufbuild/protobuf";
-import { toast } from "sonner";
+import { adminClient } from "@/lib/rpc";
 
 export type SectorWithCount = Sector & { customerCount?: number };
 
@@ -26,9 +26,7 @@ export function useCommunities(options?: {
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCommunity, setEditingCommunity] = useState<Community | null>(
-    null,
-  );
+  const [editingCommunity, setEditingCommunity] = useState<Community | null>(null);
   const [editingSectors, setEditingSectors] = useState<Sector[]>([]);
   const [saving, setSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -110,6 +108,16 @@ export function useCommunities(options?: {
 
       const newlyCreatedSectors: { id: string; name: string }[] = [];
 
+      // Delete any removed sectors
+      for (const sectorId of deletedSectorIds) {
+        try {
+          await adminClient.deleteSector({ id: sectorId });
+        } catch (err) {
+          console.error("Error deleting sector:", err);
+        }
+      }
+      setDeletedSectorIds([]);
+
       // Save all editing sectors
       for (const s of editingSectors) {
         if (!s.name.trim()) continue;
@@ -123,9 +131,7 @@ export function useCommunities(options?: {
         }
       }
 
-      toast.success(
-        editingCommunity.id ? "Comunidad actualizada" : "Comunidad creada",
-      );
+      toast.success(editingCommunity.id ? "Comunidad actualizada" : "Comunidad creada");
       setIsModalOpen(false);
       await loadData();
 
@@ -153,14 +159,36 @@ export function useCommunities(options?: {
 
   const updateEditingSectorName = (index: number, name: string) => {
     setEditingSectors((prev) =>
-      prev.map((s, idx) =>
-        idx === index ? create(SectorSchema, { ...s, name }) : s,
-      ),
+      prev.map((s, idx) => (idx === index ? create(SectorSchema, { ...s, name }) : s)),
     );
   };
 
+  const [deletedSectorIds, setDeletedSectorIds] = useState<string[]>([]);
+
   const removeEditingSector = (index: number) => {
+    const target = editingSectors[index];
+    if (target?.id) {
+      setDeletedSectorIds((prev) => [...prev, target.id]);
+    }
     setEditingSectors((prev) => prev.filter((_, idx) => idx !== index));
+  };
+
+  const deleteSector = async (sectorId: string) => {
+    if (
+      !confirm(
+        "¿Estás seguro de que deseas eliminar este sector? Esta acción no se puede deshacer.",
+      )
+    ) {
+      return;
+    }
+    try {
+      await adminClient.deleteSector({ id: sectorId });
+      toast.success("Sector eliminado correctamente");
+      await loadData();
+    } catch (error) {
+      console.error("Error deleting sector:", error);
+      toast.error("Error al eliminar el sector");
+    }
   };
 
   const downloadSectorCSV = async (sectorId: string, sectorName: string) => {
@@ -196,21 +224,17 @@ export function useCommunities(options?: {
 
       const csvContent = [
         headers.join(","),
-        ...rows.map((row) =>
-          row.map((val) => `"${String(val).replace(/"/g, '""')}"`).join(","),
-        ),
+        ...rows.map((row) => row.map((val) => `"${String(val).replace(/"/g, '""')}"`).join(",")),
       ].join("\n");
 
-      const blob = new Blob(["\uFEFF" + csvContent], {
+      const blob = new Blob([`\uFEFF${csvContent}`], {
         type: "text/csv;charset=utf-8;",
       });
       const url = URL.createObjectURL(blob);
 
       const link = document.createElement("a");
       link.href = url;
-      const sanitizedSectorName = sectorName
-        .replace(/[^a-zA-Z0-9]/g, "_")
-        .toUpperCase();
+      const sanitizedSectorName = sectorName.replace(/[^a-zA-Z0-9]/g, "_").toUpperCase();
       link.setAttribute("download", `Suministros_${sanitizedSectorName}.csv`);
       document.body.appendChild(link);
       link.click();
@@ -242,6 +266,7 @@ export function useCommunities(options?: {
     setSearchQuery,
     handleOpenModal,
     handleSave,
+    deleteSector,
     downloadSectorCSV,
     refresh: loadData,
   };

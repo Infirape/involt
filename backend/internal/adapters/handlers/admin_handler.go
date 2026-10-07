@@ -242,6 +242,49 @@ func (h *AdminHandler) UpsertSector(
 	}), nil
 }
 
+func (h *AdminHandler) DeleteSector(
+	ctx context.Context,
+	req *connect.Request[involtv1.DeleteSectorRequest],
+) (*connect.Response[involtv1.DeleteSectorResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok || userCtx.Role != string(domain.RoleAdmin) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("only admins can delete sectors"))
+	}
+	if req.Msg.Id == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("sector id is required"))
+	}
+
+	count, err := h.customerRepo.CountBySector(ctx, req.Msg.Id)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("failed to count customers in sector: %w", err))
+	}
+	if count > 0 {
+		return nil, connect.NewError(
+			connect.CodeFailedPrecondition,
+			fmt.Errorf("no se puede eliminar el sector porque tiene %d suministros asociados", count),
+		)
+	}
+
+	if err := h.metaRepo.DeleteSector(ctx, req.Msg.Id); err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+	return connect.NewResponse(&involtv1.DeleteSectorResponse{Success: true}), nil
+}
+
+func (h *AdminHandler) DeleteCommunity(
+	ctx context.Context,
+	req *connect.Request[involtv1.DeleteCommunityRequest],
+) (*connect.Response[involtv1.DeleteCommunityResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok || userCtx.Role != string(domain.RoleAdmin) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("only admins can delete communities"))
+	}
+	if err := h.metaRepo.DeleteCommunity(ctx, req.Msg.Id); err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+	return connect.NewResponse(&involtv1.DeleteCommunityResponse{Success: true}), nil
+}
+
 func (h *AdminHandler) GetCommunities(
 	ctx context.Context,
 	req *connect.Request[involtv1.GetCommunitiesRequest],

@@ -59,8 +59,14 @@ service AdminService {
   // UpsertSector creates or updates a sector.
   rpc UpsertSector(UpsertSectorRequest) returns (UpsertSectorResponse);
 
+  // DeleteSector removes a sector.
+  rpc DeleteSector(DeleteSectorRequest) returns (DeleteSectorResponse);
+
   // UpsertCommunity creates or updates a community.
   rpc UpsertCommunity(UpsertCommunityRequest) returns (UpsertCommunityResponse);
+
+  // DeleteCommunity removes a community.
+  rpc DeleteCommunity(DeleteCommunityRequest) returns (DeleteCommunityResponse);
 
   // TogglePaymentStatus updates the payment status of a reading.
   rpc TogglePaymentStatus(TogglePaymentStatusRequest) returns (TogglePaymentStatusResponse);
@@ -290,3 +296,20 @@ message CollectionCustomer {
   Customer customer = 1;
   repeated Reading readings = 2;
 }
+
+message DeleteSectorRequest {
+  string id = 1;
+}
+
+message DeleteSectorResponse {
+  bool success = 1;
+}
+
+message DeleteCommunityRequest {
+  string id = 1;
+}
+
+message DeleteCommunityResponse {
+  bool success = 1;
+}
+

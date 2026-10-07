@@ -2769,6 +2769,206 @@ class CollectionCustomer extends $pb.GeneratedMessage {
   $core.List<$0.Reading> get readings => $_getList(1);
 }
 
+class DeleteSectorRequest extends $pb.GeneratedMessage {
+  factory DeleteSectorRequest({
+    $core.String? id,
+  }) {
+    final $result = create();
+    if (id != null) {
+      $result.id = id;
+    }
+    return $result;
+  }
+  DeleteSectorRequest._() : super();
+  factory DeleteSectorRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeleteSectorRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'DeleteSectorRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DeleteSectorRequest clone() => DeleteSectorRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DeleteSectorRequest copyWith(void Function(DeleteSectorRequest) updates) => super.copyWith((message) => updates(message as DeleteSectorRequest)) as DeleteSectorRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteSectorRequest create() => DeleteSectorRequest._();
+  DeleteSectorRequest createEmptyInstance() => create();
+  static $pb.PbList<DeleteSectorRequest> createRepeated() => $pb.PbList<DeleteSectorRequest>();
+  @$core.pragma('dart2js:noInline')
+  static DeleteSectorRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteSectorRequest>(create);
+  static DeleteSectorRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+}
+
+class DeleteSectorResponse extends $pb.GeneratedMessage {
+  factory DeleteSectorResponse({
+    $core.bool? success,
+  }) {
+    final $result = create();
+    if (success != null) {
+      $result.success = success;
+    }
+    return $result;
+  }
+  DeleteSectorResponse._() : super();
+  factory DeleteSectorResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeleteSectorResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'DeleteSectorResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'success')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DeleteSectorResponse clone() => DeleteSectorResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DeleteSectorResponse copyWith(void Function(DeleteSectorResponse) updates) => super.copyWith((message) => updates(message as DeleteSectorResponse)) as DeleteSectorResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteSectorResponse create() => DeleteSectorResponse._();
+  DeleteSectorResponse createEmptyInstance() => create();
+  static $pb.PbList<DeleteSectorResponse> createRepeated() => $pb.PbList<DeleteSectorResponse>();
+  @$core.pragma('dart2js:noInline')
+  static DeleteSectorResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteSectorResponse>(create);
+  static DeleteSectorResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.bool get success => $_getBF(0);
+  @$pb.TagNumber(1)
+  set success($core.bool v) { $_setBool(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSuccess() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSuccess() => clearField(1);
+}
+
+class DeleteCommunityRequest extends $pb.GeneratedMessage {
+  factory DeleteCommunityRequest({
+    $core.String? id,
+  }) {
+    final $result = create();
+    if (id != null) {
+      $result.id = id;
+    }
+    return $result;
+  }
+  DeleteCommunityRequest._() : super();
+  factory DeleteCommunityRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeleteCommunityRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'DeleteCommunityRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DeleteCommunityRequest clone() => DeleteCommunityRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DeleteCommunityRequest copyWith(void Function(DeleteCommunityRequest) updates) => super.copyWith((message) => updates(message as DeleteCommunityRequest)) as DeleteCommunityRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteCommunityRequest create() => DeleteCommunityRequest._();
+  DeleteCommunityRequest createEmptyInstance() => create();
+  static $pb.PbList<DeleteCommunityRequest> createRepeated() => $pb.PbList<DeleteCommunityRequest>();
+  @$core.pragma('dart2js:noInline')
+  static DeleteCommunityRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteCommunityRequest>(create);
+  static DeleteCommunityRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+}
+
+class DeleteCommunityResponse extends $pb.GeneratedMessage {
+  factory DeleteCommunityResponse({
+    $core.bool? success,
+  }) {
+    final $result = create();
+    if (success != null) {
+      $result.success = success;
+    }
+    return $result;
+  }
+  DeleteCommunityResponse._() : super();
+  factory DeleteCommunityResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeleteCommunityResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'DeleteCommunityResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'success')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DeleteCommunityResponse clone() => DeleteCommunityResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DeleteCommunityResponse copyWith(void Function(DeleteCommunityResponse) updates) => super.copyWith((message) => updates(message as DeleteCommunityResponse)) as DeleteCommunityResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteCommunityResponse create() => DeleteCommunityResponse._();
+  DeleteCommunityResponse createEmptyInstance() => create();
+  static $pb.PbList<DeleteCommunityResponse> createRepeated() => $pb.PbList<DeleteCommunityResponse>();
+  @$core.pragma('dart2js:noInline')
+  static DeleteCommunityResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteCommunityResponse>(create);
+  static DeleteCommunityResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.bool get success => $_getBF(0);
+  @$pb.TagNumber(1)
+  set success($core.bool v) { $_setBool(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSuccess() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSuccess() => clearField(1);
+}
+
 class AdminServiceApi {
   $pb.RpcClient _client;
   AdminServiceApi(this._client);
@@ -2824,8 +3024,14 @@ class AdminServiceApi {
   $async.Future<UpsertSectorResponse> upsertSector($pb.ClientContext? ctx, UpsertSectorRequest request) =>
     _client.invoke<UpsertSectorResponse>(ctx, 'AdminService', 'UpsertSector', request, UpsertSectorResponse())
   ;
+  $async.Future<DeleteSectorResponse> deleteSector($pb.ClientContext? ctx, DeleteSectorRequest request) =>
+    _client.invoke<DeleteSectorResponse>(ctx, 'AdminService', 'DeleteSector', request, DeleteSectorResponse())
+  ;
   $async.Future<UpsertCommunityResponse> upsertCommunity($pb.ClientContext? ctx, UpsertCommunityRequest request) =>
     _client.invoke<UpsertCommunityResponse>(ctx, 'AdminService', 'UpsertCommunity', request, UpsertCommunityResponse())
+  ;
+  $async.Future<DeleteCommunityResponse> deleteCommunity($pb.ClientContext? ctx, DeleteCommunityRequest request) =>
+    _client.invoke<DeleteCommunityResponse>(ctx, 'AdminService', 'DeleteCommunity', request, DeleteCommunityResponse())
   ;
   $async.Future<TogglePaymentStatusResponse> togglePaymentStatus($pb.ClientContext? ctx, TogglePaymentStatusRequest request) =>
     _client.invoke<TogglePaymentStatusResponse>(ctx, 'AdminService', 'TogglePaymentStatus', request, TogglePaymentStatusResponse())

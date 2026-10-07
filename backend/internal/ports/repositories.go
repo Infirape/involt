@@ -48,6 +48,8 @@ type MetadataRepository interface {
 	ListSectors(ctx context.Context) ([]domain.Sector, error)
 	SaveCommunities(ctx context.Context, communities []domain.Community) error
 	SaveSectors(ctx context.Context, sectors []domain.Sector) error
+	DeleteSector(ctx context.Context, id string) error
+	DeleteCommunity(ctx context.Context, id string) error
 	GetAppConfig(ctx context.Context) (*domain.AppConfig, error)
 	GetSettings(ctx context.Context) (*domain.Settings, error)
 	SaveSettings(ctx context.Context, settings *domain.Settings) error

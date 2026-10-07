@@ -2361,6 +2361,182 @@ func (x *CollectionCustomer) GetReadings() []*Reading {
 	return nil
 }
 
+type DeleteSectorRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteSectorRequest) Reset() {
+	*x = DeleteSectorRequest{}
+	mi := &file_involt_v1_admin_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteSectorRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteSectorRequest) ProtoMessage() {}
+
+func (x *DeleteSectorRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_involt_v1_admin_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteSectorRequest.ProtoReflect.Descriptor instead.
+func (*DeleteSectorRequest) Descriptor() ([]byte, []int) {
+	return file_involt_v1_admin_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *DeleteSectorRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type DeleteSectorResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteSectorResponse) Reset() {
+	*x = DeleteSectorResponse{}
+	mi := &file_involt_v1_admin_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteSectorResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteSectorResponse) ProtoMessage() {}
+
+func (x *DeleteSectorResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_involt_v1_admin_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteSectorResponse.ProtoReflect.Descriptor instead.
+func (*DeleteSectorResponse) Descriptor() ([]byte, []int) {
+	return file_involt_v1_admin_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *DeleteSectorResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+type DeleteCommunityRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCommunityRequest) Reset() {
+	*x = DeleteCommunityRequest{}
+	mi := &file_involt_v1_admin_proto_msgTypes[46]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCommunityRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCommunityRequest) ProtoMessage() {}
+
+func (x *DeleteCommunityRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_involt_v1_admin_proto_msgTypes[46]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCommunityRequest.ProtoReflect.Descriptor instead.
+func (*DeleteCommunityRequest) Descriptor() ([]byte, []int) {
+	return file_involt_v1_admin_proto_rawDescGZIP(), []int{46}
+}
+
+func (x *DeleteCommunityRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type DeleteCommunityResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCommunityResponse) Reset() {
+	*x = DeleteCommunityResponse{}
+	mi := &file_involt_v1_admin_proto_msgTypes[47]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCommunityResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCommunityResponse) ProtoMessage() {}
+
+func (x *DeleteCommunityResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_involt_v1_admin_proto_msgTypes[47]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCommunityResponse.ProtoReflect.Descriptor instead.
+func (*DeleteCommunityResponse) Descriptor() ([]byte, []int) {
+	return file_involt_v1_admin_proto_rawDescGZIP(), []int{47}
+}
+
+func (x *DeleteCommunityResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
 var File_involt_v1_admin_proto protoreflect.FileDescriptor
 
 const file_involt_v1_admin_proto_rawDesc = "" +
@@ -2515,12 +2691,20 @@ const file_involt_v1_admin_proto_rawDesc = "" +
 	"\tcustomers\x18\x02 \x03(\v2\x1d.involt.v1.CollectionCustomerR\tcustomers\"u\n" +
 	"\x12CollectionCustomer\x12/\n" +
 	"\bcustomer\x18\x01 \x01(\v2\x13.involt.v1.CustomerR\bcustomer\x12.\n" +
-	"\breadings\x18\x02 \x03(\v2\x12.involt.v1.ReadingR\breadings*j\n" +
+	"\breadings\x18\x02 \x03(\v2\x12.involt.v1.ReadingR\breadings\"%\n" +
+	"\x13DeleteSectorRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"0\n" +
+	"\x14DeleteSectorResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"(\n" +
+	"\x16DeleteCommunityRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"3\n" +
+	"\x17DeleteCommunityResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess*j\n" +
 	"\bUserRole\x12\x19\n" +
 	"\x15USER_ROLE_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fUSER_ROLE_ADMIN\x10\x01\x12\x18\n" +
 	"\x14USER_ROLE_SUPERVISOR\x10\x02\x12\x14\n" +
-	"\x10USER_ROLE_READER\x10\x032\xf4\f\n" +
+	"\x10USER_ROLE_READER\x10\x032\x9f\x0e\n" +
 	"\fAdminService\x12:\n" +
 	"\x05Login\x12\x17.involt.v1.LoginRequest\x1a\x18.involt.v1.LoginResponse\x12C\n" +
 	"\bGetUsers\x12\x1a.involt.v1.GetUsersRequest\x1a\x1b.involt.v1.GetUsersResponse\x12I\n" +
@@ -2541,8 +2725,10 @@ const file_involt_v1_admin_proto_rawDesc = "" +
 	"\n" +
 	"OpenPeriod\x12\x1c.involt.v1.OpenPeriodRequest\x1a\x1d.involt.v1.OpenPeriodResponse\x12L\n" +
 	"\vClosePeriod\x12\x1d.involt.v1.ClosePeriodRequest\x1a\x1e.involt.v1.ClosePeriodResponse\x12O\n" +
-	"\fUpsertSector\x12\x1e.involt.v1.UpsertSectorRequest\x1a\x1f.involt.v1.UpsertSectorResponse\x12X\n" +
-	"\x0fUpsertCommunity\x12!.involt.v1.UpsertCommunityRequest\x1a\".involt.v1.UpsertCommunityResponse\x12d\n" +
+	"\fUpsertSector\x12\x1e.involt.v1.UpsertSectorRequest\x1a\x1f.involt.v1.UpsertSectorResponse\x12O\n" +
+	"\fDeleteSector\x12\x1e.involt.v1.DeleteSectorRequest\x1a\x1f.involt.v1.DeleteSectorResponse\x12X\n" +
+	"\x0fUpsertCommunity\x12!.involt.v1.UpsertCommunityRequest\x1a\".involt.v1.UpsertCommunityResponse\x12X\n" +
+	"\x0fDeleteCommunity\x12!.involt.v1.DeleteCommunityRequest\x1a\".involt.v1.DeleteCommunityResponse\x12d\n" +
 	"\x13TogglePaymentStatus\x12%.involt.v1.TogglePaymentStatusRequest\x1a&.involt.v1.TogglePaymentStatusResponse\x12U\n" +
 	"\x0eGetCollections\x12 .involt.v1.GetCollectionsRequest\x1a!.involt.v1.GetCollectionsResponseBBZ@github.com/infira/involt/backend/internal/gen/involt/v1;involtv1b\x06proto3"
 
@@ -2559,7 +2745,7 @@ func file_involt_v1_admin_proto_rawDescGZIP() []byte {
 }
 
 var file_involt_v1_admin_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_involt_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 44)
+var file_involt_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 48)
 var file_involt_v1_admin_proto_goTypes = []any{
 	(UserRole)(0),                       // 0: involt.v1.UserRole
 	(*UpsertSectorRequest)(nil),         // 1: involt.v1.UpsertSectorRequest
@@ -2606,42 +2792,46 @@ var file_involt_v1_admin_proto_goTypes = []any{
 	(*GetCollectionsRequest)(nil),       // 42: involt.v1.GetCollectionsRequest
 	(*GetCollectionsResponse)(nil),      // 43: involt.v1.GetCollectionsResponse
 	(*CollectionCustomer)(nil),          // 44: involt.v1.CollectionCustomer
-	(*Sector)(nil),                      // 45: involt.v1.Sector
-	(*Community)(nil),                   // 46: involt.v1.Community
-	(*Customer)(nil),                    // 47: involt.v1.Customer
-	(*Reading)(nil),                     // 48: involt.v1.Reading
-	(*Settings)(nil),                    // 49: involt.v1.Settings
-	(*Period)(nil),                      // 50: involt.v1.Period
+	(*DeleteSectorRequest)(nil),         // 45: involt.v1.DeleteSectorRequest
+	(*DeleteSectorResponse)(nil),        // 46: involt.v1.DeleteSectorResponse
+	(*DeleteCommunityRequest)(nil),      // 47: involt.v1.DeleteCommunityRequest
+	(*DeleteCommunityResponse)(nil),     // 48: involt.v1.DeleteCommunityResponse
+	(*Sector)(nil),                      // 49: involt.v1.Sector
+	(*Community)(nil),                   // 50: involt.v1.Community
+	(*Customer)(nil),                    // 51: involt.v1.Customer
+	(*Reading)(nil),                     // 52: involt.v1.Reading
+	(*Settings)(nil),                    // 53: involt.v1.Settings
+	(*Period)(nil),                      // 54: involt.v1.Period
 }
 var file_involt_v1_admin_proto_depIdxs = []int32{
-	45, // 0: involt.v1.UpsertSectorRequest.sector:type_name -> involt.v1.Sector
-	45, // 1: involt.v1.UpsertSectorResponse.sector:type_name -> involt.v1.Sector
-	46, // 2: involt.v1.UpsertCommunityRequest.community:type_name -> involt.v1.Community
-	46, // 3: involt.v1.UpsertCommunityResponse.community:type_name -> involt.v1.Community
+	49, // 0: involt.v1.UpsertSectorRequest.sector:type_name -> involt.v1.Sector
+	49, // 1: involt.v1.UpsertSectorResponse.sector:type_name -> involt.v1.Sector
+	50, // 2: involt.v1.UpsertCommunityRequest.community:type_name -> involt.v1.Community
+	50, // 3: involt.v1.UpsertCommunityResponse.community:type_name -> involt.v1.Community
 	27, // 4: involt.v1.LoginResponse.user:type_name -> involt.v1.User
 	27, // 5: involt.v1.GetUsersResponse.users:type_name -> involt.v1.User
 	27, // 6: involt.v1.UpsertUserRequest.user:type_name -> involt.v1.User
 	27, // 7: involt.v1.UpsertUserResponse.user:type_name -> involt.v1.User
-	45, // 8: involt.v1.GetSectorsResponse.sectors:type_name -> involt.v1.Sector
-	46, // 9: involt.v1.GetCommunitiesResponse.communities:type_name -> involt.v1.Community
-	47, // 10: involt.v1.GetCustomersResponse.customers:type_name -> involt.v1.Customer
-	48, // 11: involt.v1.GetReadingsResponse.readings:type_name -> involt.v1.Reading
-	49, // 12: involt.v1.GetSettingsResponse.settings:type_name -> involt.v1.Settings
-	49, // 13: involt.v1.UpdateSettingsRequest.settings:type_name -> involt.v1.Settings
-	49, // 14: involt.v1.UpdateSettingsResponse.settings:type_name -> involt.v1.Settings
-	47, // 15: involt.v1.UpsertCustomerRequest.customer:type_name -> involt.v1.Customer
-	47, // 16: involt.v1.UpsertCustomerResponse.customer:type_name -> involt.v1.Customer
+	49, // 8: involt.v1.GetSectorsResponse.sectors:type_name -> involt.v1.Sector
+	50, // 9: involt.v1.GetCommunitiesResponse.communities:type_name -> involt.v1.Community
+	51, // 10: involt.v1.GetCustomersResponse.customers:type_name -> involt.v1.Customer
+	52, // 11: involt.v1.GetReadingsResponse.readings:type_name -> involt.v1.Reading
+	53, // 12: involt.v1.GetSettingsResponse.settings:type_name -> involt.v1.Settings
+	53, // 13: involt.v1.UpdateSettingsRequest.settings:type_name -> involt.v1.Settings
+	53, // 14: involt.v1.UpdateSettingsResponse.settings:type_name -> involt.v1.Settings
+	51, // 15: involt.v1.UpsertCustomerRequest.customer:type_name -> involt.v1.Customer
+	51, // 16: involt.v1.UpsertCustomerResponse.customer:type_name -> involt.v1.Customer
 	0,  // 17: involt.v1.User.role:type_name -> involt.v1.UserRole
 	30, // 18: involt.v1.GetDashboardStatsResponse.sector_stats:type_name -> involt.v1.SectorStat
-	50, // 19: involt.v1.ListPeriodsResponse.periods:type_name -> involt.v1.Period
+	54, // 19: involt.v1.ListPeriodsResponse.periods:type_name -> involt.v1.Period
 	35, // 20: involt.v1.GetPeriodStatsResponse.missing_customers:type_name -> involt.v1.MissingCustomer
-	50, // 21: involt.v1.OpenPeriodResponse.period:type_name -> involt.v1.Period
-	50, // 22: involt.v1.ClosePeriodResponse.closed_period:type_name -> involt.v1.Period
-	50, // 23: involt.v1.ClosePeriodResponse.next_period:type_name -> involt.v1.Period
-	48, // 24: involt.v1.GetCollectionsResponse.readings:type_name -> involt.v1.Reading
+	54, // 21: involt.v1.OpenPeriodResponse.period:type_name -> involt.v1.Period
+	54, // 22: involt.v1.ClosePeriodResponse.closed_period:type_name -> involt.v1.Period
+	54, // 23: involt.v1.ClosePeriodResponse.next_period:type_name -> involt.v1.Period
+	52, // 24: involt.v1.GetCollectionsResponse.readings:type_name -> involt.v1.Reading
 	44, // 25: involt.v1.GetCollectionsResponse.customers:type_name -> involt.v1.CollectionCustomer
-	47, // 26: involt.v1.CollectionCustomer.customer:type_name -> involt.v1.Customer
-	48, // 27: involt.v1.CollectionCustomer.readings:type_name -> involt.v1.Reading
+	51, // 26: involt.v1.CollectionCustomer.customer:type_name -> involt.v1.Customer
+	52, // 27: involt.v1.CollectionCustomer.readings:type_name -> involt.v1.Reading
 	7,  // 28: involt.v1.AdminService.Login:input_type -> involt.v1.LoginRequest
 	9,  // 29: involt.v1.AdminService.GetUsers:input_type -> involt.v1.GetUsersRequest
 	11, // 30: involt.v1.AdminService.UpsertUser:input_type -> involt.v1.UpsertUserRequest
@@ -2659,31 +2849,35 @@ var file_involt_v1_admin_proto_depIdxs = []int32{
 	36, // 42: involt.v1.AdminService.OpenPeriod:input_type -> involt.v1.OpenPeriodRequest
 	38, // 43: involt.v1.AdminService.ClosePeriod:input_type -> involt.v1.ClosePeriodRequest
 	1,  // 44: involt.v1.AdminService.UpsertSector:input_type -> involt.v1.UpsertSectorRequest
-	3,  // 45: involt.v1.AdminService.UpsertCommunity:input_type -> involt.v1.UpsertCommunityRequest
-	40, // 46: involt.v1.AdminService.TogglePaymentStatus:input_type -> involt.v1.TogglePaymentStatusRequest
-	42, // 47: involt.v1.AdminService.GetCollections:input_type -> involt.v1.GetCollectionsRequest
-	8,  // 48: involt.v1.AdminService.Login:output_type -> involt.v1.LoginResponse
-	10, // 49: involt.v1.AdminService.GetUsers:output_type -> involt.v1.GetUsersResponse
-	12, // 50: involt.v1.AdminService.UpsertUser:output_type -> involt.v1.UpsertUserResponse
-	14, // 51: involt.v1.AdminService.GetSectors:output_type -> involt.v1.GetSectorsResponse
-	16, // 52: involt.v1.AdminService.GetCommunities:output_type -> involt.v1.GetCommunitiesResponse
-	18, // 53: involt.v1.AdminService.GetCustomers:output_type -> involt.v1.GetCustomersResponse
-	20, // 54: involt.v1.AdminService.GetReadings:output_type -> involt.v1.GetReadingsResponse
-	22, // 55: involt.v1.AdminService.GetSettings:output_type -> involt.v1.GetSettingsResponse
-	24, // 56: involt.v1.AdminService.UpdateSettings:output_type -> involt.v1.UpdateSettingsResponse
-	26, // 57: involt.v1.AdminService.UpsertCustomer:output_type -> involt.v1.UpsertCustomerResponse
-	6,  // 58: involt.v1.AdminService.DeleteCustomer:output_type -> involt.v1.DeleteCustomerResponse
-	29, // 59: involt.v1.AdminService.GetDashboardStats:output_type -> involt.v1.GetDashboardStatsResponse
-	32, // 60: involt.v1.AdminService.ListPeriods:output_type -> involt.v1.ListPeriodsResponse
-	34, // 61: involt.v1.AdminService.GetPeriodStats:output_type -> involt.v1.GetPeriodStatsResponse
-	37, // 62: involt.v1.AdminService.OpenPeriod:output_type -> involt.v1.OpenPeriodResponse
-	39, // 63: involt.v1.AdminService.ClosePeriod:output_type -> involt.v1.ClosePeriodResponse
-	2,  // 64: involt.v1.AdminService.UpsertSector:output_type -> involt.v1.UpsertSectorResponse
-	4,  // 65: involt.v1.AdminService.UpsertCommunity:output_type -> involt.v1.UpsertCommunityResponse
-	41, // 66: involt.v1.AdminService.TogglePaymentStatus:output_type -> involt.v1.TogglePaymentStatusResponse
-	43, // 67: involt.v1.AdminService.GetCollections:output_type -> involt.v1.GetCollectionsResponse
-	48, // [48:68] is the sub-list for method output_type
-	28, // [28:48] is the sub-list for method input_type
+	45, // 45: involt.v1.AdminService.DeleteSector:input_type -> involt.v1.DeleteSectorRequest
+	3,  // 46: involt.v1.AdminService.UpsertCommunity:input_type -> involt.v1.UpsertCommunityRequest
+	47, // 47: involt.v1.AdminService.DeleteCommunity:input_type -> involt.v1.DeleteCommunityRequest
+	40, // 48: involt.v1.AdminService.TogglePaymentStatus:input_type -> involt.v1.TogglePaymentStatusRequest
+	42, // 49: involt.v1.AdminService.GetCollections:input_type -> involt.v1.GetCollectionsRequest
+	8,  // 50: involt.v1.AdminService.Login:output_type -> involt.v1.LoginResponse
+	10, // 51: involt.v1.AdminService.GetUsers:output_type -> involt.v1.GetUsersResponse
+	12, // 52: involt.v1.AdminService.UpsertUser:output_type -> involt.v1.UpsertUserResponse
+	14, // 53: involt.v1.AdminService.GetSectors:output_type -> involt.v1.GetSectorsResponse
+	16, // 54: involt.v1.AdminService.GetCommunities:output_type -> involt.v1.GetCommunitiesResponse
+	18, // 55: involt.v1.AdminService.GetCustomers:output_type -> involt.v1.GetCustomersResponse
+	20, // 56: involt.v1.AdminService.GetReadings:output_type -> involt.v1.GetReadingsResponse
+	22, // 57: involt.v1.AdminService.GetSettings:output_type -> involt.v1.GetSettingsResponse
+	24, // 58: involt.v1.AdminService.UpdateSettings:output_type -> involt.v1.UpdateSettingsResponse
+	26, // 59: involt.v1.AdminService.UpsertCustomer:output_type -> involt.v1.UpsertCustomerResponse
+	6,  // 60: involt.v1.AdminService.DeleteCustomer:output_type -> involt.v1.DeleteCustomerResponse
+	29, // 61: involt.v1.AdminService.GetDashboardStats:output_type -> involt.v1.GetDashboardStatsResponse
+	32, // 62: involt.v1.AdminService.ListPeriods:output_type -> involt.v1.ListPeriodsResponse
+	34, // 63: involt.v1.AdminService.GetPeriodStats:output_type -> involt.v1.GetPeriodStatsResponse
+	37, // 64: involt.v1.AdminService.OpenPeriod:output_type -> involt.v1.OpenPeriodResponse
+	39, // 65: involt.v1.AdminService.ClosePeriod:output_type -> involt.v1.ClosePeriodResponse
+	2,  // 66: involt.v1.AdminService.UpsertSector:output_type -> involt.v1.UpsertSectorResponse
+	46, // 67: involt.v1.AdminService.DeleteSector:output_type -> involt.v1.DeleteSectorResponse
+	4,  // 68: involt.v1.AdminService.UpsertCommunity:output_type -> involt.v1.UpsertCommunityResponse
+	48, // 69: involt.v1.AdminService.DeleteCommunity:output_type -> involt.v1.DeleteCommunityResponse
+	41, // 70: involt.v1.AdminService.TogglePaymentStatus:output_type -> involt.v1.TogglePaymentStatusResponse
+	43, // 71: involt.v1.AdminService.GetCollections:output_type -> involt.v1.GetCollectionsResponse
+	50, // [50:72] is the sub-list for method output_type
+	28, // [28:50] is the sub-list for method input_type
 	28, // [28:28] is the sub-list for extension type_name
 	28, // [28:28] is the sub-list for extension extendee
 	0,  // [0:28] is the sub-list for field type_name
@@ -2701,7 +2895,7 @@ func file_involt_v1_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_involt_v1_admin_proto_rawDesc), len(file_involt_v1_admin_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   44,
+			NumMessages:   48,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

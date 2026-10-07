@@ -79,9 +79,15 @@ const (
 	// AdminServiceUpsertSectorProcedure is the fully-qualified name of the AdminService's UpsertSector
 	// RPC.
 	AdminServiceUpsertSectorProcedure = "/involt.v1.AdminService/UpsertSector"
+	// AdminServiceDeleteSectorProcedure is the fully-qualified name of the AdminService's DeleteSector
+	// RPC.
+	AdminServiceDeleteSectorProcedure = "/involt.v1.AdminService/DeleteSector"
 	// AdminServiceUpsertCommunityProcedure is the fully-qualified name of the AdminService's
 	// UpsertCommunity RPC.
 	AdminServiceUpsertCommunityProcedure = "/involt.v1.AdminService/UpsertCommunity"
+	// AdminServiceDeleteCommunityProcedure is the fully-qualified name of the AdminService's
+	// DeleteCommunity RPC.
+	AdminServiceDeleteCommunityProcedure = "/involt.v1.AdminService/DeleteCommunity"
 	// AdminServiceTogglePaymentStatusProcedure is the fully-qualified name of the AdminService's
 	// TogglePaymentStatus RPC.
 	AdminServiceTogglePaymentStatusProcedure = "/involt.v1.AdminService/TogglePaymentStatus"
@@ -126,8 +132,12 @@ type AdminServiceClient interface {
 	ClosePeriod(context.Context, *connect.Request[v1.ClosePeriodRequest]) (*connect.Response[v1.ClosePeriodResponse], error)
 	// UpsertSector creates or updates a sector.
 	UpsertSector(context.Context, *connect.Request[v1.UpsertSectorRequest]) (*connect.Response[v1.UpsertSectorResponse], error)
+	// DeleteSector removes a sector.
+	DeleteSector(context.Context, *connect.Request[v1.DeleteSectorRequest]) (*connect.Response[v1.DeleteSectorResponse], error)
 	// UpsertCommunity creates or updates a community.
 	UpsertCommunity(context.Context, *connect.Request[v1.UpsertCommunityRequest]) (*connect.Response[v1.UpsertCommunityResponse], error)
+	// DeleteCommunity removes a community.
+	DeleteCommunity(context.Context, *connect.Request[v1.DeleteCommunityRequest]) (*connect.Response[v1.DeleteCommunityResponse], error)
 	// TogglePaymentStatus updates the payment status of a reading.
 	TogglePaymentStatus(context.Context, *connect.Request[v1.TogglePaymentStatusRequest]) (*connect.Response[v1.TogglePaymentStatusResponse], error)
 	// GetCollections returns the payment matrix for a sector across periods.
@@ -247,10 +257,22 @@ func NewAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(adminServiceMethods.ByName("UpsertSector")),
 			connect.WithClientOptions(opts...),
 		),
+		deleteSector: connect.NewClient[v1.DeleteSectorRequest, v1.DeleteSectorResponse](
+			httpClient,
+			baseURL+AdminServiceDeleteSectorProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("DeleteSector")),
+			connect.WithClientOptions(opts...),
+		),
 		upsertCommunity: connect.NewClient[v1.UpsertCommunityRequest, v1.UpsertCommunityResponse](
 			httpClient,
 			baseURL+AdminServiceUpsertCommunityProcedure,
 			connect.WithSchema(adminServiceMethods.ByName("UpsertCommunity")),
+			connect.WithClientOptions(opts...),
+		),
+		deleteCommunity: connect.NewClient[v1.DeleteCommunityRequest, v1.DeleteCommunityResponse](
+			httpClient,
+			baseURL+AdminServiceDeleteCommunityProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("DeleteCommunity")),
 			connect.WithClientOptions(opts...),
 		),
 		togglePaymentStatus: connect.NewClient[v1.TogglePaymentStatusRequest, v1.TogglePaymentStatusResponse](
@@ -287,7 +309,9 @@ type adminServiceClient struct {
 	openPeriod          *connect.Client[v1.OpenPeriodRequest, v1.OpenPeriodResponse]
 	closePeriod         *connect.Client[v1.ClosePeriodRequest, v1.ClosePeriodResponse]
 	upsertSector        *connect.Client[v1.UpsertSectorRequest, v1.UpsertSectorResponse]
+	deleteSector        *connect.Client[v1.DeleteSectorRequest, v1.DeleteSectorResponse]
 	upsertCommunity     *connect.Client[v1.UpsertCommunityRequest, v1.UpsertCommunityResponse]
+	deleteCommunity     *connect.Client[v1.DeleteCommunityRequest, v1.DeleteCommunityResponse]
 	togglePaymentStatus *connect.Client[v1.TogglePaymentStatusRequest, v1.TogglePaymentStatusResponse]
 	getCollections      *connect.Client[v1.GetCollectionsRequest, v1.GetCollectionsResponse]
 }
@@ -377,9 +401,19 @@ func (c *adminServiceClient) UpsertSector(ctx context.Context, req *connect.Requ
 	return c.upsertSector.CallUnary(ctx, req)
 }
 
+// DeleteSector calls involt.v1.AdminService.DeleteSector.
+func (c *adminServiceClient) DeleteSector(ctx context.Context, req *connect.Request[v1.DeleteSectorRequest]) (*connect.Response[v1.DeleteSectorResponse], error) {
+	return c.deleteSector.CallUnary(ctx, req)
+}
+
 // UpsertCommunity calls involt.v1.AdminService.UpsertCommunity.
 func (c *adminServiceClient) UpsertCommunity(ctx context.Context, req *connect.Request[v1.UpsertCommunityRequest]) (*connect.Response[v1.UpsertCommunityResponse], error) {
 	return c.upsertCommunity.CallUnary(ctx, req)
+}
+
+// DeleteCommunity calls involt.v1.AdminService.DeleteCommunity.
+func (c *adminServiceClient) DeleteCommunity(ctx context.Context, req *connect.Request[v1.DeleteCommunityRequest]) (*connect.Response[v1.DeleteCommunityResponse], error) {
+	return c.deleteCommunity.CallUnary(ctx, req)
 }
 
 // TogglePaymentStatus calls involt.v1.AdminService.TogglePaymentStatus.
@@ -428,8 +462,12 @@ type AdminServiceHandler interface {
 	ClosePeriod(context.Context, *connect.Request[v1.ClosePeriodRequest]) (*connect.Response[v1.ClosePeriodResponse], error)
 	// UpsertSector creates or updates a sector.
 	UpsertSector(context.Context, *connect.Request[v1.UpsertSectorRequest]) (*connect.Response[v1.UpsertSectorResponse], error)
+	// DeleteSector removes a sector.
+	DeleteSector(context.Context, *connect.Request[v1.DeleteSectorRequest]) (*connect.Response[v1.DeleteSectorResponse], error)
 	// UpsertCommunity creates or updates a community.
 	UpsertCommunity(context.Context, *connect.Request[v1.UpsertCommunityRequest]) (*connect.Response[v1.UpsertCommunityResponse], error)
+	// DeleteCommunity removes a community.
+	DeleteCommunity(context.Context, *connect.Request[v1.DeleteCommunityRequest]) (*connect.Response[v1.DeleteCommunityResponse], error)
 	// TogglePaymentStatus updates the payment status of a reading.
 	TogglePaymentStatus(context.Context, *connect.Request[v1.TogglePaymentStatusRequest]) (*connect.Response[v1.TogglePaymentStatusResponse], error)
 	// GetCollections returns the payment matrix for a sector across periods.
@@ -545,10 +583,22 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(adminServiceMethods.ByName("UpsertSector")),
 		connect.WithHandlerOptions(opts...),
 	)
+	adminServiceDeleteSectorHandler := connect.NewUnaryHandler(
+		AdminServiceDeleteSectorProcedure,
+		svc.DeleteSector,
+		connect.WithSchema(adminServiceMethods.ByName("DeleteSector")),
+		connect.WithHandlerOptions(opts...),
+	)
 	adminServiceUpsertCommunityHandler := connect.NewUnaryHandler(
 		AdminServiceUpsertCommunityProcedure,
 		svc.UpsertCommunity,
 		connect.WithSchema(adminServiceMethods.ByName("UpsertCommunity")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceDeleteCommunityHandler := connect.NewUnaryHandler(
+		AdminServiceDeleteCommunityProcedure,
+		svc.DeleteCommunity,
+		connect.WithSchema(adminServiceMethods.ByName("DeleteCommunity")),
 		connect.WithHandlerOptions(opts...),
 	)
 	adminServiceTogglePaymentStatusHandler := connect.NewUnaryHandler(
@@ -599,8 +649,12 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 			adminServiceClosePeriodHandler.ServeHTTP(w, r)
 		case AdminServiceUpsertSectorProcedure:
 			adminServiceUpsertSectorHandler.ServeHTTP(w, r)
+		case AdminServiceDeleteSectorProcedure:
+			adminServiceDeleteSectorHandler.ServeHTTP(w, r)
 		case AdminServiceUpsertCommunityProcedure:
 			adminServiceUpsertCommunityHandler.ServeHTTP(w, r)
+		case AdminServiceDeleteCommunityProcedure:
+			adminServiceDeleteCommunityHandler.ServeHTTP(w, r)
 		case AdminServiceTogglePaymentStatusProcedure:
 			adminServiceTogglePaymentStatusHandler.ServeHTTP(w, r)
 		case AdminServiceGetCollectionsProcedure:
@@ -682,8 +736,16 @@ func (UnimplementedAdminServiceHandler) UpsertSector(context.Context, *connect.R
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.UpsertSector is not implemented"))
 }
 
+func (UnimplementedAdminServiceHandler) DeleteSector(context.Context, *connect.Request[v1.DeleteSectorRequest]) (*connect.Response[v1.DeleteSectorResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.DeleteSector is not implemented"))
+}
+
 func (UnimplementedAdminServiceHandler) UpsertCommunity(context.Context, *connect.Request[v1.UpsertCommunityRequest]) (*connect.Response[v1.UpsertCommunityResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.UpsertCommunity is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) DeleteCommunity(context.Context, *connect.Request[v1.DeleteCommunityRequest]) (*connect.Response[v1.DeleteCommunityResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.DeleteCommunity is not implemented"))
 }
 
 func (UnimplementedAdminServiceHandler) TogglePaymentStatus(context.Context, *connect.Request[v1.TogglePaymentStatusRequest]) (*connect.Response[v1.TogglePaymentStatusResponse], error) {
