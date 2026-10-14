@@ -5,6 +5,7 @@
 
 import { ClosePeriodRequest, ClosePeriodResponse, DeleteCommunityRequest, DeleteCommunityResponse, DeleteCustomerRequest, DeleteCustomerResponse, DeleteSectorRequest, DeleteSectorResponse, GetCollectionsRequest, GetCollectionsResponse, GetCommunitiesRequest, GetCommunitiesResponse, GetCustomersRequest, GetCustomersResponse, GetDashboardStatsRequest, GetDashboardStatsResponse, GetPeriodStatsRequest, GetPeriodStatsResponse, GetReadingsRequest, GetReadingsResponse, GetSectorsRequest, GetSectorsResponse, GetSettingsRequest, GetSettingsResponse, GetUsersRequest, GetUsersResponse, ListPeriodsRequest, ListPeriodsResponse, LoginRequest, LoginResponse, OpenPeriodRequest, OpenPeriodResponse, TogglePaymentStatusRequest, TogglePaymentStatusResponse, UpdateSettingsRequest, UpdateSettingsResponse, UpsertCommunityRequest, UpsertCommunityResponse, UpsertCustomerRequest, UpsertCustomerResponse, UpsertSectorRequest, UpsertSectorResponse, UpsertUserRequest, UpsertUserResponse } from "./admin_pb";
 import { MethodKind } from "@bufbuild/protobuf";
+import { CreateFlatChargeRequest, CreateFlatChargeResponse, GetCashClosingRequest, GetCashClosingResponse, GetCustomerAccountRequest, GetCustomerAccountResponse, RegisterPaymentRequest, RegisterPaymentResponse, VoidPaymentRequest, VoidPaymentResponse } from "./payments_pb";
 
 /**
  * AdminService handles administrative operations like user management and RBAC.
@@ -236,6 +237,8 @@ export const AdminService = {
     },
     /**
      * TogglePaymentStatus updates the payment status of a reading.
+     * Deprecated: use RegisterPayment / VoidPayment. Marking as paid registers a cash payment
+     * for the outstanding balance; marking as unpaid is rejected.
      *
      * @generated from rpc involt.v1.AdminService.TogglePaymentStatus
      */
@@ -254,6 +257,61 @@ export const AdminService = {
       name: "GetCollections",
       I: GetCollectionsRequest,
       O: GetCollectionsResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * GetCustomerAccount returns a customer's receipts with balances and payment history.
+     *
+     * @generated from rpc involt.v1.AdminService.GetCustomerAccount
+     */
+    getCustomerAccount: {
+      name: "GetCustomerAccount",
+      I: GetCustomerAccountRequest,
+      O: GetCustomerAccountResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * RegisterPayment records a (possibly partial) payment applied oldest debt first.
+     *
+     * @generated from rpc involt.v1.AdminService.RegisterPayment
+     */
+    registerPayment: {
+      name: "RegisterPayment",
+      I: RegisterPaymentRequest,
+      O: RegisterPaymentResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * VoidPayment annuls a payment (admin/supervisor only), restoring the debt.
+     *
+     * @generated from rpc involt.v1.AdminService.VoidPayment
+     */
+    voidPayment: {
+      name: "VoidPayment",
+      I: VoidPaymentRequest,
+      O: VoidPaymentResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * CreateFlatCharge bills a period without meter reading using the fixed fee.
+     *
+     * @generated from rpc involt.v1.AdminService.CreateFlatCharge
+     */
+    createFlatCharge: {
+      name: "CreateFlatCharge",
+      I: CreateFlatChargeRequest,
+      O: CreateFlatChargeResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * GetCashClosing summarizes payments collected in a date range (cierre de caja).
+     *
+     * @generated from rpc involt.v1.AdminService.GetCashClosing
+     */
+    getCashClosing: {
+      name: "GetCashClosing",
+      I: GetCashClosingRequest,
+      O: GetCashClosingResponse,
       kind: MethodKind.Unary,
     },
   }

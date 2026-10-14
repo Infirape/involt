@@ -3,6 +3,7 @@ syntax = "proto3";
 package involt.v1;
 
 import "involt/v1/models.proto";
+import "involt/v1/payments.proto";
 
 option go_package = "github.com/infira/involt/backend/internal/gen/involt/v1;involtv1";
 
@@ -69,10 +70,27 @@ service AdminService {
   rpc DeleteCommunity(DeleteCommunityRequest) returns (DeleteCommunityResponse);
 
   // TogglePaymentStatus updates the payment status of a reading.
+  // Deprecated: use RegisterPayment / VoidPayment. Marking as paid registers a cash payment
+  // for the outstanding balance; marking as unpaid is rejected.
   rpc TogglePaymentStatus(TogglePaymentStatusRequest) returns (TogglePaymentStatusResponse);
 
   // GetCollections returns the payment matrix for a sector across periods.
   rpc GetCollections(GetCollectionsRequest) returns (GetCollectionsResponse);
+
+  // GetCustomerAccount returns a customer's receipts with balances and payment history.
+  rpc GetCustomerAccount(GetCustomerAccountRequest) returns (GetCustomerAccountResponse);
+
+  // RegisterPayment records a (possibly partial) payment applied oldest debt first.
+  rpc RegisterPayment(RegisterPaymentRequest) returns (RegisterPaymentResponse);
+
+  // VoidPayment annuls a payment (admin/supervisor only), restoring the debt.
+  rpc VoidPayment(VoidPaymentRequest) returns (VoidPaymentResponse);
+
+  // CreateFlatCharge bills a period without meter reading using the fixed fee.
+  rpc CreateFlatCharge(CreateFlatChargeRequest) returns (CreateFlatChargeResponse);
+
+  // GetCashClosing summarizes payments collected in a date range (cierre de caja).
+  rpc GetCashClosing(GetCashClosingRequest) returns (GetCashClosingResponse);
 }
 
 message UpsertSectorRequest {
@@ -290,11 +308,15 @@ message GetCollectionsRequest {
 message GetCollectionsResponse {
   repeated Reading readings = 1;
   repeated CollectionCustomer customers = 2;
+  double total_billed = 3; // sum of receipts in the requested periods
+  double total_collected = 4; // non-voided payments applied to those receipts
 }
 
 message CollectionCustomer {
   Customer customer = 1;
   repeated Reading readings = 2;
+  repeated ReceiptBalance receipts = 3; // requested periods only
+  double total_debt = 4; // outstanding balance across ALL periods
 }
 
 message DeleteSectorRequest {

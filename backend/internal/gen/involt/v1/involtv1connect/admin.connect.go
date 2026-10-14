@@ -94,6 +94,21 @@ const (
 	// AdminServiceGetCollectionsProcedure is the fully-qualified name of the AdminService's
 	// GetCollections RPC.
 	AdminServiceGetCollectionsProcedure = "/involt.v1.AdminService/GetCollections"
+	// AdminServiceGetCustomerAccountProcedure is the fully-qualified name of the AdminService's
+	// GetCustomerAccount RPC.
+	AdminServiceGetCustomerAccountProcedure = "/involt.v1.AdminService/GetCustomerAccount"
+	// AdminServiceRegisterPaymentProcedure is the fully-qualified name of the AdminService's
+	// RegisterPayment RPC.
+	AdminServiceRegisterPaymentProcedure = "/involt.v1.AdminService/RegisterPayment"
+	// AdminServiceVoidPaymentProcedure is the fully-qualified name of the AdminService's VoidPayment
+	// RPC.
+	AdminServiceVoidPaymentProcedure = "/involt.v1.AdminService/VoidPayment"
+	// AdminServiceCreateFlatChargeProcedure is the fully-qualified name of the AdminService's
+	// CreateFlatCharge RPC.
+	AdminServiceCreateFlatChargeProcedure = "/involt.v1.AdminService/CreateFlatCharge"
+	// AdminServiceGetCashClosingProcedure is the fully-qualified name of the AdminService's
+	// GetCashClosing RPC.
+	AdminServiceGetCashClosingProcedure = "/involt.v1.AdminService/GetCashClosing"
 )
 
 // AdminServiceClient is a client for the involt.v1.AdminService service.
@@ -139,9 +154,21 @@ type AdminServiceClient interface {
 	// DeleteCommunity removes a community.
 	DeleteCommunity(context.Context, *connect.Request[v1.DeleteCommunityRequest]) (*connect.Response[v1.DeleteCommunityResponse], error)
 	// TogglePaymentStatus updates the payment status of a reading.
+	// Deprecated: use RegisterPayment / VoidPayment. Marking as paid registers a cash payment
+	// for the outstanding balance; marking as unpaid is rejected.
 	TogglePaymentStatus(context.Context, *connect.Request[v1.TogglePaymentStatusRequest]) (*connect.Response[v1.TogglePaymentStatusResponse], error)
 	// GetCollections returns the payment matrix for a sector across periods.
 	GetCollections(context.Context, *connect.Request[v1.GetCollectionsRequest]) (*connect.Response[v1.GetCollectionsResponse], error)
+	// GetCustomerAccount returns a customer's receipts with balances and payment history.
+	GetCustomerAccount(context.Context, *connect.Request[v1.GetCustomerAccountRequest]) (*connect.Response[v1.GetCustomerAccountResponse], error)
+	// RegisterPayment records a (possibly partial) payment applied oldest debt first.
+	RegisterPayment(context.Context, *connect.Request[v1.RegisterPaymentRequest]) (*connect.Response[v1.RegisterPaymentResponse], error)
+	// VoidPayment annuls a payment (admin/supervisor only), restoring the debt.
+	VoidPayment(context.Context, *connect.Request[v1.VoidPaymentRequest]) (*connect.Response[v1.VoidPaymentResponse], error)
+	// CreateFlatCharge bills a period without meter reading using the fixed fee.
+	CreateFlatCharge(context.Context, *connect.Request[v1.CreateFlatChargeRequest]) (*connect.Response[v1.CreateFlatChargeResponse], error)
+	// GetCashClosing summarizes payments collected in a date range (cierre de caja).
+	GetCashClosing(context.Context, *connect.Request[v1.GetCashClosingRequest]) (*connect.Response[v1.GetCashClosingResponse], error)
 }
 
 // NewAdminServiceClient constructs a client for the involt.v1.AdminService service. By default, it
@@ -287,6 +314,36 @@ func NewAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(adminServiceMethods.ByName("GetCollections")),
 			connect.WithClientOptions(opts...),
 		),
+		getCustomerAccount: connect.NewClient[v1.GetCustomerAccountRequest, v1.GetCustomerAccountResponse](
+			httpClient,
+			baseURL+AdminServiceGetCustomerAccountProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("GetCustomerAccount")),
+			connect.WithClientOptions(opts...),
+		),
+		registerPayment: connect.NewClient[v1.RegisterPaymentRequest, v1.RegisterPaymentResponse](
+			httpClient,
+			baseURL+AdminServiceRegisterPaymentProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("RegisterPayment")),
+			connect.WithClientOptions(opts...),
+		),
+		voidPayment: connect.NewClient[v1.VoidPaymentRequest, v1.VoidPaymentResponse](
+			httpClient,
+			baseURL+AdminServiceVoidPaymentProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("VoidPayment")),
+			connect.WithClientOptions(opts...),
+		),
+		createFlatCharge: connect.NewClient[v1.CreateFlatChargeRequest, v1.CreateFlatChargeResponse](
+			httpClient,
+			baseURL+AdminServiceCreateFlatChargeProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("CreateFlatCharge")),
+			connect.WithClientOptions(opts...),
+		),
+		getCashClosing: connect.NewClient[v1.GetCashClosingRequest, v1.GetCashClosingResponse](
+			httpClient,
+			baseURL+AdminServiceGetCashClosingProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("GetCashClosing")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -314,6 +371,11 @@ type adminServiceClient struct {
 	deleteCommunity     *connect.Client[v1.DeleteCommunityRequest, v1.DeleteCommunityResponse]
 	togglePaymentStatus *connect.Client[v1.TogglePaymentStatusRequest, v1.TogglePaymentStatusResponse]
 	getCollections      *connect.Client[v1.GetCollectionsRequest, v1.GetCollectionsResponse]
+	getCustomerAccount  *connect.Client[v1.GetCustomerAccountRequest, v1.GetCustomerAccountResponse]
+	registerPayment     *connect.Client[v1.RegisterPaymentRequest, v1.RegisterPaymentResponse]
+	voidPayment         *connect.Client[v1.VoidPaymentRequest, v1.VoidPaymentResponse]
+	createFlatCharge    *connect.Client[v1.CreateFlatChargeRequest, v1.CreateFlatChargeResponse]
+	getCashClosing      *connect.Client[v1.GetCashClosingRequest, v1.GetCashClosingResponse]
 }
 
 // Login calls involt.v1.AdminService.Login.
@@ -426,6 +488,31 @@ func (c *adminServiceClient) GetCollections(ctx context.Context, req *connect.Re
 	return c.getCollections.CallUnary(ctx, req)
 }
 
+// GetCustomerAccount calls involt.v1.AdminService.GetCustomerAccount.
+func (c *adminServiceClient) GetCustomerAccount(ctx context.Context, req *connect.Request[v1.GetCustomerAccountRequest]) (*connect.Response[v1.GetCustomerAccountResponse], error) {
+	return c.getCustomerAccount.CallUnary(ctx, req)
+}
+
+// RegisterPayment calls involt.v1.AdminService.RegisterPayment.
+func (c *adminServiceClient) RegisterPayment(ctx context.Context, req *connect.Request[v1.RegisterPaymentRequest]) (*connect.Response[v1.RegisterPaymentResponse], error) {
+	return c.registerPayment.CallUnary(ctx, req)
+}
+
+// VoidPayment calls involt.v1.AdminService.VoidPayment.
+func (c *adminServiceClient) VoidPayment(ctx context.Context, req *connect.Request[v1.VoidPaymentRequest]) (*connect.Response[v1.VoidPaymentResponse], error) {
+	return c.voidPayment.CallUnary(ctx, req)
+}
+
+// CreateFlatCharge calls involt.v1.AdminService.CreateFlatCharge.
+func (c *adminServiceClient) CreateFlatCharge(ctx context.Context, req *connect.Request[v1.CreateFlatChargeRequest]) (*connect.Response[v1.CreateFlatChargeResponse], error) {
+	return c.createFlatCharge.CallUnary(ctx, req)
+}
+
+// GetCashClosing calls involt.v1.AdminService.GetCashClosing.
+func (c *adminServiceClient) GetCashClosing(ctx context.Context, req *connect.Request[v1.GetCashClosingRequest]) (*connect.Response[v1.GetCashClosingResponse], error) {
+	return c.getCashClosing.CallUnary(ctx, req)
+}
+
 // AdminServiceHandler is an implementation of the involt.v1.AdminService service.
 type AdminServiceHandler interface {
 	// Login authenticates a user and returns a JWT token.
@@ -469,9 +556,21 @@ type AdminServiceHandler interface {
 	// DeleteCommunity removes a community.
 	DeleteCommunity(context.Context, *connect.Request[v1.DeleteCommunityRequest]) (*connect.Response[v1.DeleteCommunityResponse], error)
 	// TogglePaymentStatus updates the payment status of a reading.
+	// Deprecated: use RegisterPayment / VoidPayment. Marking as paid registers a cash payment
+	// for the outstanding balance; marking as unpaid is rejected.
 	TogglePaymentStatus(context.Context, *connect.Request[v1.TogglePaymentStatusRequest]) (*connect.Response[v1.TogglePaymentStatusResponse], error)
 	// GetCollections returns the payment matrix for a sector across periods.
 	GetCollections(context.Context, *connect.Request[v1.GetCollectionsRequest]) (*connect.Response[v1.GetCollectionsResponse], error)
+	// GetCustomerAccount returns a customer's receipts with balances and payment history.
+	GetCustomerAccount(context.Context, *connect.Request[v1.GetCustomerAccountRequest]) (*connect.Response[v1.GetCustomerAccountResponse], error)
+	// RegisterPayment records a (possibly partial) payment applied oldest debt first.
+	RegisterPayment(context.Context, *connect.Request[v1.RegisterPaymentRequest]) (*connect.Response[v1.RegisterPaymentResponse], error)
+	// VoidPayment annuls a payment (admin/supervisor only), restoring the debt.
+	VoidPayment(context.Context, *connect.Request[v1.VoidPaymentRequest]) (*connect.Response[v1.VoidPaymentResponse], error)
+	// CreateFlatCharge bills a period without meter reading using the fixed fee.
+	CreateFlatCharge(context.Context, *connect.Request[v1.CreateFlatChargeRequest]) (*connect.Response[v1.CreateFlatChargeResponse], error)
+	// GetCashClosing summarizes payments collected in a date range (cierre de caja).
+	GetCashClosing(context.Context, *connect.Request[v1.GetCashClosingRequest]) (*connect.Response[v1.GetCashClosingResponse], error)
 }
 
 // NewAdminServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -613,6 +712,36 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(adminServiceMethods.ByName("GetCollections")),
 		connect.WithHandlerOptions(opts...),
 	)
+	adminServiceGetCustomerAccountHandler := connect.NewUnaryHandler(
+		AdminServiceGetCustomerAccountProcedure,
+		svc.GetCustomerAccount,
+		connect.WithSchema(adminServiceMethods.ByName("GetCustomerAccount")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceRegisterPaymentHandler := connect.NewUnaryHandler(
+		AdminServiceRegisterPaymentProcedure,
+		svc.RegisterPayment,
+		connect.WithSchema(adminServiceMethods.ByName("RegisterPayment")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceVoidPaymentHandler := connect.NewUnaryHandler(
+		AdminServiceVoidPaymentProcedure,
+		svc.VoidPayment,
+		connect.WithSchema(adminServiceMethods.ByName("VoidPayment")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceCreateFlatChargeHandler := connect.NewUnaryHandler(
+		AdminServiceCreateFlatChargeProcedure,
+		svc.CreateFlatCharge,
+		connect.WithSchema(adminServiceMethods.ByName("CreateFlatCharge")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceGetCashClosingHandler := connect.NewUnaryHandler(
+		AdminServiceGetCashClosingProcedure,
+		svc.GetCashClosing,
+		connect.WithSchema(adminServiceMethods.ByName("GetCashClosing")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/involt.v1.AdminService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AdminServiceLoginProcedure:
@@ -659,6 +788,16 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 			adminServiceTogglePaymentStatusHandler.ServeHTTP(w, r)
 		case AdminServiceGetCollectionsProcedure:
 			adminServiceGetCollectionsHandler.ServeHTTP(w, r)
+		case AdminServiceGetCustomerAccountProcedure:
+			adminServiceGetCustomerAccountHandler.ServeHTTP(w, r)
+		case AdminServiceRegisterPaymentProcedure:
+			adminServiceRegisterPaymentHandler.ServeHTTP(w, r)
+		case AdminServiceVoidPaymentProcedure:
+			adminServiceVoidPaymentHandler.ServeHTTP(w, r)
+		case AdminServiceCreateFlatChargeProcedure:
+			adminServiceCreateFlatChargeHandler.ServeHTTP(w, r)
+		case AdminServiceGetCashClosingProcedure:
+			adminServiceGetCashClosingHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -754,4 +893,24 @@ func (UnimplementedAdminServiceHandler) TogglePaymentStatus(context.Context, *co
 
 func (UnimplementedAdminServiceHandler) GetCollections(context.Context, *connect.Request[v1.GetCollectionsRequest]) (*connect.Response[v1.GetCollectionsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetCollections is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) GetCustomerAccount(context.Context, *connect.Request[v1.GetCustomerAccountRequest]) (*connect.Response[v1.GetCustomerAccountResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetCustomerAccount is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) RegisterPayment(context.Context, *connect.Request[v1.RegisterPaymentRequest]) (*connect.Response[v1.RegisterPaymentResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.RegisterPayment is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) VoidPayment(context.Context, *connect.Request[v1.VoidPaymentRequest]) (*connect.Response[v1.VoidPaymentResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.VoidPayment is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) CreateFlatCharge(context.Context, *connect.Request[v1.CreateFlatChargeRequest]) (*connect.Response[v1.CreateFlatChargeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.CreateFlatCharge is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) GetCashClosing(context.Context, *connect.Request[v1.GetCashClosingRequest]) (*connect.Response[v1.GetCashClosingResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetCashClosing is not implemented"))
 }

@@ -16,6 +16,7 @@ import 'package:protobuf/protobuf.dart' as $pb;
 
 import 'admin.pbenum.dart';
 import 'models.pb.dart' as $0;
+import 'payments.pb.dart' as $1;
 
 export 'admin.pbenum.dart';
 
@@ -2661,6 +2662,8 @@ class GetCollectionsResponse extends $pb.GeneratedMessage {
   factory GetCollectionsResponse({
     $core.Iterable<$0.Reading>? readings,
     $core.Iterable<CollectionCustomer>? customers,
+    $core.double? totalBilled,
+    $core.double? totalCollected,
   }) {
     final $result = create();
     if (readings != null) {
@@ -2668,6 +2671,12 @@ class GetCollectionsResponse extends $pb.GeneratedMessage {
     }
     if (customers != null) {
       $result.customers.addAll(customers);
+    }
+    if (totalBilled != null) {
+      $result.totalBilled = totalBilled;
+    }
+    if (totalCollected != null) {
+      $result.totalCollected = totalCollected;
     }
     return $result;
   }
@@ -2678,6 +2687,8 @@ class GetCollectionsResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetCollectionsResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
     ..pc<$0.Reading>(1, _omitFieldNames ? '' : 'readings', $pb.PbFieldType.PM, subBuilder: $0.Reading.create)
     ..pc<CollectionCustomer>(2, _omitFieldNames ? '' : 'customers', $pb.PbFieldType.PM, subBuilder: CollectionCustomer.create)
+    ..a<$core.double>(3, _omitFieldNames ? '' : 'totalBilled', $pb.PbFieldType.OD)
+    ..a<$core.double>(4, _omitFieldNames ? '' : 'totalCollected', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -2707,12 +2718,32 @@ class GetCollectionsResponse extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(2)
   $core.List<CollectionCustomer> get customers => $_getList(1);
+
+  @$pb.TagNumber(3)
+  $core.double get totalBilled => $_getN(2);
+  @$pb.TagNumber(3)
+  set totalBilled($core.double v) { $_setDouble(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasTotalBilled() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearTotalBilled() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.double get totalCollected => $_getN(3);
+  @$pb.TagNumber(4)
+  set totalCollected($core.double v) { $_setDouble(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasTotalCollected() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearTotalCollected() => clearField(4);
 }
 
 class CollectionCustomer extends $pb.GeneratedMessage {
   factory CollectionCustomer({
     $0.Customer? customer,
     $core.Iterable<$0.Reading>? readings,
+    $core.Iterable<$1.ReceiptBalance>? receipts,
+    $core.double? totalDebt,
   }) {
     final $result = create();
     if (customer != null) {
@@ -2720,6 +2751,12 @@ class CollectionCustomer extends $pb.GeneratedMessage {
     }
     if (readings != null) {
       $result.readings.addAll(readings);
+    }
+    if (receipts != null) {
+      $result.receipts.addAll(receipts);
+    }
+    if (totalDebt != null) {
+      $result.totalDebt = totalDebt;
     }
     return $result;
   }
@@ -2730,6 +2767,8 @@ class CollectionCustomer extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'CollectionCustomer', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
     ..aOM<$0.Customer>(1, _omitFieldNames ? '' : 'customer', subBuilder: $0.Customer.create)
     ..pc<$0.Reading>(2, _omitFieldNames ? '' : 'readings', $pb.PbFieldType.PM, subBuilder: $0.Reading.create)
+    ..pc<$1.ReceiptBalance>(3, _omitFieldNames ? '' : 'receipts', $pb.PbFieldType.PM, subBuilder: $1.ReceiptBalance.create)
+    ..a<$core.double>(4, _omitFieldNames ? '' : 'totalDebt', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -2767,6 +2806,18 @@ class CollectionCustomer extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(2)
   $core.List<$0.Reading> get readings => $_getList(1);
+
+  @$pb.TagNumber(3)
+  $core.List<$1.ReceiptBalance> get receipts => $_getList(2);
+
+  @$pb.TagNumber(4)
+  $core.double get totalDebt => $_getN(3);
+  @$pb.TagNumber(4)
+  set totalDebt($core.double v) { $_setDouble(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasTotalDebt() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearTotalDebt() => clearField(4);
 }
 
 class DeleteSectorRequest extends $pb.GeneratedMessage {
@@ -3038,6 +3089,21 @@ class AdminServiceApi {
   ;
   $async.Future<GetCollectionsResponse> getCollections($pb.ClientContext? ctx, GetCollectionsRequest request) =>
     _client.invoke<GetCollectionsResponse>(ctx, 'AdminService', 'GetCollections', request, GetCollectionsResponse())
+  ;
+  $async.Future<$1.GetCustomerAccountResponse> getCustomerAccount($pb.ClientContext? ctx, $1.GetCustomerAccountRequest request) =>
+    _client.invoke<$1.GetCustomerAccountResponse>(ctx, 'AdminService', 'GetCustomerAccount', request, $1.GetCustomerAccountResponse())
+  ;
+  $async.Future<$1.RegisterPaymentResponse> registerPayment($pb.ClientContext? ctx, $1.RegisterPaymentRequest request) =>
+    _client.invoke<$1.RegisterPaymentResponse>(ctx, 'AdminService', 'RegisterPayment', request, $1.RegisterPaymentResponse())
+  ;
+  $async.Future<$1.VoidPaymentResponse> voidPayment($pb.ClientContext? ctx, $1.VoidPaymentRequest request) =>
+    _client.invoke<$1.VoidPaymentResponse>(ctx, 'AdminService', 'VoidPayment', request, $1.VoidPaymentResponse())
+  ;
+  $async.Future<$1.CreateFlatChargeResponse> createFlatCharge($pb.ClientContext? ctx, $1.CreateFlatChargeRequest request) =>
+    _client.invoke<$1.CreateFlatChargeResponse>(ctx, 'AdminService', 'CreateFlatCharge', request, $1.CreateFlatChargeResponse())
+  ;
+  $async.Future<$1.GetCashClosingResponse> getCashClosing($pb.ClientContext? ctx, $1.GetCashClosingRequest request) =>
+    _client.invoke<$1.GetCashClosingResponse>(ctx, 'AdminService', 'GetCashClosing', request, $1.GetCashClosingResponse())
   ;
 }
 

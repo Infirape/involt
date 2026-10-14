@@ -14,6 +14,7 @@ import 'dart:core' as $core;
 import 'dart:typed_data' as $typed_data;
 
 import 'models.pbjson.dart' as $0;
+import 'payments.pbjson.dart' as $1;
 
 @$core.Deprecated('Use userRoleDescriptor instead')
 const UserRole$json = {
@@ -628,6 +629,8 @@ const GetCollectionsResponse$json = {
   '2': [
     {'1': 'readings', '3': 1, '4': 3, '5': 11, '6': '.involt.v1.Reading', '10': 'readings'},
     {'1': 'customers', '3': 2, '4': 3, '5': 11, '6': '.involt.v1.CollectionCustomer', '10': 'customers'},
+    {'1': 'total_billed', '3': 3, '4': 1, '5': 1, '10': 'totalBilled'},
+    {'1': 'total_collected', '3': 4, '4': 1, '5': 1, '10': 'totalCollected'},
   ],
 };
 
@@ -635,7 +638,8 @@ const GetCollectionsResponse$json = {
 final $typed_data.Uint8List getCollectionsResponseDescriptor = $convert.base64Decode(
     'ChZHZXRDb2xsZWN0aW9uc1Jlc3BvbnNlEi4KCHJlYWRpbmdzGAEgAygLMhIuaW52b2x0LnYxLl'
     'JlYWRpbmdSCHJlYWRpbmdzEjsKCWN1c3RvbWVycxgCIAMoCzIdLmludm9sdC52MS5Db2xsZWN0'
-    'aW9uQ3VzdG9tZXJSCWN1c3RvbWVycw==');
+    'aW9uQ3VzdG9tZXJSCWN1c3RvbWVycxIhCgx0b3RhbF9iaWxsZWQYAyABKAFSC3RvdGFsQmlsbG'
+    'VkEicKD3RvdGFsX2NvbGxlY3RlZBgEIAEoAVIOdG90YWxDb2xsZWN0ZWQ=');
 
 @$core.Deprecated('Use collectionCustomerDescriptor instead')
 const CollectionCustomer$json = {
@@ -643,6 +647,8 @@ const CollectionCustomer$json = {
   '2': [
     {'1': 'customer', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Customer', '10': 'customer'},
     {'1': 'readings', '3': 2, '4': 3, '5': 11, '6': '.involt.v1.Reading', '10': 'readings'},
+    {'1': 'receipts', '3': 3, '4': 3, '5': 11, '6': '.involt.v1.ReceiptBalance', '10': 'receipts'},
+    {'1': 'total_debt', '3': 4, '4': 1, '5': 1, '10': 'totalDebt'},
   ],
 };
 
@@ -650,7 +656,8 @@ const CollectionCustomer$json = {
 final $typed_data.Uint8List collectionCustomerDescriptor = $convert.base64Decode(
     'ChJDb2xsZWN0aW9uQ3VzdG9tZXISLwoIY3VzdG9tZXIYASABKAsyEy5pbnZvbHQudjEuQ3VzdG'
     '9tZXJSCGN1c3RvbWVyEi4KCHJlYWRpbmdzGAIgAygLMhIuaW52b2x0LnYxLlJlYWRpbmdSCHJl'
-    'YWRpbmdz');
+    'YWRpbmdzEjUKCHJlY2VpcHRzGAMgAygLMhkuaW52b2x0LnYxLlJlY2VpcHRCYWxhbmNlUghyZW'
+    'NlaXB0cxIdCgp0b3RhbF9kZWJ0GAQgASgBUgl0b3RhbERlYnQ=');
 
 @$core.Deprecated('Use deleteSectorRequestDescriptor instead')
 const DeleteSectorRequest$json = {
@@ -725,6 +732,11 @@ const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
     {'1': 'DeleteCommunity', '2': '.involt.v1.DeleteCommunityRequest', '3': '.involt.v1.DeleteCommunityResponse'},
     {'1': 'TogglePaymentStatus', '2': '.involt.v1.TogglePaymentStatusRequest', '3': '.involt.v1.TogglePaymentStatusResponse'},
     {'1': 'GetCollections', '2': '.involt.v1.GetCollectionsRequest', '3': '.involt.v1.GetCollectionsResponse'},
+    {'1': 'GetCustomerAccount', '2': '.involt.v1.GetCustomerAccountRequest', '3': '.involt.v1.GetCustomerAccountResponse'},
+    {'1': 'RegisterPayment', '2': '.involt.v1.RegisterPaymentRequest', '3': '.involt.v1.RegisterPaymentResponse'},
+    {'1': 'VoidPayment', '2': '.involt.v1.VoidPaymentRequest', '3': '.involt.v1.VoidPaymentResponse'},
+    {'1': 'CreateFlatCharge', '2': '.involt.v1.CreateFlatChargeRequest', '3': '.involt.v1.CreateFlatChargeResponse'},
+    {'1': 'GetCashClosing', '2': '.involt.v1.GetCashClosingRequest', '3': '.involt.v1.GetCashClosingResponse'},
   ],
 };
 
@@ -784,6 +796,21 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> AdminServi
   '.involt.v1.GetCollectionsRequest': GetCollectionsRequest$json,
   '.involt.v1.GetCollectionsResponse': GetCollectionsResponse$json,
   '.involt.v1.CollectionCustomer': CollectionCustomer$json,
+  '.involt.v1.ReceiptBalance': $1.ReceiptBalance$json,
+  '.involt.v1.GetCustomerAccountRequest': $1.GetCustomerAccountRequest$json,
+  '.involt.v1.GetCustomerAccountResponse': $1.GetCustomerAccountResponse$json,
+  '.involt.v1.Payment': $1.Payment$json,
+  '.involt.v1.PaymentAllocation': $1.PaymentAllocation$json,
+  '.involt.v1.RegisterPaymentRequest': $1.RegisterPaymentRequest$json,
+  '.involt.v1.RegisterPaymentResponse': $1.RegisterPaymentResponse$json,
+  '.involt.v1.VoidPaymentRequest': $1.VoidPaymentRequest$json,
+  '.involt.v1.VoidPaymentResponse': $1.VoidPaymentResponse$json,
+  '.involt.v1.CreateFlatChargeRequest': $1.CreateFlatChargeRequest$json,
+  '.involt.v1.CreateFlatChargeResponse': $1.CreateFlatChargeResponse$json,
+  '.involt.v1.GetCashClosingRequest': $1.GetCashClosingRequest$json,
+  '.involt.v1.GetCashClosingResponse': $1.GetCashClosingResponse$json,
+  '.involt.v1.MethodTotal': $1.MethodTotal$json,
+  '.involt.v1.CollectorTotal': $1.CollectorTotal$json,
 };
 
 /// Descriptor for `AdminService`. Decode as a `google.protobuf.ServiceDescriptorProto`.
@@ -820,5 +847,13 @@ final $typed_data.Uint8List adminServiceDescriptor = $convert.base64Decode(
     'EuRGVsZXRlQ29tbXVuaXR5UmVzcG9uc2USZAoTVG9nZ2xlUGF5bWVudFN0YXR1cxIlLmludm9s'
     'dC52MS5Ub2dnbGVQYXltZW50U3RhdHVzUmVxdWVzdBomLmludm9sdC52MS5Ub2dnbGVQYXltZW'
     '50U3RhdHVzUmVzcG9uc2USVQoOR2V0Q29sbGVjdGlvbnMSIC5pbnZvbHQudjEuR2V0Q29sbGVj'
-    'dGlvbnNSZXF1ZXN0GiEuaW52b2x0LnYxLkdldENvbGxlY3Rpb25zUmVzcG9uc2U=');
+    'dGlvbnNSZXF1ZXN0GiEuaW52b2x0LnYxLkdldENvbGxlY3Rpb25zUmVzcG9uc2USYQoSR2V0Q3'
+    'VzdG9tZXJBY2NvdW50EiQuaW52b2x0LnYxLkdldEN1c3RvbWVyQWNjb3VudFJlcXVlc3QaJS5p'
+    'bnZvbHQudjEuR2V0Q3VzdG9tZXJBY2NvdW50UmVzcG9uc2USWAoPUmVnaXN0ZXJQYXltZW50Ei'
+    'EuaW52b2x0LnYxLlJlZ2lzdGVyUGF5bWVudFJlcXVlc3QaIi5pbnZvbHQudjEuUmVnaXN0ZXJQ'
+    'YXltZW50UmVzcG9uc2USTAoLVm9pZFBheW1lbnQSHS5pbnZvbHQudjEuVm9pZFBheW1lbnRSZX'
+    'F1ZXN0Gh4uaW52b2x0LnYxLlZvaWRQYXltZW50UmVzcG9uc2USWwoQQ3JlYXRlRmxhdENoYXJn'
+    'ZRIiLmludm9sdC52MS5DcmVhdGVGbGF0Q2hhcmdlUmVxdWVzdBojLmludm9sdC52MS5DcmVhdG'
+    'VGbGF0Q2hhcmdlUmVzcG9uc2USVQoOR2V0Q2FzaENsb3NpbmcSIC5pbnZvbHQudjEuR2V0Q2Fz'
+    'aENsb3NpbmdSZXF1ZXN0GiEuaW52b2x0LnYxLkdldENhc2hDbG9zaW5nUmVzcG9uc2U=');
 
