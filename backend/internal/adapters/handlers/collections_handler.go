@@ -58,8 +58,8 @@ func (h *AdminHandler) TogglePaymentStatus(
 	if err != nil {
 		return nil, err
 	}
-	if balance := debts[0].Balance; balance > 0 {
-		if _, err := h.recordPayment(ctx, user, customer, []string{readingID}, balance, domain.PaymentMethodCash, "", req.Msg.Observation); err != nil {
+	if owed := roundCents(debts[0].Balance + debts[0].LateFee); owed > 0 {
+		if _, err := h.recordPayment(ctx, user, customer, []string{readingID}, owed, domain.PaymentMethodCash, "", req.Msg.Observation); err != nil {
 			return nil, err
 		}
 	}
@@ -92,10 +92,15 @@ func (h *AdminHandler) GetCollections(
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
-	paid, err := h.paymentRepo.PaidAmounts(ctx, readingIDs(readings))
-	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
+	sectorCustomerIDs := make([]string, len(customers))
+	for i, c := range customers {
+		sectorCustomerIDs[i] = c.ID
 	}
+	state, err := h.loadCollectionState(ctx, sectorCustomerIDs, readings)
+	if err != nil {
+		return nil, err
+	}
+	paid := state.paid
 	debts, err := h.paymentRepo.DebtByCustomer(ctx, req.Msg.SectorId)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
@@ -126,13 +131,12 @@ func (h *AdminHandler) GetCollections(
 	resp.TotalBilled = float64(billedCents) / 100
 	resp.TotalCollected = float64(collectedCents) / 100
 
-	now := h.now()
 	for i := range customers {
 		customer := &customers[i]
 		resp.Customers = append(resp.Customers, &involtv1.CollectionCustomer{
 			Customer:  domain.MapCustomerToProto(customer),
 			Readings:  protoByCustomer[customer.ID],
-			Receipts:  buildReceiptBalances(readingsByCustomer[customer.ID], paid, now),
+			Receipts:  state.receiptBalances(readingsByCustomer[customer.ID]),
 			TotalDebt: debts[customer.ID],
 		})
 	}

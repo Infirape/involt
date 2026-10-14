@@ -61,8 +61,14 @@ func (s *collectionsReadingRepoStub) Save(_ context.Context, r *domain.Reading) 
 	s.saved = append(s.saved, r)
 	return nil
 }
-func (s *collectionsReadingRepoStub) GetByID(context.Context, string) (*domain.Reading, error) {
-	panic("not implemented")
+func (s *collectionsReadingRepoStub) GetByID(ctx context.Context, id string) (*domain.Reading, error) {
+	readings, _ := s.listByCustomerFunc(ctx, "")
+	for i := range readings {
+		if readings[i].ID == id {
+			return &readings[i], nil
+		}
+	}
+	return nil, nil
 }
 func (s *collectionsReadingRepoStub) ListByCustomer(ctx context.Context, customerID string) ([]domain.Reading, error) {
 	return s.listByCustomerFunc(ctx, customerID)
@@ -193,6 +199,19 @@ func (f *fakePaymentRepo) PaidAmounts(_ context.Context, ids []string) (map[stri
 		}
 		for _, a := range p.Allocations {
 			out[a.ReadingID] += a.Amount
+		}
+	}
+	return out, nil
+}
+
+func (f *fakePaymentRepo) LateFeesPaid(_ context.Context, _ []string) (map[string]float64, error) {
+	out := map[string]float64{}
+	for _, p := range f.payments {
+		if p.IsVoided() {
+			continue
+		}
+		for _, a := range p.Allocations {
+			out[a.ReadingID] += a.LateFee
 		}
 	}
 	return out, nil

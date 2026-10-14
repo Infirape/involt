@@ -36,6 +36,8 @@ const (
 	ReceiptStatusPartial ReceiptStatus = "PARTIAL"
 	ReceiptStatusPending ReceiptStatus = "PENDING"
 	ReceiptStatusOverdue ReceiptStatus = "OVERDUE"
+	// ReceiptStatusInAgreement: outstanding but covered by an on-schedule payment agreement.
+	ReceiptStatusInAgreement ReceiptStatus = "IN_AGREEMENT"
 )
 
 var (
@@ -70,18 +72,25 @@ func (p Payment) IsVoided() bool {
 	return p.VoidedAt != nil
 }
 
-// PaymentAllocation is the portion of a payment applied to one receipt.
+// PaymentAllocation is the portion of a payment applied to one receipt:
+// Amount goes to the receipt's principal, LateFee to its late fee (mora).
 type PaymentAllocation struct {
 	ReadingID string  `db:"reading_id"`
 	Period    string  `db:"period"`
 	Amount    float64 `db:"amount"`
+	LateFee   float64 `db:"late_fee"`
 }
 
-// Debt is the outstanding balance of a receipt.
+// Debt is the outstanding balance of a receipt plus its unpaid late fee.
 type Debt struct {
 	ReadingID string
 	Period    string
 	Balance   float64
+	LateFee   float64
+}
+
+func (d Debt) totalCents() int64 {
+	return toCents(d.Balance) + toCents(d.LateFee)
 }
 
 // toCents converts soles to integer cents to avoid float drift.
@@ -125,6 +134,7 @@ func ComputeReceiptStatus(total, paid float64, expiration, now time.Time) Receip
 }
 
 // AllocatePayment distributes an amount across debts, settling the oldest period first.
+// Within each receipt the late fee is paid before the principal.
 func AllocatePayment(amount float64, debts []Debt) ([]PaymentAllocation, error) {
 	remaining := toCents(amount)
 	if remaining <= 0 {
@@ -134,9 +144,9 @@ func AllocatePayment(amount float64, debts []Debt) ([]PaymentAllocation, error) 
 	sorted := make([]Debt, 0, len(debts))
 	var totalDebt int64
 	for _, d := range debts {
-		if toCents(d.Balance) > 0 {
+		if d.totalCents() > 0 {
 			sorted = append(sorted, d)
-			totalDebt += toCents(d.Balance)
+			totalDebt += d.totalCents()
 		}
 	}
 	if remaining > totalDebt {
@@ -150,9 +160,12 @@ func AllocatePayment(amount float64, debts []Debt) ([]PaymentAllocation, error) 
 		if remaining == 0 {
 			break
 		}
-		applied := min(toCents(d.Balance), remaining)
-		allocations = append(allocations, PaymentAllocation{ReadingID: d.ReadingID, Amount: fromCents(applied)})
-		remaining -= applied
+		fee := min(toCents(d.LateFee), remaining)
+		principal := min(toCents(d.Balance), remaining-fee)
+		allocations = append(allocations, PaymentAllocation{
+			ReadingID: d.ReadingID, Amount: fromCents(principal), LateFee: fromCents(fee),
+		})
+		remaining -= fee + principal
 	}
 	return allocations, nil
 }

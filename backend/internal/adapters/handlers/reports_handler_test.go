@@ -180,3 +180,50 @@ func TestGetDebtorsFiltersAndFlagsCutCandidates(t *testing.T) {
 		})
 	}
 }
+
+func TestDebtorsInAgreementAreNotCutCandidates(t *testing.T) {
+	h, _ := newReportsHandler()
+	inst, _ := domain.BuildInstallments(17, 0, 2, time.Date(2026, 11, 1, 0, 0, 0, 0, time.UTC))
+	h.agreementRepo = &fakeAgreementRepo{agreements: []*domain.Agreement{{
+		ID: "ag", CustomerID: "caro", Status: domain.AgreementActive, Total: 17, Installments: inst,
+		Receipts: []domain.AgreementReceipt{{ReadingID: "c1", Principal: 12}, {ReadingID: "old", Principal: 5}},
+	}}}
+	admin := contextWithUser("admin", "ADMIN")
+
+	resp, err := h.GetDebtors(admin, connect.NewRequest(&involtv1.GetDebtorsRequest{}))
+	if err != nil {
+		t.Fatalf("GetDebtors: %v", err)
+	}
+	var caro *involtv1.DebtorRow
+	for _, d := range resp.Msg.GetDebtors() {
+		if d.GetCustomerId() == "caro" {
+			caro = d
+		}
+	}
+	if caro == nil || caro.GetCutCandidate() || !caro.GetInAgreement() || caro.GetOverdueReceipts() != 0 {
+		t.Fatalf("caro = %+v", caro)
+	}
+	if resp.Msg.GetCutCandidates() != 1 {
+		t.Fatalf("cut candidates = %d, want 1 (only Ana)", resp.Msg.GetCutCandidates())
+	}
+
+	dash, _ := h.GetCollectionsDashboard(admin, connect.NewRequest(&involtv1.GetCollectionsDashboardRequest{}))
+	if dash.Msg.GetTotals().GetCutCandidates() != 1 {
+		t.Fatalf("dashboard cut candidates = %d, want 1", dash.Msg.GetTotals().GetCutCandidates())
+	}
+}
+
+func TestDebtorsWithAgreementInDefaultAreFlagged(t *testing.T) {
+	h, _ := newReportsHandler()
+	inst, _ := domain.BuildInstallments(17, 0, 2, time.Date(2026, 8, 1, 0, 0, 0, 0, time.UTC))
+	h.agreementRepo = &fakeAgreementRepo{agreements: []*domain.Agreement{{
+		ID: "ag", CustomerID: "caro", Status: domain.AgreementActive, Total: 17, Installments: inst,
+		Receipts: []domain.AgreementReceipt{{ReadingID: "c1", Principal: 12}, {ReadingID: "old", Principal: 5}},
+	}}}
+
+	resp, _ := h.GetDebtors(contextWithUser("admin", "ADMIN"), connect.NewRequest(&involtv1.GetDebtorsRequest{Search: "caro"}))
+	caro := resp.Msg.GetDebtors()[0]
+	if !caro.GetAgreementInDefault() || caro.GetInAgreement() || !caro.GetCutCandidate() {
+		t.Fatalf("caro in default = %+v", caro)
+	}
+}

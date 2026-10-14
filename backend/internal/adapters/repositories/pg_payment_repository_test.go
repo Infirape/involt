@@ -25,7 +25,7 @@ func openPaymentsTestDB(t *testing.T) *sqlx.DB {
 	}
 	t.Cleanup(func() { db.Close() })
 
-	for _, file := range []string{"../../../cmd/server/schema.sql", "../../../cmd/server/payments_schema.sql"} {
+	for _, file := range []string{"../../../cmd/server/schema.sql", "../../../cmd/server/payments_schema.sql", "../../../cmd/server/collections_schema.sql"} {
 		sqlBytes, err := os.ReadFile(file)
 		if err != nil {
 			t.Fatalf("read %s: %v", file, err)
@@ -35,7 +35,9 @@ func openPaymentsTestDB(t *testing.T) *sqlx.DB {
 		}
 	}
 
-	db.MustExec(`TRUNCATE payment_allocations, payments, readings, customers, sectors, communities CASCADE`)
+	db.MustExec(`TRUNCATE agreement_installments, agreement_receipts, payment_agreements, late_fee_waivers, payment_allocations, payments, readings, customers, sectors, communities CASCADE`)
+	db.MustExec(`DELETE FROM collection_policy`)
+	db.MustExec(`INSERT INTO collection_policy (id) VALUES ('main')`)
 	db.MustExec(`INSERT INTO communities (id, name) VALUES ('com-1', 'Chetilla')`)
 	db.MustExec(`INSERT INTO sectors (id, community_id, name) VALUES ('sec-1', 'com-1', 'Centro')`)
 	db.MustExec(`INSERT INTO customers (id, code, name, community_id, sector_id, connection_type, tariff, meter_number)

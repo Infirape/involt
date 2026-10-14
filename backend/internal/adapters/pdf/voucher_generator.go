@@ -64,6 +64,19 @@ func (g *MarotoGenerator) GenerateVoucher(_ context.Context, payment *domain.Pay
 }
 
 func (g *MarotoGenerator) addVoucherHeader(m core.Maroto, payment *domain.Payment, settings *domain.Settings) {
+	g.addDocumentHeader(m, settings, "COMPROBANTE DE PAGO", payment.ReceiptNumber)
+
+	if payment.IsVoided() {
+		m.AddRows(row.New(12).Add(col.New(12).Add(
+			text.New("ANULADO", props.Text{Top: 1, Size: 14, Style: fontstyle.Bold, Align: align.Center, Color: voidedColor}),
+			text.New(fmt.Sprintf("%s · %s", payment.VoidedAt.In(voucherZone).Format("02/01/2006 15:04"), payment.VoidReason),
+				props.Text{Top: 7.5, Size: 7, Align: align.Center, Color: voidedColor}),
+		)))
+	}
+}
+
+// addDocumentHeader prints the entity header and a boxed title with the document number.
+func (g *MarotoGenerator) addDocumentHeader(m core.Maroto, settings *domain.Settings, title string, number int64) {
 	ruc := ""
 	if settings.RUC != "" {
 		ruc = "RUC " + settings.RUC
@@ -77,21 +90,12 @@ func (g *MarotoGenerator) addVoucherHeader(m core.Maroto, payment *domain.Paymen
 			text.New(settings.Direccion, props.Text{Top: 14.5, Size: 7, Align: align.Right}),
 		),
 	))
-
 	m.AddRows(row.New(12).Add(
 		col.New(12).Add(
-			text.New("COMPROBANTE DE PAGO", props.Text{Top: 1.5, Size: 12, Style: fontstyle.Bold, Align: align.Center}),
-			text.New(fmt.Sprintf("N° %06d", payment.ReceiptNumber), props.Text{Top: 7, Size: 10, Style: fontstyle.Bold, Align: align.Center}),
+			text.New(title, props.Text{Top: 1.5, Size: 12, Style: fontstyle.Bold, Align: align.Center}),
+			text.New(fmt.Sprintf("N° %06d", number), props.Text{Top: 7, Size: 10, Style: fontstyle.Bold, Align: align.Center}),
 		).WithStyle(&props.Cell{BorderType: border.Full, BorderThickness: 0.4, BorderColor: defaultBorderColor}),
 	))
-
-	if payment.IsVoided() {
-		m.AddRows(row.New(12).Add(col.New(12).Add(
-			text.New("ANULADO", props.Text{Top: 1, Size: 14, Style: fontstyle.Bold, Align: align.Center, Color: voidedColor}),
-			text.New(fmt.Sprintf("%s · %s", payment.VoidedAt.In(voucherZone).Format("02/01/2006 15:04"), payment.VoidReason),
-				props.Text{Top: 7.5, Size: 7, Align: align.Center, Color: voidedColor}),
-		)))
-	}
 }
 
 func addVoucherDetails(m core.Maroto, payment *domain.Payment, customer *domain.Customer) {
@@ -124,9 +128,13 @@ func addVoucherAllocations(m core.Maroto, payment *domain.Payment) {
 		col.New(4).Add(text.New("Importe aplicado", props.Text{Size: 8, Style: fontstyle.Bold, Align: align.Right})).WithStyle(headerStyle),
 	))
 	for _, a := range payment.Allocations {
+		label := formatPeriod(a.Period)
+		if a.LateFee > 0 {
+			label = fmt.Sprintf("%s (incluye mora S/ %.2f)", label, a.LateFee)
+		}
 		m.AddRows(row.New(5.5).Add(
-			col.New(8).Add(text.New(formatPeriod(a.Period), props.Text{Top: 1, Size: 8})),
-			col.New(4).Add(text.New(fmt.Sprintf("S/ %.2f", a.Amount), props.Text{Top: 1, Size: 8, Align: align.Right})),
+			col.New(8).Add(text.New(label, props.Text{Top: 1, Size: 8})),
+			col.New(4).Add(text.New(fmt.Sprintf("S/ %.2f", a.Amount+a.LateFee), props.Text{Top: 1, Size: 8, Align: align.Right})),
 		))
 	}
 	m.AddRows(row.New(8).Add(

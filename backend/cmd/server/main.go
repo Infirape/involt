@@ -58,6 +58,8 @@ func main() {
 	periodRepo := repositories.NewPostgresPeriodRepository(db)
 	paymentRepo := repositories.NewPostgresPaymentRepository(db)
 	reportRepo := repositories.NewPostgresCollectionsReportRepository(db)
+	policyRepo := repositories.NewPostgresCollectionPolicyRepository(db)
+	agreementRepo := repositories.NewPostgresAgreementRepository(db)
 	pdfGen := pdf.NewMarotoGenerator()
 
 	// 3. Initialize Handlers
@@ -68,7 +70,7 @@ func main() {
 
 	syncHandler := handlers.NewSyncHandler(metaRepo, customerRepo, readingRepo, periodRepo, adminRepo, pdfGen)
 	settingsHandler := handlers.NewSettingsHandler(settingsRepo)
-	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, periodRepo, jwtSecret, pdfGen, paymentRepo, pdfGen, reportRepo)
+	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, periodRepo, jwtSecret, pdfGen, paymentRepo, pdfGen, reportRepo, policyRepo, agreementRepo, pdfGen)
 
 	// 4. Setup Mux
 	mux := http.NewServeMux()
@@ -104,6 +106,7 @@ func main() {
 	mux.HandleFunc("/admin/readings/bulk-pdf", adminSvcHandler.BulkPDF)
 	mux.HandleFunc("/admin/readings/pdf/", adminSvcHandler.DownloadReadingPDF)
 	mux.HandleFunc("/admin/payments/pdf/", adminSvcHandler.DownloadPaymentVoucher)
+	mux.HandleFunc("/admin/agreements/pdf/", adminSvcHandler.DownloadAgreementPDF)
 
 	// API Health check
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -180,8 +183,14 @@ func initSchema(db *sqlx.DB) error {
 	if _, err := db.Exec(paymentsSchemaSQL); err != nil {
 		log.Printf("⚠️ Notice during payments schema: %v", err)
 	}
+	if _, err := db.Exec(collectionsSchemaSQL); err != nil {
+		log.Printf("⚠️ Notice during collections schema: %v", err)
+	}
 	return nil
 }
 
 //go:embed payments_schema.sql
 var paymentsSchemaSQL string
+
+//go:embed collections_schema.sql
+var collectionsSchemaSQL string

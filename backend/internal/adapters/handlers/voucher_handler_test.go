@@ -75,3 +75,37 @@ func TestDownloadPaymentVoucherAuthorization(t *testing.T) {
 		})
 	}
 }
+
+type agreementDocStub struct{}
+
+func (agreementDocStub) GenerateAgreement(context.Context, *domain.Agreement, *domain.Customer, *domain.Settings) ([]byte, error) {
+	return []byte("%PDF-agreement"), nil
+}
+
+func TestDownloadAgreementPDF(t *testing.T) {
+	h, _, token := newVoucherTestHandler(t)
+	h.agreementDoc = agreementDocStub{}
+	h.agreementRepo = &fakeAgreementRepo{agreements: []*domain.Agreement{{ID: "ag-1", Number: 3, CustomerID: "cust-1"}}}
+
+	cases := []struct {
+		url  string
+		code int
+	}{
+		{"/admin/agreements/pdf/ag-1?token=" + token("ADMIN"), http.StatusOK},
+		{"/admin/agreements/pdf/ag-1?token=" + token("SUPERVISOR", "sec-9"), http.StatusForbidden},
+		{"/admin/agreements/pdf/ghost?token=" + token("ADMIN"), http.StatusNotFound},
+		{"/admin/agreements/pdf/ag-1", http.StatusUnauthorized},
+	}
+	for _, tc := range cases {
+		rec := httptest.NewRecorder()
+		h.DownloadAgreementPDF(rec, httptest.NewRequest(http.MethodGet, tc.url, nil))
+		if rec.Code != tc.code {
+			t.Fatalf("%s: status = %d, want %d", tc.url, rec.Code, tc.code)
+		}
+	}
+	rec := httptest.NewRecorder()
+	h.DownloadAgreementPDF(rec, httptest.NewRequest(http.MethodGet, "/admin/agreements/pdf/ag-1?token="+token("ADMIN"), nil))
+	if cd := rec.Header().Get("Content-Disposition"); cd != `inline; filename="convenio_000003.pdf"` {
+		t.Fatalf("content disposition = %q", cd)
+	}
+}

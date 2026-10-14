@@ -30,9 +30,9 @@ func (h *AdminHandler) GetCustomerAccount(
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
-	paid, err := h.paymentRepo.PaidAmounts(ctx, readingIDs(readings))
+	state, err := h.loadCollectionState(ctx, []string{customer.ID}, readings)
 	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
+		return nil, err
 	}
 	payments, err := h.paymentRepo.List(ctx, ports.PaymentFilter{CustomerID: customer.ID, IncludeVoided: true})
 	if err != nil {
@@ -40,17 +40,23 @@ func (h *AdminHandler) GetCustomerAccount(
 	}
 
 	resp := &involtv1.GetCustomerAccountResponse{
-		Customer: domain.MapCustomerToProto(customer),
-		Receipts: buildReceiptBalances(readings, paid, h.now()),
+		Customer:          domain.MapCustomerToProto(customer),
+		Receipts:          state.receiptBalances(readings),
+		AgreementsEnabled: state.policy.Agreement.MaxInstallments > 0,
 	}
-	var debtCents int64
+	var debtCents, feeCents int64
 	for _, r := range resp.Receipts {
-		debtCents += int64(r.Balance*100 + 0.5)
+		debtCents += toCentsRounded(r.Balance)
+		feeCents += toCentsRounded(r.LateFee)
 		if r.Status == involtv1.ReceiptStatus_RECEIPT_STATUS_OVERDUE {
 			resp.OverdueCount++
 		}
 	}
-	resp.TotalDebt = float64(debtCents) / 100
+	resp.TotalLateFees = float64(feeCents) / 100
+	resp.TotalDebt = float64(debtCents+feeCents) / 100
+	if resp.Agreements, err = h.customerAgreements(ctx, customer.ID, state); err != nil {
+		return nil, err
+	}
 	for i := range payments {
 		resp.Payments = append(resp.Payments, mapPaymentToProto(&payments[i]))
 	}
@@ -242,7 +248,8 @@ func (h *AdminHandler) authorizeCustomer(ctx context.Context, customerID string)
 	return user, customer, nil
 }
 
-// outstandingDebts returns the balances of the customer's receipts, optionally limited to readingIDs.
+// outstandingDebts returns the balances and unpaid mora of the customer's receipts,
+// optionally limited to readingIDs.
 func (h *AdminHandler) outstandingDebts(ctx context.Context, customerID string, onlyIDs []string) ([]domain.Debt, error) {
 	readings, err := h.readingRepo.ListByCustomer(ctx, customerID)
 	if err != nil {
@@ -264,17 +271,13 @@ func (h *AdminHandler) outstandingDebts(ctx context.Context, customerID string, 
 		readings = selected
 	}
 
-	paid, err := h.paymentRepo.PaidAmounts(ctx, readingIDs(readings))
+	state, err := h.loadCollectionState(ctx, []string{customerID}, readings)
 	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
+		return nil, err
 	}
 	debts := make([]domain.Debt, 0, len(readings))
-	for _, r := range readings {
-		debts = append(debts, domain.Debt{
-			ReadingID: r.ID,
-			Period:    r.EffectivePeriod(),
-			Balance:   domain.ReceiptBalance(r.TotalToPay, paid[r.ID]),
-		})
+	for i := range readings {
+		debts = append(debts, state.debt(&readings[i]))
 	}
 	return debts, nil
 }

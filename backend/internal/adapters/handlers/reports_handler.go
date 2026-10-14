@@ -54,6 +54,10 @@ func (h *AdminHandler) GetCollectionsDashboard(
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
+	debtLines, _, err = h.applyAgreements(ctx, debtLines)
+	if err != nil {
+		return nil, err
+	}
 
 	today := h.now()
 	resp := &involtv1.GetCollectionsDashboardResponse{FromPeriod: from, ToPeriod: to, Totals: &involtv1.CollectionsDashboardTotals{}}
@@ -116,6 +120,10 @@ func (h *AdminHandler) GetDebtors(
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
+	lines, agreementFlags, err := h.applyAgreements(ctx, lines)
+	if err != nil {
+		return nil, err
+	}
 	debtors := domain.BuildDebtors(lines, nil, h.now(), cutThresholdOrDefault(req.Msg.CutThreshold))
 
 	search := strings.ToLower(strings.TrimSpace(req.Msg.Search))
@@ -149,7 +157,9 @@ func (h *AdminHandler) GetDebtors(
 			TotalDebt: d.TotalDebt, OverdueDebt: d.OverdueDebt,
 			PendingReceipts: int32(d.PendingReceipts), OverdueReceipts: int32(d.OverdueReceipts),
 			OldestOverduePeriod: d.OldestOverduePeriod, DaysOverdue: int32(d.DaysOverdue),
-			CutCandidate: d.CutCandidate,
+			CutCandidate:       d.CutCandidate,
+			InAgreement:        agreementFlags[d.CustomerID] == agreementOnTrack,
+			AgreementInDefault: agreementFlags[d.CustomerID] == agreementLate,
 		}
 		if last, ok := lastPayments[d.CustomerID]; ok && !last.IsZero() {
 			row.LastPaymentAt = last.Format(time.RFC3339)
@@ -225,4 +235,50 @@ func agingBucketToProto(b domain.AgingBucket) involtv1.AgingBucket {
 		return involtv1.AgingBucket_AGING_BUCKET_OVER_90
 	}
 	return involtv1.AgingBucket_AGING_BUCKET_UNSPECIFIED
+}
+
+type agreementFlag int
+
+const (
+	agreementNone agreementFlag = iota
+	agreementOnTrack
+	agreementLate
+)
+
+// applyAgreements treats receipts covered by an on-schedule agreement as not yet due, so they
+// neither age nor count towards service cut, and flags each customer's agreement state.
+func (h *AdminHandler) applyAgreements(ctx context.Context, lines []domain.ReceiptLine) ([]domain.ReceiptLine, map[string]agreementFlag, error) {
+	flags := map[string]agreementFlag{}
+	if h.agreementRepo == nil {
+		return lines, flags, nil
+	}
+	agreements, err := h.agreementRepo.List(ctx, nil, true)
+	if err != nil {
+		return nil, nil, connect.NewError(connect.CodeInternal, err)
+	}
+	policy, err := h.collectionPolicy(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+	protected := map[string]bool{}
+	for _, a := range agreements {
+		progress := domain.ComputeAgreementProgress(a, a.PaidSinceSigning, h.now(), policy.Agreement.GraceDays)
+		switch {
+		case progress.ProtectsReceipts():
+			flags[a.CustomerID] = max(flags[a.CustomerID], agreementOnTrack)
+			for _, rc := range a.Receipts {
+				protected[rc.ReadingID] = true
+			}
+		case progress.InDefault:
+			flags[a.CustomerID] = agreementLate
+		}
+	}
+	out := make([]domain.ReceiptLine, len(lines))
+	for i, l := range lines {
+		if protected[l.ReadingID] {
+			l.ExpirationDate = time.Time{}
+		}
+		out[i] = l
+	}
+	return out, flags, nil
 }

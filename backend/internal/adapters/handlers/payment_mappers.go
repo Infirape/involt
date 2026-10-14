@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"sort"
 	"time"
 
 	"github.com/infira/involt/backend/internal/adapters/auth"
@@ -58,6 +57,8 @@ func receiptStatusToProto(status domain.ReceiptStatus) involtv1.ReceiptStatus {
 		return involtv1.ReceiptStatus_RECEIPT_STATUS_PENDING
 	case domain.ReceiptStatusOverdue:
 		return involtv1.ReceiptStatus_RECEIPT_STATUS_OVERDUE
+	case domain.ReceiptStatusInAgreement:
+		return involtv1.ReceiptStatus_RECEIPT_STATUS_IN_AGREEMENT
 	}
 	return involtv1.ReceiptStatus_RECEIPT_STATUS_UNSPECIFIED
 }
@@ -90,28 +91,7 @@ func mapPaymentToProto(p *domain.Payment) *involtv1.Payment {
 			ReadingId: a.ReadingID,
 			Period:    a.Period,
 			Amount:    a.Amount,
-		})
-	}
-	return out
-}
-
-// buildReceiptBalances pairs readings with paid amounts, ordered oldest period first.
-func buildReceiptBalances(readings []domain.Reading, paid map[string]float64, now time.Time) []*involtv1.ReceiptBalance {
-	sorted := make([]domain.Reading, len(readings))
-	copy(sorted, readings)
-	sort.SliceStable(sorted, func(i, j int) bool {
-		return sorted[i].EffectivePeriod() < sorted[j].EffectivePeriod()
-	})
-
-	out := make([]*involtv1.ReceiptBalance, 0, len(sorted))
-	for i := range sorted {
-		r := &sorted[i]
-		paidAmount := paid[r.ID]
-		out = append(out, &involtv1.ReceiptBalance{
-			Reading:    domain.MapReadingToProto(r),
-			PaidAmount: paidAmount,
-			Balance:    domain.ReceiptBalance(r.TotalToPay, paidAmount),
-			Status:     receiptStatusToProto(domain.ComputeReceiptStatus(r.TotalToPay, paidAmount, r.ExpirationDate, now)),
+			LateFee:   a.LateFee,
 		})
 	}
 	return out

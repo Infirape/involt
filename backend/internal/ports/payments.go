@@ -27,6 +27,8 @@ type PaymentRepository interface {
 	Void(ctx context.Context, id, voidedBy, reason string) error
 	// PaidAmounts returns the sum of non-voided allocations per reading ID.
 	PaidAmounts(ctx context.Context, readingIDs []string) (map[string]float64, error)
+	// LateFeesPaid returns the sum of non-voided late fee (mora) allocations per reading ID.
+	LateFeesPaid(ctx context.Context, readingIDs []string) (map[string]float64, error)
 	// DebtByCustomer returns the outstanding balance across all periods per customer of a sector.
 	DebtByCustomer(ctx context.Context, sectorID string) (map[string]float64, error)
 }

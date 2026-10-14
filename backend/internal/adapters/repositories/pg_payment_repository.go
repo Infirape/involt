@@ -66,8 +66,8 @@ func (r *PostgresPaymentRepository) Create(ctx context.Context, payment *domain.
 	readingIDs := make([]string, 0, len(payment.Allocations))
 	for _, a := range payment.Allocations {
 		_, err := tx.ExecContext(ctx,
-			`INSERT INTO payment_allocations (payment_id, reading_id, amount) VALUES ($1, $2, $3)`,
-			payment.ID, a.ReadingID, a.Amount)
+			`INSERT INTO payment_allocations (payment_id, reading_id, amount, late_fee) VALUES ($1, $2, $3, $4)`,
+			payment.ID, a.ReadingID, a.Amount, a.LateFee)
 		if err != nil {
 			return fmt.Errorf("error inserting payment allocation: %w", err)
 		}
@@ -171,6 +171,15 @@ func (r *PostgresPaymentRepository) Void(ctx context.Context, id, voidedBy, reas
 }
 
 func (r *PostgresPaymentRepository) PaidAmounts(ctx context.Context, readingIDs []string) (map[string]float64, error) {
+	return r.sumAllocations(ctx, "pa.amount", readingIDs)
+}
+
+func (r *PostgresPaymentRepository) LateFeesPaid(ctx context.Context, readingIDs []string) (map[string]float64, error) {
+	return r.sumAllocations(ctx, "pa.late_fee", readingIDs)
+}
+
+// sumAllocations sums a column of non-voided allocations per reading.
+func (r *PostgresPaymentRepository) sumAllocations(ctx context.Context, column string, readingIDs []string) (map[string]float64, error) {
 	result := make(map[string]float64, len(readingIDs))
 	if len(readingIDs) == 0 {
 		return result, nil
@@ -179,7 +188,7 @@ func (r *PostgresPaymentRepository) PaidAmounts(ctx context.Context, readingIDs 
 		ReadingID string  `db:"reading_id"`
 		Paid      float64 `db:"paid"`
 	}
-	query := `SELECT pa.reading_id, SUM(pa.amount) AS paid
+	query := `SELECT pa.reading_id, SUM(` + column + `) AS paid
 		FROM payment_allocations pa JOIN payments p ON p.id = pa.payment_id
 		WHERE p.voided_at IS NULL AND pa.reading_id = ANY($1)
 		GROUP BY pa.reading_id`
@@ -207,7 +216,7 @@ func (r *PostgresPaymentRepository) attachAllocations(ctx context.Context, payme
 		PaymentID string `db:"payment_id"`
 		domain.PaymentAllocation
 	}
-	query := `SELECT pa.payment_id, pa.reading_id, COALESCE(rd.period, '') AS period, pa.amount
+	query := `SELECT pa.payment_id, pa.reading_id, COALESCE(rd.period, '') AS period, pa.amount, pa.late_fee
 		FROM payment_allocations pa JOIN readings rd ON rd.id = pa.reading_id
 		WHERE pa.payment_id = ANY($1)
 		ORDER BY rd.period`

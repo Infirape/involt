@@ -32,6 +32,9 @@ type AdminHandler struct {
 	paymentRepo  ports.PaymentRepository
 	voucherGen   ports.PaymentVoucherGenerator
 	reportRepo   ports.CollectionsReportRepository
+	policyRepo   ports.CollectionPolicyRepository
+	agreementRepo ports.AgreementRepository
+	agreementDoc ports.AgreementDocumentGenerator
 	clock        func() time.Time
 }
 
@@ -46,6 +49,9 @@ func NewAdminHandler(
 	paymentRepo ports.PaymentRepository,
 	voucherGen ports.PaymentVoucherGenerator,
 	reportRepo ports.CollectionsReportRepository,
+	policyRepo ports.CollectionPolicyRepository,
+	agreementRepo ports.AgreementRepository,
+	agreementDoc ports.AgreementDocumentGenerator,
 ) *AdminHandler {
 	return &AdminHandler{
 		adminRepo:    adminRepo,
@@ -58,6 +64,9 @@ func NewAdminHandler(
 		paymentRepo:  paymentRepo,
 		voucherGen:   voucherGen,
 		reportRepo:   reportRepo,
+		policyRepo:   policyRepo,
+		agreementRepo: agreementRepo,
+		agreementDoc: agreementDoc,
 	}
 }
 
