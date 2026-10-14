@@ -84,11 +84,12 @@ func (PaymentMethod) EnumDescriptor() ([]byte, []int) {
 type ReceiptStatus int32
 
 const (
-	ReceiptStatus_RECEIPT_STATUS_UNSPECIFIED ReceiptStatus = 0
-	ReceiptStatus_RECEIPT_STATUS_PAID        ReceiptStatus = 1
-	ReceiptStatus_RECEIPT_STATUS_PARTIAL     ReceiptStatus = 2
-	ReceiptStatus_RECEIPT_STATUS_PENDING     ReceiptStatus = 3
-	ReceiptStatus_RECEIPT_STATUS_OVERDUE     ReceiptStatus = 4
+	ReceiptStatus_RECEIPT_STATUS_UNSPECIFIED  ReceiptStatus = 0
+	ReceiptStatus_RECEIPT_STATUS_PAID         ReceiptStatus = 1
+	ReceiptStatus_RECEIPT_STATUS_PARTIAL      ReceiptStatus = 2
+	ReceiptStatus_RECEIPT_STATUS_PENDING      ReceiptStatus = 3
+	ReceiptStatus_RECEIPT_STATUS_OVERDUE      ReceiptStatus = 4
+	ReceiptStatus_RECEIPT_STATUS_IN_AGREEMENT ReceiptStatus = 5 // covered by an on-schedule payment agreement
 )
 
 // Enum value maps for ReceiptStatus.
@@ -99,13 +100,15 @@ var (
 		2: "RECEIPT_STATUS_PARTIAL",
 		3: "RECEIPT_STATUS_PENDING",
 		4: "RECEIPT_STATUS_OVERDUE",
+		5: "RECEIPT_STATUS_IN_AGREEMENT",
 	}
 	ReceiptStatus_value = map[string]int32{
-		"RECEIPT_STATUS_UNSPECIFIED": 0,
-		"RECEIPT_STATUS_PAID":        1,
-		"RECEIPT_STATUS_PARTIAL":     2,
-		"RECEIPT_STATUS_PENDING":     3,
-		"RECEIPT_STATUS_OVERDUE":     4,
+		"RECEIPT_STATUS_UNSPECIFIED":  0,
+		"RECEIPT_STATUS_PAID":         1,
+		"RECEIPT_STATUS_PARTIAL":      2,
+		"RECEIPT_STATUS_PENDING":      3,
+		"RECEIPT_STATUS_OVERDUE":      4,
+		"RECEIPT_STATUS_IN_AGREEMENT": 5,
 	}
 )
 
@@ -143,6 +146,9 @@ type ReceiptBalance struct {
 	PaidAmount    float64                `protobuf:"fixed64,2,opt,name=paid_amount,json=paidAmount,proto3" json:"paid_amount,omitempty"`
 	Balance       float64                `protobuf:"fixed64,3,opt,name=balance,proto3" json:"balance,omitempty"`
 	Status        ReceiptStatus          `protobuf:"varint,4,opt,name=status,proto3,enum=involt.v1.ReceiptStatus" json:"status,omitempty"`
+	LateFee       float64                `protobuf:"fixed64,5,opt,name=late_fee,json=lateFee,proto3" json:"late_fee,omitempty"` // unpaid mora owed today
+	LateFeeWaived bool                   `protobuf:"varint,6,opt,name=late_fee_waived,json=lateFeeWaived,proto3" json:"late_fee_waived,omitempty"`
+	AgreementId   string                 `protobuf:"bytes,7,opt,name=agreement_id,json=agreementId,proto3" json:"agreement_id,omitempty"` // active agreement covering this receipt, if any
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -205,11 +211,33 @@ func (x *ReceiptBalance) GetStatus() ReceiptStatus {
 	return ReceiptStatus_RECEIPT_STATUS_UNSPECIFIED
 }
 
+func (x *ReceiptBalance) GetLateFee() float64 {
+	if x != nil {
+		return x.LateFee
+	}
+	return 0
+}
+
+func (x *ReceiptBalance) GetLateFeeWaived() bool {
+	if x != nil {
+		return x.LateFeeWaived
+	}
+	return false
+}
+
+func (x *ReceiptBalance) GetAgreementId() string {
+	if x != nil {
+		return x.AgreementId
+	}
+	return ""
+}
+
 type PaymentAllocation struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ReadingId     string                 `protobuf:"bytes,1,opt,name=reading_id,json=readingId,proto3" json:"reading_id,omitempty"`
 	Period        string                 `protobuf:"bytes,2,opt,name=period,proto3" json:"period,omitempty"`
-	Amount        float64                `protobuf:"fixed64,3,opt,name=amount,proto3" json:"amount,omitempty"`
+	Amount        float64                `protobuf:"fixed64,3,opt,name=amount,proto3" json:"amount,omitempty"` // principal
+	LateFee       float64                `protobuf:"fixed64,4,opt,name=late_fee,json=lateFee,proto3" json:"late_fee,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -261,6 +289,13 @@ func (x *PaymentAllocation) GetPeriod() string {
 func (x *PaymentAllocation) GetAmount() float64 {
 	if x != nil {
 		return x.Amount
+	}
+	return 0
+}
+
+func (x *PaymentAllocation) GetLateFee() float64 {
+	if x != nil {
+		return x.LateFee
 	}
 	return 0
 }
@@ -474,14 +509,17 @@ func (x *GetCustomerAccountRequest) GetCustomerId() string {
 }
 
 type GetCustomerAccountResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Customer      *Customer              `protobuf:"bytes,1,opt,name=customer,proto3" json:"customer,omitempty"`
-	Receipts      []*ReceiptBalance      `protobuf:"bytes,2,rep,name=receipts,proto3" json:"receipts,omitempty"` // every receipt, oldest period first
-	Payments      []*Payment             `protobuf:"bytes,3,rep,name=payments,proto3" json:"payments,omitempty"` // newest first, including voided
-	TotalDebt     float64                `protobuf:"fixed64,4,opt,name=total_debt,json=totalDebt,proto3" json:"total_debt,omitempty"`
-	OverdueCount  int32                  `protobuf:"varint,5,opt,name=overdue_count,json=overdueCount,proto3" json:"overdue_count,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Customer          *Customer              `protobuf:"bytes,1,opt,name=customer,proto3" json:"customer,omitempty"`
+	Receipts          []*ReceiptBalance      `protobuf:"bytes,2,rep,name=receipts,proto3" json:"receipts,omitempty"`                      // every receipt, oldest period first
+	Payments          []*Payment             `protobuf:"bytes,3,rep,name=payments,proto3" json:"payments,omitempty"`                      // newest first, including voided
+	TotalDebt         float64                `protobuf:"fixed64,4,opt,name=total_debt,json=totalDebt,proto3" json:"total_debt,omitempty"` // principal + mora
+	OverdueCount      int32                  `protobuf:"varint,5,opt,name=overdue_count,json=overdueCount,proto3" json:"overdue_count,omitempty"`
+	TotalLateFees     float64                `protobuf:"fixed64,6,opt,name=total_late_fees,json=totalLateFees,proto3" json:"total_late_fees,omitempty"`
+	Agreements        []*PaymentAgreement    `protobuf:"bytes,7,rep,name=agreements,proto3" json:"agreements,omitempty"` // newest first
+	AgreementsEnabled bool                   `protobuf:"varint,8,opt,name=agreements_enabled,json=agreementsEnabled,proto3" json:"agreements_enabled,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *GetCustomerAccountResponse) Reset() {
@@ -547,6 +585,27 @@ func (x *GetCustomerAccountResponse) GetOverdueCount() int32 {
 		return x.OverdueCount
 	}
 	return 0
+}
+
+func (x *GetCustomerAccountResponse) GetTotalLateFees() float64 {
+	if x != nil {
+		return x.TotalLateFees
+	}
+	return 0
+}
+
+func (x *GetCustomerAccountResponse) GetAgreements() []*PaymentAgreement {
+	if x != nil {
+		return x.Agreements
+	}
+	return nil
+}
+
+func (x *GetCustomerAccountResponse) GetAgreementsEnabled() bool {
+	if x != nil {
+		return x.AgreementsEnabled
+	}
+	return false
 }
 
 type RegisterPaymentRequest struct {
@@ -1172,18 +1231,22 @@ var File_involt_v1_payments_proto protoreflect.FileDescriptor
 
 const file_involt_v1_payments_proto_rawDesc = "" +
 	"\n" +
-	"\x18involt/v1/payments.proto\x12\tinvolt.v1\x1a\x16involt/v1/models.proto\"\xab\x01\n" +
+	"\x18involt/v1/payments.proto\x12\tinvolt.v1\x1a\x1ainvolt/v1/agreements.proto\x1a\x16involt/v1/models.proto\"\x91\x02\n" +
 	"\x0eReceiptBalance\x12,\n" +
 	"\areading\x18\x01 \x01(\v2\x12.involt.v1.ReadingR\areading\x12\x1f\n" +
 	"\vpaid_amount\x18\x02 \x01(\x01R\n" +
 	"paidAmount\x12\x18\n" +
 	"\abalance\x18\x03 \x01(\x01R\abalance\x120\n" +
-	"\x06status\x18\x04 \x01(\x0e2\x18.involt.v1.ReceiptStatusR\x06status\"b\n" +
+	"\x06status\x18\x04 \x01(\x0e2\x18.involt.v1.ReceiptStatusR\x06status\x12\x19\n" +
+	"\blate_fee\x18\x05 \x01(\x01R\alateFee\x12&\n" +
+	"\x0flate_fee_waived\x18\x06 \x01(\bR\rlateFeeWaived\x12!\n" +
+	"\fagreement_id\x18\a \x01(\tR\vagreementId\"}\n" +
 	"\x11PaymentAllocation\x12\x1d\n" +
 	"\n" +
 	"reading_id\x18\x01 \x01(\tR\treadingId\x12\x16\n" +
 	"\x06period\x18\x02 \x01(\tR\x06period\x12\x16\n" +
-	"\x06amount\x18\x03 \x01(\x01R\x06amount\"\xb5\x04\n" +
+	"\x06amount\x18\x03 \x01(\x01R\x06amount\x12\x19\n" +
+	"\blate_fee\x18\x04 \x01(\x01R\alateFee\"\xb5\x04\n" +
 	"\aPayment\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12%\n" +
 	"\x0ereceipt_number\x18\x02 \x01(\x03R\rreceiptNumber\x12\x1f\n" +
@@ -1206,14 +1269,19 @@ const file_involt_v1_payments_proto_rawDesc = "" +
 	"\fcollected_by\x18\x10 \x01(\tR\vcollectedBy\"<\n" +
 	"\x19GetCustomerAccountRequest\x12\x1f\n" +
 	"\vcustomer_id\x18\x01 \x01(\tR\n" +
-	"customerId\"\xf8\x01\n" +
+	"customerId\"\x8c\x03\n" +
 	"\x1aGetCustomerAccountResponse\x12/\n" +
 	"\bcustomer\x18\x01 \x01(\v2\x13.involt.v1.CustomerR\bcustomer\x125\n" +
 	"\breceipts\x18\x02 \x03(\v2\x19.involt.v1.ReceiptBalanceR\breceipts\x12.\n" +
 	"\bpayments\x18\x03 \x03(\v2\x12.involt.v1.PaymentR\bpayments\x12\x1d\n" +
 	"\n" +
 	"total_debt\x18\x04 \x01(\x01R\ttotalDebt\x12#\n" +
-	"\roverdue_count\x18\x05 \x01(\x05R\foverdueCount\"\xe4\x01\n" +
+	"\roverdue_count\x18\x05 \x01(\x05R\foverdueCount\x12&\n" +
+	"\x0ftotal_late_fees\x18\x06 \x01(\x01R\rtotalLateFees\x12;\n" +
+	"\n" +
+	"agreements\x18\a \x03(\v2\x1b.involt.v1.PaymentAgreementR\n" +
+	"agreements\x12-\n" +
+	"\x12agreements_enabled\x18\b \x01(\bR\x11agreementsEnabled\"\xe4\x01\n" +
 	"\x16RegisterPaymentRequest\x12\x1f\n" +
 	"\vcustomer_id\x18\x01 \x01(\tR\n" +
 	"customerId\x12\x1f\n" +
@@ -1266,13 +1334,14 @@ const file_involt_v1_payments_proto_rawDesc = "" +
 	"\x13PAYMENT_METHOD_YAPE\x10\x02\x12\x17\n" +
 	"\x13PAYMENT_METHOD_PLIN\x10\x03\x12\x1b\n" +
 	"\x17PAYMENT_METHOD_TRANSFER\x10\x04\x12\x18\n" +
-	"\x14PAYMENT_METHOD_OTHER\x10\x05*\x9c\x01\n" +
+	"\x14PAYMENT_METHOD_OTHER\x10\x05*\xbd\x01\n" +
 	"\rReceiptStatus\x12\x1e\n" +
 	"\x1aRECEIPT_STATUS_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13RECEIPT_STATUS_PAID\x10\x01\x12\x1a\n" +
 	"\x16RECEIPT_STATUS_PARTIAL\x10\x02\x12\x1a\n" +
 	"\x16RECEIPT_STATUS_PENDING\x10\x03\x12\x1a\n" +
-	"\x16RECEIPT_STATUS_OVERDUE\x10\x04BBZ@github.com/infira/involt/backend/internal/gen/involt/v1;involtv1b\x06proto3"
+	"\x16RECEIPT_STATUS_OVERDUE\x10\x04\x12\x1f\n" +
+	"\x1bRECEIPT_STATUS_IN_AGREEMENT\x10\x05BBZ@github.com/infira/involt/backend/internal/gen/involt/v1;involtv1b\x06proto3"
 
 var (
 	file_involt_v1_payments_proto_rawDescOnce sync.Once
@@ -1308,6 +1377,7 @@ var file_involt_v1_payments_proto_goTypes = []any{
 	(*GetCashClosingResponse)(nil),     // 16: involt.v1.GetCashClosingResponse
 	(*Reading)(nil),                    // 17: involt.v1.Reading
 	(*Customer)(nil),                   // 18: involt.v1.Customer
+	(*PaymentAgreement)(nil),           // 19: involt.v1.PaymentAgreement
 }
 var file_involt_v1_payments_proto_depIdxs = []int32{
 	17, // 0: involt.v1.ReceiptBalance.reading:type_name -> involt.v1.Reading
@@ -1317,19 +1387,20 @@ var file_involt_v1_payments_proto_depIdxs = []int32{
 	18, // 4: involt.v1.GetCustomerAccountResponse.customer:type_name -> involt.v1.Customer
 	2,  // 5: involt.v1.GetCustomerAccountResponse.receipts:type_name -> involt.v1.ReceiptBalance
 	4,  // 6: involt.v1.GetCustomerAccountResponse.payments:type_name -> involt.v1.Payment
-	0,  // 7: involt.v1.RegisterPaymentRequest.method:type_name -> involt.v1.PaymentMethod
-	4,  // 8: involt.v1.RegisterPaymentResponse.payment:type_name -> involt.v1.Payment
-	4,  // 9: involt.v1.VoidPaymentResponse.payment:type_name -> involt.v1.Payment
-	17, // 10: involt.v1.CreateFlatChargeResponse.reading:type_name -> involt.v1.Reading
-	0,  // 11: involt.v1.MethodTotal.method:type_name -> involt.v1.PaymentMethod
-	4,  // 12: involt.v1.GetCashClosingResponse.payments:type_name -> involt.v1.Payment
-	14, // 13: involt.v1.GetCashClosingResponse.by_method:type_name -> involt.v1.MethodTotal
-	15, // 14: involt.v1.GetCashClosingResponse.by_collector:type_name -> involt.v1.CollectorTotal
-	15, // [15:15] is the sub-list for method output_type
-	15, // [15:15] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	19, // 7: involt.v1.GetCustomerAccountResponse.agreements:type_name -> involt.v1.PaymentAgreement
+	0,  // 8: involt.v1.RegisterPaymentRequest.method:type_name -> involt.v1.PaymentMethod
+	4,  // 9: involt.v1.RegisterPaymentResponse.payment:type_name -> involt.v1.Payment
+	4,  // 10: involt.v1.VoidPaymentResponse.payment:type_name -> involt.v1.Payment
+	17, // 11: involt.v1.CreateFlatChargeResponse.reading:type_name -> involt.v1.Reading
+	0,  // 12: involt.v1.MethodTotal.method:type_name -> involt.v1.PaymentMethod
+	4,  // 13: involt.v1.GetCashClosingResponse.payments:type_name -> involt.v1.Payment
+	14, // 14: involt.v1.GetCashClosingResponse.by_method:type_name -> involt.v1.MethodTotal
+	15, // 15: involt.v1.GetCashClosingResponse.by_collector:type_name -> involt.v1.CollectorTotal
+	16, // [16:16] is the sub-list for method output_type
+	16, // [16:16] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_involt_v1_payments_proto_init() }
@@ -1337,6 +1408,7 @@ func file_involt_v1_payments_proto_init() {
 	if File_involt_v1_payments_proto != nil {
 		return
 	}
+	file_involt_v1_agreements_proto_init()
 	file_involt_v1_models_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{

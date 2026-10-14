@@ -44,6 +44,7 @@ class ReceiptStatus extends $pb.ProtobufEnum {
   static const ReceiptStatus RECEIPT_STATUS_PARTIAL = ReceiptStatus._(2, _omitEnumNames ? '' : 'RECEIPT_STATUS_PARTIAL');
   static const ReceiptStatus RECEIPT_STATUS_PENDING = ReceiptStatus._(3, _omitEnumNames ? '' : 'RECEIPT_STATUS_PENDING');
   static const ReceiptStatus RECEIPT_STATUS_OVERDUE = ReceiptStatus._(4, _omitEnumNames ? '' : 'RECEIPT_STATUS_OVERDUE');
+  static const ReceiptStatus RECEIPT_STATUS_IN_AGREEMENT = ReceiptStatus._(5, _omitEnumNames ? '' : 'RECEIPT_STATUS_IN_AGREEMENT');
 
   static const $core.List<ReceiptStatus> values = <ReceiptStatus> [
     RECEIPT_STATUS_UNSPECIFIED,
@@ -51,6 +52,7 @@ class ReceiptStatus extends $pb.ProtobufEnum {
     RECEIPT_STATUS_PARTIAL,
     RECEIPT_STATUS_PENDING,
     RECEIPT_STATUS_OVERDUE,
+    RECEIPT_STATUS_IN_AGREEMENT,
   ];
 
   static final $core.Map<$core.int, ReceiptStatus> _byValue = $pb.ProtobufEnum.initByValue(values);

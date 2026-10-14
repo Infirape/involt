@@ -170,6 +170,8 @@ const DebtorRow$json = {
     {'1': 'days_overdue', '3': 12, '4': 1, '5': 5, '10': 'daysOverdue'},
     {'1': 'last_payment_at', '3': 13, '4': 1, '5': 9, '10': 'lastPaymentAt'},
     {'1': 'cut_candidate', '3': 14, '4': 1, '5': 8, '10': 'cutCandidate'},
+    {'1': 'in_agreement', '3': 15, '4': 1, '5': 8, '10': 'inAgreement'},
+    {'1': 'agreement_in_default', '3': 16, '4': 1, '5': 8, '10': 'agreementInDefault'},
   ],
 };
 
@@ -184,7 +186,9 @@ final $typed_data.Uint8List debtorRowDescriptor = $convert.base64Decode(
     'dmVyZHVlX3JlY2VpcHRzGAogASgFUg9vdmVyZHVlUmVjZWlwdHMSMgoVb2xkZXN0X292ZXJkdW'
     'VfcGVyaW9kGAsgASgJUhNvbGRlc3RPdmVyZHVlUGVyaW9kEiEKDGRheXNfb3ZlcmR1ZRgMIAEo'
     'BVILZGF5c092ZXJkdWUSJgoPbGFzdF9wYXltZW50X2F0GA0gASgJUg1sYXN0UGF5bWVudEF0Ei'
-    'MKDWN1dF9jYW5kaWRhdGUYDiABKAhSDGN1dENhbmRpZGF0ZQ==');
+    'MKDWN1dF9jYW5kaWRhdGUYDiABKAhSDGN1dENhbmRpZGF0ZRIhCgxpbl9hZ3JlZW1lbnQYDyAB'
+    'KAhSC2luQWdyZWVtZW50EjAKFGFncmVlbWVudF9pbl9kZWZhdWx0GBAgASgIUhJhZ3JlZW1lbn'
+    'RJbkRlZmF1bHQ=');
 
 @$core.Deprecated('Use getDebtorsRequestDescriptor instead')
 const GetDebtorsRequest$json = {

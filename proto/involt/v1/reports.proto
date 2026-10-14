@@ -79,6 +79,8 @@ message DebtorRow {
   int32 days_overdue = 12;
   string last_payment_at = 13; // ISO 8601, empty if never paid
   bool cut_candidate = 14;
+  bool in_agreement = 15; // has an on-schedule agreement
+  bool agreement_in_default = 16;
 }
 
 message GetDebtorsRequest {

@@ -575,6 +575,8 @@ type DebtorRow struct {
 	DaysOverdue         int32                  `protobuf:"varint,12,opt,name=days_overdue,json=daysOverdue,proto3" json:"days_overdue,omitempty"`
 	LastPaymentAt       string                 `protobuf:"bytes,13,opt,name=last_payment_at,json=lastPaymentAt,proto3" json:"last_payment_at,omitempty"` // ISO 8601, empty if never paid
 	CutCandidate        bool                   `protobuf:"varint,14,opt,name=cut_candidate,json=cutCandidate,proto3" json:"cut_candidate,omitempty"`
+	InAgreement         bool                   `protobuf:"varint,15,opt,name=in_agreement,json=inAgreement,proto3" json:"in_agreement,omitempty"` // has an on-schedule agreement
+	AgreementInDefault  bool                   `protobuf:"varint,16,opt,name=agreement_in_default,json=agreementInDefault,proto3" json:"agreement_in_default,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -703,6 +705,20 @@ func (x *DebtorRow) GetLastPaymentAt() string {
 func (x *DebtorRow) GetCutCandidate() bool {
 	if x != nil {
 		return x.CutCandidate
+	}
+	return false
+}
+
+func (x *DebtorRow) GetInAgreement() bool {
+	if x != nil {
+		return x.InAgreement
+	}
+	return false
+}
+
+func (x *DebtorRow) GetAgreementInDefault() bool {
+	if x != nil {
+		return x.AgreementInDefault
 	}
 	return false
 }
@@ -915,7 +931,7 @@ const file_involt_v1_reports_proto_rawDesc = "" +
 	"\x05aging\x18\x04 \x03(\v2\x15.involt.v1.AgingTotalR\x05aging\x12\x1f\n" +
 	"\vfrom_period\x18\x05 \x01(\tR\n" +
 	"fromPeriod\x12\x1b\n" +
-	"\tto_period\x18\x06 \x01(\tR\btoPeriod\"\x97\x04\n" +
+	"\tto_period\x18\x06 \x01(\tR\btoPeriod\"\xec\x04\n" +
 	"\tDebtorRow\x12\x1f\n" +
 	"\vcustomer_id\x18\x01 \x01(\tR\n" +
 	"customerId\x12#\n" +
@@ -934,7 +950,9 @@ const file_involt_v1_reports_proto_rawDesc = "" +
 	"\x15oldest_overdue_period\x18\v \x01(\tR\x13oldestOverduePeriod\x12!\n" +
 	"\fdays_overdue\x18\f \x01(\x05R\vdaysOverdue\x12&\n" +
 	"\x0flast_payment_at\x18\r \x01(\tR\rlastPaymentAt\x12#\n" +
-	"\rcut_candidate\x18\x0e \x01(\bR\fcutCandidate\"\x8d\x02\n" +
+	"\rcut_candidate\x18\x0e \x01(\bR\fcutCandidate\x12!\n" +
+	"\fin_agreement\x18\x0f \x01(\bR\vinAgreement\x120\n" +
+	"\x14agreement_in_default\x18\x10 \x01(\bR\x12agreementInDefault\"\x8d\x02\n" +
 	"\x11GetDebtorsRequest\x12!\n" +
 	"\fcommunity_id\x18\x01 \x01(\tR\vcommunityId\x12\x1b\n" +
 	"\tsector_id\x18\x02 \x01(\tR\bsectorId\x12\x16\n" +

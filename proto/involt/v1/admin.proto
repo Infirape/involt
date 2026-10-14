@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package involt.v1;
 
+import "involt/v1/agreements.proto";
 import "involt/v1/models.proto";
 import "involt/v1/payments.proto";
 import "involt/v1/reports.proto";
@@ -98,6 +99,24 @@ service AdminService {
 
   // GetDebtors lists customers with outstanding balance and service-cut candidates.
   rpc GetDebtors(GetDebtorsRequest) returns (GetDebtorsResponse);
+
+  // GetCollectionPolicy returns the late fee and agreement rules.
+  rpc GetCollectionPolicy(GetCollectionPolicyRequest) returns (GetCollectionPolicyResponse);
+
+  // UpdateCollectionPolicy changes the late fee and agreement rules (admin only).
+  rpc UpdateCollectionPolicy(UpdateCollectionPolicyRequest) returns (UpdateCollectionPolicyResponse);
+
+  // WaiveLateFee forgives the mora of receipts (admin/supervisor).
+  rpc WaiveLateFee(WaiveLateFeeRequest) returns (WaiveLateFeeResponse);
+
+  // PreviewAgreement computes an agreement's totals and schedule without saving it.
+  rpc PreviewAgreement(AgreementRequest) returns (PreviewAgreementResponse);
+
+  // CreateAgreement signs a payment agreement and collects its initial payment.
+  rpc CreateAgreement(AgreementRequest) returns (CreateAgreementResponse);
+
+  // CancelAgreement cancels an active agreement (admin/supervisor).
+  rpc CancelAgreement(CancelAgreementRequest) returns (CancelAgreementResponse);
 }
 
 message UpsertSectorRequest {

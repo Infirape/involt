@@ -695,6 +695,8 @@ class DebtorRow extends $pb.GeneratedMessage {
     $core.int? daysOverdue,
     $core.String? lastPaymentAt,
     $core.bool? cutCandidate,
+    $core.bool? inAgreement,
+    $core.bool? agreementInDefault,
   }) {
     final $result = create();
     if (customerId != null) {
@@ -739,6 +741,12 @@ class DebtorRow extends $pb.GeneratedMessage {
     if (cutCandidate != null) {
       $result.cutCandidate = cutCandidate;
     }
+    if (inAgreement != null) {
+      $result.inAgreement = inAgreement;
+    }
+    if (agreementInDefault != null) {
+      $result.agreementInDefault = agreementInDefault;
+    }
     return $result;
   }
   DebtorRow._() : super();
@@ -760,6 +768,8 @@ class DebtorRow extends $pb.GeneratedMessage {
     ..a<$core.int>(12, _omitFieldNames ? '' : 'daysOverdue', $pb.PbFieldType.O3)
     ..aOS(13, _omitFieldNames ? '' : 'lastPaymentAt')
     ..aOB(14, _omitFieldNames ? '' : 'cutCandidate')
+    ..aOB(15, _omitFieldNames ? '' : 'inAgreement')
+    ..aOB(16, _omitFieldNames ? '' : 'agreementInDefault')
     ..hasRequiredFields = false
   ;
 
@@ -909,6 +919,24 @@ class DebtorRow extends $pb.GeneratedMessage {
   $core.bool hasCutCandidate() => $_has(13);
   @$pb.TagNumber(14)
   void clearCutCandidate() => clearField(14);
+
+  @$pb.TagNumber(15)
+  $core.bool get inAgreement => $_getBF(14);
+  @$pb.TagNumber(15)
+  set inAgreement($core.bool v) { $_setBool(14, v); }
+  @$pb.TagNumber(15)
+  $core.bool hasInAgreement() => $_has(14);
+  @$pb.TagNumber(15)
+  void clearInAgreement() => clearField(15);
+
+  @$pb.TagNumber(16)
+  $core.bool get agreementInDefault => $_getBF(15);
+  @$pb.TagNumber(16)
+  set agreementInDefault($core.bool v) { $_setBool(15, v); }
+  @$pb.TagNumber(16)
+  $core.bool hasAgreementInDefault() => $_has(15);
+  @$pb.TagNumber(16)
+  void clearAgreementInDefault() => clearField(16);
 }
 
 class GetDebtorsRequest extends $pb.GeneratedMessage {

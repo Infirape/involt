@@ -15,9 +15,10 @@ import 'dart:core' as $core;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 import 'admin.pbenum.dart';
+import 'agreements.pb.dart' as $1;
 import 'models.pb.dart' as $0;
-import 'payments.pb.dart' as $1;
-import 'reports.pb.dart' as $2;
+import 'payments.pb.dart' as $2;
+import 'reports.pb.dart' as $3;
 
 export 'admin.pbenum.dart';
 
@@ -2743,7 +2744,7 @@ class CollectionCustomer extends $pb.GeneratedMessage {
   factory CollectionCustomer({
     $0.Customer? customer,
     $core.Iterable<$0.Reading>? readings,
-    $core.Iterable<$1.ReceiptBalance>? receipts,
+    $core.Iterable<$2.ReceiptBalance>? receipts,
     $core.double? totalDebt,
   }) {
     final $result = create();
@@ -2768,7 +2769,7 @@ class CollectionCustomer extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'CollectionCustomer', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
     ..aOM<$0.Customer>(1, _omitFieldNames ? '' : 'customer', subBuilder: $0.Customer.create)
     ..pc<$0.Reading>(2, _omitFieldNames ? '' : 'readings', $pb.PbFieldType.PM, subBuilder: $0.Reading.create)
-    ..pc<$1.ReceiptBalance>(3, _omitFieldNames ? '' : 'receipts', $pb.PbFieldType.PM, subBuilder: $1.ReceiptBalance.create)
+    ..pc<$2.ReceiptBalance>(3, _omitFieldNames ? '' : 'receipts', $pb.PbFieldType.PM, subBuilder: $2.ReceiptBalance.create)
     ..a<$core.double>(4, _omitFieldNames ? '' : 'totalDebt', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
@@ -2809,7 +2810,7 @@ class CollectionCustomer extends $pb.GeneratedMessage {
   $core.List<$0.Reading> get readings => $_getList(1);
 
   @$pb.TagNumber(3)
-  $core.List<$1.ReceiptBalance> get receipts => $_getList(2);
+  $core.List<$2.ReceiptBalance> get receipts => $_getList(2);
 
   @$pb.TagNumber(4)
   $core.double get totalDebt => $_getN(3);
@@ -3091,26 +3092,44 @@ class AdminServiceApi {
   $async.Future<GetCollectionsResponse> getCollections($pb.ClientContext? ctx, GetCollectionsRequest request) =>
     _client.invoke<GetCollectionsResponse>(ctx, 'AdminService', 'GetCollections', request, GetCollectionsResponse())
   ;
-  $async.Future<$1.GetCustomerAccountResponse> getCustomerAccount($pb.ClientContext? ctx, $1.GetCustomerAccountRequest request) =>
-    _client.invoke<$1.GetCustomerAccountResponse>(ctx, 'AdminService', 'GetCustomerAccount', request, $1.GetCustomerAccountResponse())
+  $async.Future<$2.GetCustomerAccountResponse> getCustomerAccount($pb.ClientContext? ctx, $2.GetCustomerAccountRequest request) =>
+    _client.invoke<$2.GetCustomerAccountResponse>(ctx, 'AdminService', 'GetCustomerAccount', request, $2.GetCustomerAccountResponse())
   ;
-  $async.Future<$1.RegisterPaymentResponse> registerPayment($pb.ClientContext? ctx, $1.RegisterPaymentRequest request) =>
-    _client.invoke<$1.RegisterPaymentResponse>(ctx, 'AdminService', 'RegisterPayment', request, $1.RegisterPaymentResponse())
+  $async.Future<$2.RegisterPaymentResponse> registerPayment($pb.ClientContext? ctx, $2.RegisterPaymentRequest request) =>
+    _client.invoke<$2.RegisterPaymentResponse>(ctx, 'AdminService', 'RegisterPayment', request, $2.RegisterPaymentResponse())
   ;
-  $async.Future<$1.VoidPaymentResponse> voidPayment($pb.ClientContext? ctx, $1.VoidPaymentRequest request) =>
-    _client.invoke<$1.VoidPaymentResponse>(ctx, 'AdminService', 'VoidPayment', request, $1.VoidPaymentResponse())
+  $async.Future<$2.VoidPaymentResponse> voidPayment($pb.ClientContext? ctx, $2.VoidPaymentRequest request) =>
+    _client.invoke<$2.VoidPaymentResponse>(ctx, 'AdminService', 'VoidPayment', request, $2.VoidPaymentResponse())
   ;
-  $async.Future<$1.CreateFlatChargeResponse> createFlatCharge($pb.ClientContext? ctx, $1.CreateFlatChargeRequest request) =>
-    _client.invoke<$1.CreateFlatChargeResponse>(ctx, 'AdminService', 'CreateFlatCharge', request, $1.CreateFlatChargeResponse())
+  $async.Future<$2.CreateFlatChargeResponse> createFlatCharge($pb.ClientContext? ctx, $2.CreateFlatChargeRequest request) =>
+    _client.invoke<$2.CreateFlatChargeResponse>(ctx, 'AdminService', 'CreateFlatCharge', request, $2.CreateFlatChargeResponse())
   ;
-  $async.Future<$1.GetCashClosingResponse> getCashClosing($pb.ClientContext? ctx, $1.GetCashClosingRequest request) =>
-    _client.invoke<$1.GetCashClosingResponse>(ctx, 'AdminService', 'GetCashClosing', request, $1.GetCashClosingResponse())
+  $async.Future<$2.GetCashClosingResponse> getCashClosing($pb.ClientContext? ctx, $2.GetCashClosingRequest request) =>
+    _client.invoke<$2.GetCashClosingResponse>(ctx, 'AdminService', 'GetCashClosing', request, $2.GetCashClosingResponse())
   ;
-  $async.Future<$2.GetCollectionsDashboardResponse> getCollectionsDashboard($pb.ClientContext? ctx, $2.GetCollectionsDashboardRequest request) =>
-    _client.invoke<$2.GetCollectionsDashboardResponse>(ctx, 'AdminService', 'GetCollectionsDashboard', request, $2.GetCollectionsDashboardResponse())
+  $async.Future<$3.GetCollectionsDashboardResponse> getCollectionsDashboard($pb.ClientContext? ctx, $3.GetCollectionsDashboardRequest request) =>
+    _client.invoke<$3.GetCollectionsDashboardResponse>(ctx, 'AdminService', 'GetCollectionsDashboard', request, $3.GetCollectionsDashboardResponse())
   ;
-  $async.Future<$2.GetDebtorsResponse> getDebtors($pb.ClientContext? ctx, $2.GetDebtorsRequest request) =>
-    _client.invoke<$2.GetDebtorsResponse>(ctx, 'AdminService', 'GetDebtors', request, $2.GetDebtorsResponse())
+  $async.Future<$3.GetDebtorsResponse> getDebtors($pb.ClientContext? ctx, $3.GetDebtorsRequest request) =>
+    _client.invoke<$3.GetDebtorsResponse>(ctx, 'AdminService', 'GetDebtors', request, $3.GetDebtorsResponse())
+  ;
+  $async.Future<$1.GetCollectionPolicyResponse> getCollectionPolicy($pb.ClientContext? ctx, $1.GetCollectionPolicyRequest request) =>
+    _client.invoke<$1.GetCollectionPolicyResponse>(ctx, 'AdminService', 'GetCollectionPolicy', request, $1.GetCollectionPolicyResponse())
+  ;
+  $async.Future<$1.UpdateCollectionPolicyResponse> updateCollectionPolicy($pb.ClientContext? ctx, $1.UpdateCollectionPolicyRequest request) =>
+    _client.invoke<$1.UpdateCollectionPolicyResponse>(ctx, 'AdminService', 'UpdateCollectionPolicy', request, $1.UpdateCollectionPolicyResponse())
+  ;
+  $async.Future<$1.WaiveLateFeeResponse> waiveLateFee($pb.ClientContext? ctx, $1.WaiveLateFeeRequest request) =>
+    _client.invoke<$1.WaiveLateFeeResponse>(ctx, 'AdminService', 'WaiveLateFee', request, $1.WaiveLateFeeResponse())
+  ;
+  $async.Future<$1.PreviewAgreementResponse> previewAgreement($pb.ClientContext? ctx, $1.AgreementRequest request) =>
+    _client.invoke<$1.PreviewAgreementResponse>(ctx, 'AdminService', 'PreviewAgreement', request, $1.PreviewAgreementResponse())
+  ;
+  $async.Future<$1.CreateAgreementResponse> createAgreement($pb.ClientContext? ctx, $1.AgreementRequest request) =>
+    _client.invoke<$1.CreateAgreementResponse>(ctx, 'AdminService', 'CreateAgreement', request, $1.CreateAgreementResponse())
+  ;
+  $async.Future<$1.CancelAgreementResponse> cancelAgreement($pb.ClientContext? ctx, $1.CancelAgreementRequest request) =>
+    _client.invoke<$1.CancelAgreementResponse>(ctx, 'AdminService', 'CancelAgreement', request, $1.CancelAgreementResponse())
   ;
 }
 

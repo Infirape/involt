@@ -4,6 +4,8 @@
 
 import type { GenEnum, GenFile, GenMessage } from "@bufbuild/protobuf/codegenv2";
 import { enumDesc, fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv2";
+import type { PaymentAgreement } from "./agreements_pb";
+import { file_involt_v1_agreements } from "./agreements_pb";
 import type { Customer, Reading } from "./models_pb";
 import { file_involt_v1_models } from "./models_pb";
 import type { Message } from "@bufbuild/protobuf";
@@ -12,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file involt/v1/payments.proto.
  */
 export const file_involt_v1_payments: GenFile = /*@__PURE__*/
-  fileDesc("ChhpbnZvbHQvdjEvcGF5bWVudHMucHJvdG8SCWludm9sdC52MSKFAQoOUmVjZWlwdEJhbGFuY2USIwoHcmVhZGluZxgBIAEoCzISLmludm9sdC52MS5SZWFkaW5nEhMKC3BhaWRfYW1vdW50GAIgASgBEg8KB2JhbGFuY2UYAyABKAESKAoGc3RhdHVzGAQgASgOMhguaW52b2x0LnYxLlJlY2VpcHRTdGF0dXMiRwoRUGF5bWVudEFsbG9jYXRpb24SEgoKcmVhZGluZ19pZBgBIAEoCRIOCgZwZXJpb2QYAiABKAkSDgoGYW1vdW50GAMgASgBIoADCgdQYXltZW50EgoKAmlkGAEgASgJEhYKDnJlY2VpcHRfbnVtYmVyGAIgASgDEhMKC2N1c3RvbWVyX2lkGAMgASgJEhUKDWN1c3RvbWVyX25hbWUYBCABKAkSFQoNY3VzdG9tZXJfY29kZRgFIAEoCRIOCgZhbW91bnQYBiABKAESKAoGbWV0aG9kGAcgASgOMhguaW52b2x0LnYxLlBheW1lbnRNZXRob2QSEQoJcmVmZXJlbmNlGAggASgJEhMKC29ic2VydmF0aW9uGAkgASgJEhoKEmNvbGxlY3RlZF9ieV9lbWFpbBgKIAEoCRIPCgdwYWlkX2F0GAsgASgJEg4KBnZvaWRlZBgMIAEoCBIRCgl2b2lkZWRfYXQYDSABKAkSEwoLdm9pZF9yZWFzb24YDiABKAkSMQoLYWxsb2NhdGlvbnMYDyADKAsyHC5pbnZvbHQudjEuUGF5bWVudEFsbG9jYXRpb24SFAoMY29sbGVjdGVkX2J5GBAgASgJIjAKGUdldEN1c3RvbWVyQWNjb3VudFJlcXVlc3QSEwoLY3VzdG9tZXJfaWQYASABKAkiwQEKGkdldEN1c3RvbWVyQWNjb3VudFJlc3BvbnNlEiUKCGN1c3RvbWVyGAEgASgLMhMuaW52b2x0LnYxLkN1c3RvbWVyEisKCHJlY2VpcHRzGAIgAygLMhkuaW52b2x0LnYxLlJlY2VpcHRCYWxhbmNlEiQKCHBheW1lbnRzGAMgAygLMhIuaW52b2x0LnYxLlBheW1lbnQSEgoKdG90YWxfZGVidBgEIAEoARIVCg1vdmVyZHVlX2NvdW50GAUgASgFIqQBChZSZWdpc3RlclBheW1lbnRSZXF1ZXN0EhMKC2N1c3RvbWVyX2lkGAEgASgJEhMKC3JlYWRpbmdfaWRzGAIgAygJEg4KBmFtb3VudBgDIAEoARIoCgZtZXRob2QYBCABKA4yGC5pbnZvbHQudjEuUGF5bWVudE1ldGhvZBIRCglyZWZlcmVuY2UYBSABKAkSEwoLb2JzZXJ2YXRpb24YBiABKAkiPgoXUmVnaXN0ZXJQYXltZW50UmVzcG9uc2USIwoHcGF5bWVudBgBIAEoCzISLmludm9sdC52MS5QYXltZW50IjgKElZvaWRQYXltZW50UmVxdWVzdBISCgpwYXltZW50X2lkGAEgASgJEg4KBnJlYXNvbhgCIAEoCSI6ChNWb2lkUGF5bWVudFJlc3BvbnNlEiMKB3BheW1lbnQYASABKAsyEi5pbnZvbHQudjEuUGF5bWVudCJjChdDcmVhdGVGbGF0Q2hhcmdlUmVxdWVzdBITCgtjdXN0b21lcl9pZBgBIAEoCRIOCgZwZXJpb2QYAiABKAkSDgoGYW1vdW50GAMgASgBEhMKC29ic2VydmF0aW9uGAQgASgJIj8KGENyZWF0ZUZsYXRDaGFyZ2VSZXNwb25zZRIjCgdyZWFkaW5nGAEgASgLMhIuaW52b2x0LnYxLlJlYWRpbmciUQoVR2V0Q2FzaENsb3NpbmdSZXF1ZXN0EhEKCWRhdGVfZnJvbRgBIAEoCRIPCgdkYXRlX3RvGAIgASgJEhQKDGNvbGxlY3RlZF9ieRgDIAEoCSJWCgtNZXRob2RUb3RhbBIoCgZtZXRob2QYASABKA4yGC5pbnZvbHQudjEuUGF5bWVudE1ldGhvZBIOCgZhbW91bnQYAiABKAESDQoFY291bnQYAyABKAUiYQoOQ29sbGVjdG9yVG90YWwSFAoMY29sbGVjdGVkX2J5GAEgASgJEhoKEmNvbGxlY3RlZF9ieV9lbWFpbBgCIAEoCRIOCgZhbW91bnQYAyABKAESDQoFY291bnQYBCABKAUi9AEKFkdldENhc2hDbG9zaW5nUmVzcG9uc2USJAoIcGF5bWVudHMYASADKAsyEi5pbnZvbHQudjEuUGF5bWVudBIUCgx0b3RhbF9hbW91bnQYAiABKAESFQoNcGF5bWVudF9jb3VudBgDIAEoBRIpCglieV9tZXRob2QYBCADKAsyFi5pbnZvbHQudjEuTWV0aG9kVG90YWwSLwoMYnlfY29sbGVjdG9yGAUgAygLMhkuaW52b2x0LnYxLkNvbGxlY3RvclRvdGFsEhUKDXZvaWRlZF9hbW91bnQYBiABKAESFAoMdm9pZGVkX2NvdW50GAcgASgFKrEBCg1QYXltZW50TWV0aG9kEh4KGlBBWU1FTlRfTUVUSE9EX1VOU1BFQ0lGSUVEEAASFwoTUEFZTUVOVF9NRVRIT0RfQ0FTSBABEhcKE1BBWU1FTlRfTUVUSE9EX1lBUEUQAhIXChNQQVlNRU5UX01FVEhPRF9QTElOEAMSGwoXUEFZTUVOVF9NRVRIT0RfVFJBTlNGRVIQBBIYChRQQVlNRU5UX01FVEhPRF9PVEhFUhAFKpwBCg1SZWNlaXB0U3RhdHVzEh4KGlJFQ0VJUFRfU1RBVFVTX1VOU1BFQ0lGSUVEEAASFwoTUkVDRUlQVF9TVEFUVVNfUEFJRBABEhoKFlJFQ0VJUFRfU1RBVFVTX1BBUlRJQUwQAhIaChZSRUNFSVBUX1NUQVRVU19QRU5ESU5HEAMSGgoWUkVDRUlQVF9TVEFUVVNfT1ZFUkRVRRAEQkJaQGdpdGh1Yi5jb20vaW5maXJhL2ludm9sdC9iYWNrZW5kL2ludGVybmFsL2dlbi9pbnZvbHQvdjE7aW52b2x0djFiBnByb3RvMw", [file_involt_v1_models]);
+  fileDesc("ChhpbnZvbHQvdjEvcGF5bWVudHMucHJvdG8SCWludm9sdC52MSLGAQoOUmVjZWlwdEJhbGFuY2USIwoHcmVhZGluZxgBIAEoCzISLmludm9sdC52MS5SZWFkaW5nEhMKC3BhaWRfYW1vdW50GAIgASgBEg8KB2JhbGFuY2UYAyABKAESKAoGc3RhdHVzGAQgASgOMhguaW52b2x0LnYxLlJlY2VpcHRTdGF0dXMSEAoIbGF0ZV9mZWUYBSABKAESFwoPbGF0ZV9mZWVfd2FpdmVkGAYgASgIEhQKDGFncmVlbWVudF9pZBgHIAEoCSJZChFQYXltZW50QWxsb2NhdGlvbhISCgpyZWFkaW5nX2lkGAEgASgJEg4KBnBlcmlvZBgCIAEoCRIOCgZhbW91bnQYAyABKAESEAoIbGF0ZV9mZWUYBCABKAEigAMKB1BheW1lbnQSCgoCaWQYASABKAkSFgoOcmVjZWlwdF9udW1iZXIYAiABKAMSEwoLY3VzdG9tZXJfaWQYAyABKAkSFQoNY3VzdG9tZXJfbmFtZRgEIAEoCRIVCg1jdXN0b21lcl9jb2RlGAUgASgJEg4KBmFtb3VudBgGIAEoARIoCgZtZXRob2QYByABKA4yGC5pbnZvbHQudjEuUGF5bWVudE1ldGhvZBIRCglyZWZlcmVuY2UYCCABKAkSEwoLb2JzZXJ2YXRpb24YCSABKAkSGgoSY29sbGVjdGVkX2J5X2VtYWlsGAogASgJEg8KB3BhaWRfYXQYCyABKAkSDgoGdm9pZGVkGAwgASgIEhEKCXZvaWRlZF9hdBgNIAEoCRITCgt2b2lkX3JlYXNvbhgOIAEoCRIxCgthbGxvY2F0aW9ucxgPIAMoCzIcLmludm9sdC52MS5QYXltZW50QWxsb2NhdGlvbhIUCgxjb2xsZWN0ZWRfYnkYECABKAkiMAoZR2V0Q3VzdG9tZXJBY2NvdW50UmVxdWVzdBITCgtjdXN0b21lcl9pZBgBIAEoCSKnAgoaR2V0Q3VzdG9tZXJBY2NvdW50UmVzcG9uc2USJQoIY3VzdG9tZXIYASABKAsyEy5pbnZvbHQudjEuQ3VzdG9tZXISKwoIcmVjZWlwdHMYAiADKAsyGS5pbnZvbHQudjEuUmVjZWlwdEJhbGFuY2USJAoIcGF5bWVudHMYAyADKAsyEi5pbnZvbHQudjEuUGF5bWVudBISCgp0b3RhbF9kZWJ0GAQgASgBEhUKDW92ZXJkdWVfY291bnQYBSABKAUSFwoPdG90YWxfbGF0ZV9mZWVzGAYgASgBEi8KCmFncmVlbWVudHMYByADKAsyGy5pbnZvbHQudjEuUGF5bWVudEFncmVlbWVudBIaChJhZ3JlZW1lbnRzX2VuYWJsZWQYCCABKAgipAEKFlJlZ2lzdGVyUGF5bWVudFJlcXVlc3QSEwoLY3VzdG9tZXJfaWQYASABKAkSEwoLcmVhZGluZ19pZHMYAiADKAkSDgoGYW1vdW50GAMgASgBEigKBm1ldGhvZBgEIAEoDjIYLmludm9sdC52MS5QYXltZW50TWV0aG9kEhEKCXJlZmVyZW5jZRgFIAEoCRITCgtvYnNlcnZhdGlvbhgGIAEoCSI+ChdSZWdpc3RlclBheW1lbnRSZXNwb25zZRIjCgdwYXltZW50GAEgASgLMhIuaW52b2x0LnYxLlBheW1lbnQiOAoSVm9pZFBheW1lbnRSZXF1ZXN0EhIKCnBheW1lbnRfaWQYASABKAkSDgoGcmVhc29uGAIgASgJIjoKE1ZvaWRQYXltZW50UmVzcG9uc2USIwoHcGF5bWVudBgBIAEoCzISLmludm9sdC52MS5QYXltZW50ImMKF0NyZWF0ZUZsYXRDaGFyZ2VSZXF1ZXN0EhMKC2N1c3RvbWVyX2lkGAEgASgJEg4KBnBlcmlvZBgCIAEoCRIOCgZhbW91bnQYAyABKAESEwoLb2JzZXJ2YXRpb24YBCABKAkiPwoYQ3JlYXRlRmxhdENoYXJnZVJlc3BvbnNlEiMKB3JlYWRpbmcYASABKAsyEi5pbnZvbHQudjEuUmVhZGluZyJRChVHZXRDYXNoQ2xvc2luZ1JlcXVlc3QSEQoJZGF0ZV9mcm9tGAEgASgJEg8KB2RhdGVfdG8YAiABKAkSFAoMY29sbGVjdGVkX2J5GAMgASgJIlYKC01ldGhvZFRvdGFsEigKBm1ldGhvZBgBIAEoDjIYLmludm9sdC52MS5QYXltZW50TWV0aG9kEg4KBmFtb3VudBgCIAEoARINCgVjb3VudBgDIAEoBSJhCg5Db2xsZWN0b3JUb3RhbBIUCgxjb2xsZWN0ZWRfYnkYASABKAkSGgoSY29sbGVjdGVkX2J5X2VtYWlsGAIgASgJEg4KBmFtb3VudBgDIAEoARINCgVjb3VudBgEIAEoBSL0AQoWR2V0Q2FzaENsb3NpbmdSZXNwb25zZRIkCghwYXltZW50cxgBIAMoCzISLmludm9sdC52MS5QYXltZW50EhQKDHRvdGFsX2Ftb3VudBgCIAEoARIVCg1wYXltZW50X2NvdW50GAMgASgFEikKCWJ5X21ldGhvZBgEIAMoCzIWLmludm9sdC52MS5NZXRob2RUb3RhbBIvCgxieV9jb2xsZWN0b3IYBSADKAsyGS5pbnZvbHQudjEuQ29sbGVjdG9yVG90YWwSFQoNdm9pZGVkX2Ftb3VudBgGIAEoARIUCgx2b2lkZWRfY291bnQYByABKAUqsQEKDVBheW1lbnRNZXRob2QSHgoaUEFZTUVOVF9NRVRIT0RfVU5TUEVDSUZJRUQQABIXChNQQVlNRU5UX01FVEhPRF9DQVNIEAESFwoTUEFZTUVOVF9NRVRIT0RfWUFQRRACEhcKE1BBWU1FTlRfTUVUSE9EX1BMSU4QAxIbChdQQVlNRU5UX01FVEhPRF9UUkFOU0ZFUhAEEhgKFFBBWU1FTlRfTUVUSE9EX09USEVSEAUqvQEKDVJlY2VpcHRTdGF0dXMSHgoaUkVDRUlQVF9TVEFUVVNfVU5TUEVDSUZJRUQQABIXChNSRUNFSVBUX1NUQVRVU19QQUlEEAESGgoWUkVDRUlQVF9TVEFUVVNfUEFSVElBTBACEhoKFlJFQ0VJUFRfU1RBVFVTX1BFTkRJTkcQAxIaChZSRUNFSVBUX1NUQVRVU19PVkVSRFVFEAQSHwobUkVDRUlQVF9TVEFUVVNfSU5fQUdSRUVNRU5UEAVCQlpAZ2l0aHViLmNvbS9pbmZpcmEvaW52b2x0L2JhY2tlbmQvaW50ZXJuYWwvZ2VuL2ludm9sdC92MTtpbnZvbHR2MWIGcHJvdG8z", [file_involt_v1_agreements, file_involt_v1_models]);
 
 /**
  * ReceiptBalance is a receipt with how much has been paid and what is still owed.
@@ -39,6 +41,25 @@ export type ReceiptBalance = Message<"involt.v1.ReceiptBalance"> & {
    * @generated from field: involt.v1.ReceiptStatus status = 4;
    */
   status: ReceiptStatus;
+
+  /**
+   * unpaid mora owed today
+   *
+   * @generated from field: double late_fee = 5;
+   */
+  lateFee: number;
+
+  /**
+   * @generated from field: bool late_fee_waived = 6;
+   */
+  lateFeeWaived: boolean;
+
+  /**
+   * active agreement covering this receipt, if any
+   *
+   * @generated from field: string agreement_id = 7;
+   */
+  agreementId: string;
 };
 
 /**
@@ -63,9 +84,16 @@ export type PaymentAllocation = Message<"involt.v1.PaymentAllocation"> & {
   period: string;
 
   /**
+   * principal
+   *
    * @generated from field: double amount = 3;
    */
   amount: number;
+
+  /**
+   * @generated from field: double late_fee = 4;
+   */
+  lateFee: number;
 };
 
 /**
@@ -212,6 +240,8 @@ export type GetCustomerAccountResponse = Message<"involt.v1.GetCustomerAccountRe
   payments: Payment[];
 
   /**
+   * principal + mora
+   *
    * @generated from field: double total_debt = 4;
    */
   totalDebt: number;
@@ -220,6 +250,23 @@ export type GetCustomerAccountResponse = Message<"involt.v1.GetCustomerAccountRe
    * @generated from field: int32 overdue_count = 5;
    */
   overdueCount: number;
+
+  /**
+   * @generated from field: double total_late_fees = 6;
+   */
+  totalLateFees: number;
+
+  /**
+   * newest first
+   *
+   * @generated from field: repeated involt.v1.PaymentAgreement agreements = 7;
+   */
+  agreements: PaymentAgreement[];
+
+  /**
+   * @generated from field: bool agreements_enabled = 8;
+   */
+  agreementsEnabled: boolean;
 };
 
 /**
@@ -603,6 +650,13 @@ export enum ReceiptStatus {
    * @generated from enum value: RECEIPT_STATUS_OVERDUE = 4;
    */
   OVERDUE = 4,
+
+  /**
+   * covered by an on-schedule payment agreement
+   *
+   * @generated from enum value: RECEIPT_STATUS_IN_AGREEMENT = 5;
+   */
+  IN_AGREEMENT = 5,
 }
 
 /**

@@ -114,6 +114,24 @@ const (
 	AdminServiceGetCollectionsDashboardProcedure = "/involt.v1.AdminService/GetCollectionsDashboard"
 	// AdminServiceGetDebtorsProcedure is the fully-qualified name of the AdminService's GetDebtors RPC.
 	AdminServiceGetDebtorsProcedure = "/involt.v1.AdminService/GetDebtors"
+	// AdminServiceGetCollectionPolicyProcedure is the fully-qualified name of the AdminService's
+	// GetCollectionPolicy RPC.
+	AdminServiceGetCollectionPolicyProcedure = "/involt.v1.AdminService/GetCollectionPolicy"
+	// AdminServiceUpdateCollectionPolicyProcedure is the fully-qualified name of the AdminService's
+	// UpdateCollectionPolicy RPC.
+	AdminServiceUpdateCollectionPolicyProcedure = "/involt.v1.AdminService/UpdateCollectionPolicy"
+	// AdminServiceWaiveLateFeeProcedure is the fully-qualified name of the AdminService's WaiveLateFee
+	// RPC.
+	AdminServiceWaiveLateFeeProcedure = "/involt.v1.AdminService/WaiveLateFee"
+	// AdminServicePreviewAgreementProcedure is the fully-qualified name of the AdminService's
+	// PreviewAgreement RPC.
+	AdminServicePreviewAgreementProcedure = "/involt.v1.AdminService/PreviewAgreement"
+	// AdminServiceCreateAgreementProcedure is the fully-qualified name of the AdminService's
+	// CreateAgreement RPC.
+	AdminServiceCreateAgreementProcedure = "/involt.v1.AdminService/CreateAgreement"
+	// AdminServiceCancelAgreementProcedure is the fully-qualified name of the AdminService's
+	// CancelAgreement RPC.
+	AdminServiceCancelAgreementProcedure = "/involt.v1.AdminService/CancelAgreement"
 )
 
 // AdminServiceClient is a client for the involt.v1.AdminService service.
@@ -178,6 +196,18 @@ type AdminServiceClient interface {
 	GetCollectionsDashboard(context.Context, *connect.Request[v1.GetCollectionsDashboardRequest]) (*connect.Response[v1.GetCollectionsDashboardResponse], error)
 	// GetDebtors lists customers with outstanding balance and service-cut candidates.
 	GetDebtors(context.Context, *connect.Request[v1.GetDebtorsRequest]) (*connect.Response[v1.GetDebtorsResponse], error)
+	// GetCollectionPolicy returns the late fee and agreement rules.
+	GetCollectionPolicy(context.Context, *connect.Request[v1.GetCollectionPolicyRequest]) (*connect.Response[v1.GetCollectionPolicyResponse], error)
+	// UpdateCollectionPolicy changes the late fee and agreement rules (admin only).
+	UpdateCollectionPolicy(context.Context, *connect.Request[v1.UpdateCollectionPolicyRequest]) (*connect.Response[v1.UpdateCollectionPolicyResponse], error)
+	// WaiveLateFee forgives the mora of receipts (admin/supervisor).
+	WaiveLateFee(context.Context, *connect.Request[v1.WaiveLateFeeRequest]) (*connect.Response[v1.WaiveLateFeeResponse], error)
+	// PreviewAgreement computes an agreement's totals and schedule without saving it.
+	PreviewAgreement(context.Context, *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.PreviewAgreementResponse], error)
+	// CreateAgreement signs a payment agreement and collects its initial payment.
+	CreateAgreement(context.Context, *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.CreateAgreementResponse], error)
+	// CancelAgreement cancels an active agreement (admin/supervisor).
+	CancelAgreement(context.Context, *connect.Request[v1.CancelAgreementRequest]) (*connect.Response[v1.CancelAgreementResponse], error)
 }
 
 // NewAdminServiceClient constructs a client for the involt.v1.AdminService service. By default, it
@@ -365,6 +395,42 @@ func NewAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(adminServiceMethods.ByName("GetDebtors")),
 			connect.WithClientOptions(opts...),
 		),
+		getCollectionPolicy: connect.NewClient[v1.GetCollectionPolicyRequest, v1.GetCollectionPolicyResponse](
+			httpClient,
+			baseURL+AdminServiceGetCollectionPolicyProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("GetCollectionPolicy")),
+			connect.WithClientOptions(opts...),
+		),
+		updateCollectionPolicy: connect.NewClient[v1.UpdateCollectionPolicyRequest, v1.UpdateCollectionPolicyResponse](
+			httpClient,
+			baseURL+AdminServiceUpdateCollectionPolicyProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("UpdateCollectionPolicy")),
+			connect.WithClientOptions(opts...),
+		),
+		waiveLateFee: connect.NewClient[v1.WaiveLateFeeRequest, v1.WaiveLateFeeResponse](
+			httpClient,
+			baseURL+AdminServiceWaiveLateFeeProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("WaiveLateFee")),
+			connect.WithClientOptions(opts...),
+		),
+		previewAgreement: connect.NewClient[v1.AgreementRequest, v1.PreviewAgreementResponse](
+			httpClient,
+			baseURL+AdminServicePreviewAgreementProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("PreviewAgreement")),
+			connect.WithClientOptions(opts...),
+		),
+		createAgreement: connect.NewClient[v1.AgreementRequest, v1.CreateAgreementResponse](
+			httpClient,
+			baseURL+AdminServiceCreateAgreementProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("CreateAgreement")),
+			connect.WithClientOptions(opts...),
+		),
+		cancelAgreement: connect.NewClient[v1.CancelAgreementRequest, v1.CancelAgreementResponse](
+			httpClient,
+			baseURL+AdminServiceCancelAgreementProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("CancelAgreement")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -399,6 +465,12 @@ type adminServiceClient struct {
 	getCashClosing          *connect.Client[v1.GetCashClosingRequest, v1.GetCashClosingResponse]
 	getCollectionsDashboard *connect.Client[v1.GetCollectionsDashboardRequest, v1.GetCollectionsDashboardResponse]
 	getDebtors              *connect.Client[v1.GetDebtorsRequest, v1.GetDebtorsResponse]
+	getCollectionPolicy     *connect.Client[v1.GetCollectionPolicyRequest, v1.GetCollectionPolicyResponse]
+	updateCollectionPolicy  *connect.Client[v1.UpdateCollectionPolicyRequest, v1.UpdateCollectionPolicyResponse]
+	waiveLateFee            *connect.Client[v1.WaiveLateFeeRequest, v1.WaiveLateFeeResponse]
+	previewAgreement        *connect.Client[v1.AgreementRequest, v1.PreviewAgreementResponse]
+	createAgreement         *connect.Client[v1.AgreementRequest, v1.CreateAgreementResponse]
+	cancelAgreement         *connect.Client[v1.CancelAgreementRequest, v1.CancelAgreementResponse]
 }
 
 // Login calls involt.v1.AdminService.Login.
@@ -546,6 +618,36 @@ func (c *adminServiceClient) GetDebtors(ctx context.Context, req *connect.Reques
 	return c.getDebtors.CallUnary(ctx, req)
 }
 
+// GetCollectionPolicy calls involt.v1.AdminService.GetCollectionPolicy.
+func (c *adminServiceClient) GetCollectionPolicy(ctx context.Context, req *connect.Request[v1.GetCollectionPolicyRequest]) (*connect.Response[v1.GetCollectionPolicyResponse], error) {
+	return c.getCollectionPolicy.CallUnary(ctx, req)
+}
+
+// UpdateCollectionPolicy calls involt.v1.AdminService.UpdateCollectionPolicy.
+func (c *adminServiceClient) UpdateCollectionPolicy(ctx context.Context, req *connect.Request[v1.UpdateCollectionPolicyRequest]) (*connect.Response[v1.UpdateCollectionPolicyResponse], error) {
+	return c.updateCollectionPolicy.CallUnary(ctx, req)
+}
+
+// WaiveLateFee calls involt.v1.AdminService.WaiveLateFee.
+func (c *adminServiceClient) WaiveLateFee(ctx context.Context, req *connect.Request[v1.WaiveLateFeeRequest]) (*connect.Response[v1.WaiveLateFeeResponse], error) {
+	return c.waiveLateFee.CallUnary(ctx, req)
+}
+
+// PreviewAgreement calls involt.v1.AdminService.PreviewAgreement.
+func (c *adminServiceClient) PreviewAgreement(ctx context.Context, req *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.PreviewAgreementResponse], error) {
+	return c.previewAgreement.CallUnary(ctx, req)
+}
+
+// CreateAgreement calls involt.v1.AdminService.CreateAgreement.
+func (c *adminServiceClient) CreateAgreement(ctx context.Context, req *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.CreateAgreementResponse], error) {
+	return c.createAgreement.CallUnary(ctx, req)
+}
+
+// CancelAgreement calls involt.v1.AdminService.CancelAgreement.
+func (c *adminServiceClient) CancelAgreement(ctx context.Context, req *connect.Request[v1.CancelAgreementRequest]) (*connect.Response[v1.CancelAgreementResponse], error) {
+	return c.cancelAgreement.CallUnary(ctx, req)
+}
+
 // AdminServiceHandler is an implementation of the involt.v1.AdminService service.
 type AdminServiceHandler interface {
 	// Login authenticates a user and returns a JWT token.
@@ -608,6 +710,18 @@ type AdminServiceHandler interface {
 	GetCollectionsDashboard(context.Context, *connect.Request[v1.GetCollectionsDashboardRequest]) (*connect.Response[v1.GetCollectionsDashboardResponse], error)
 	// GetDebtors lists customers with outstanding balance and service-cut candidates.
 	GetDebtors(context.Context, *connect.Request[v1.GetDebtorsRequest]) (*connect.Response[v1.GetDebtorsResponse], error)
+	// GetCollectionPolicy returns the late fee and agreement rules.
+	GetCollectionPolicy(context.Context, *connect.Request[v1.GetCollectionPolicyRequest]) (*connect.Response[v1.GetCollectionPolicyResponse], error)
+	// UpdateCollectionPolicy changes the late fee and agreement rules (admin only).
+	UpdateCollectionPolicy(context.Context, *connect.Request[v1.UpdateCollectionPolicyRequest]) (*connect.Response[v1.UpdateCollectionPolicyResponse], error)
+	// WaiveLateFee forgives the mora of receipts (admin/supervisor).
+	WaiveLateFee(context.Context, *connect.Request[v1.WaiveLateFeeRequest]) (*connect.Response[v1.WaiveLateFeeResponse], error)
+	// PreviewAgreement computes an agreement's totals and schedule without saving it.
+	PreviewAgreement(context.Context, *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.PreviewAgreementResponse], error)
+	// CreateAgreement signs a payment agreement and collects its initial payment.
+	CreateAgreement(context.Context, *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.CreateAgreementResponse], error)
+	// CancelAgreement cancels an active agreement (admin/supervisor).
+	CancelAgreement(context.Context, *connect.Request[v1.CancelAgreementRequest]) (*connect.Response[v1.CancelAgreementResponse], error)
 }
 
 // NewAdminServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -791,6 +905,42 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(adminServiceMethods.ByName("GetDebtors")),
 		connect.WithHandlerOptions(opts...),
 	)
+	adminServiceGetCollectionPolicyHandler := connect.NewUnaryHandler(
+		AdminServiceGetCollectionPolicyProcedure,
+		svc.GetCollectionPolicy,
+		connect.WithSchema(adminServiceMethods.ByName("GetCollectionPolicy")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceUpdateCollectionPolicyHandler := connect.NewUnaryHandler(
+		AdminServiceUpdateCollectionPolicyProcedure,
+		svc.UpdateCollectionPolicy,
+		connect.WithSchema(adminServiceMethods.ByName("UpdateCollectionPolicy")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceWaiveLateFeeHandler := connect.NewUnaryHandler(
+		AdminServiceWaiveLateFeeProcedure,
+		svc.WaiveLateFee,
+		connect.WithSchema(adminServiceMethods.ByName("WaiveLateFee")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServicePreviewAgreementHandler := connect.NewUnaryHandler(
+		AdminServicePreviewAgreementProcedure,
+		svc.PreviewAgreement,
+		connect.WithSchema(adminServiceMethods.ByName("PreviewAgreement")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceCreateAgreementHandler := connect.NewUnaryHandler(
+		AdminServiceCreateAgreementProcedure,
+		svc.CreateAgreement,
+		connect.WithSchema(adminServiceMethods.ByName("CreateAgreement")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceCancelAgreementHandler := connect.NewUnaryHandler(
+		AdminServiceCancelAgreementProcedure,
+		svc.CancelAgreement,
+		connect.WithSchema(adminServiceMethods.ByName("CancelAgreement")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/involt.v1.AdminService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AdminServiceLoginProcedure:
@@ -851,6 +1001,18 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 			adminServiceGetCollectionsDashboardHandler.ServeHTTP(w, r)
 		case AdminServiceGetDebtorsProcedure:
 			adminServiceGetDebtorsHandler.ServeHTTP(w, r)
+		case AdminServiceGetCollectionPolicyProcedure:
+			adminServiceGetCollectionPolicyHandler.ServeHTTP(w, r)
+		case AdminServiceUpdateCollectionPolicyProcedure:
+			adminServiceUpdateCollectionPolicyHandler.ServeHTTP(w, r)
+		case AdminServiceWaiveLateFeeProcedure:
+			adminServiceWaiveLateFeeHandler.ServeHTTP(w, r)
+		case AdminServicePreviewAgreementProcedure:
+			adminServicePreviewAgreementHandler.ServeHTTP(w, r)
+		case AdminServiceCreateAgreementProcedure:
+			adminServiceCreateAgreementHandler.ServeHTTP(w, r)
+		case AdminServiceCancelAgreementProcedure:
+			adminServiceCancelAgreementHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -974,4 +1136,28 @@ func (UnimplementedAdminServiceHandler) GetCollectionsDashboard(context.Context,
 
 func (UnimplementedAdminServiceHandler) GetDebtors(context.Context, *connect.Request[v1.GetDebtorsRequest]) (*connect.Response[v1.GetDebtorsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetDebtors is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) GetCollectionPolicy(context.Context, *connect.Request[v1.GetCollectionPolicyRequest]) (*connect.Response[v1.GetCollectionPolicyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetCollectionPolicy is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) UpdateCollectionPolicy(context.Context, *connect.Request[v1.UpdateCollectionPolicyRequest]) (*connect.Response[v1.UpdateCollectionPolicyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.UpdateCollectionPolicy is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) WaiveLateFee(context.Context, *connect.Request[v1.WaiveLateFeeRequest]) (*connect.Response[v1.WaiveLateFeeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.WaiveLateFee is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) PreviewAgreement(context.Context, *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.PreviewAgreementResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.PreviewAgreement is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) CreateAgreement(context.Context, *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.CreateAgreementResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.CreateAgreement is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) CancelAgreement(context.Context, *connect.Request[v1.CancelAgreementRequest]) (*connect.Response[v1.CancelAgreementResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.CancelAgreement is not implemented"))
 }

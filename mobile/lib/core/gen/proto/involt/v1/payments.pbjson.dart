@@ -42,6 +42,7 @@ const ReceiptStatus$json = {
     {'1': 'RECEIPT_STATUS_PARTIAL', '2': 2},
     {'1': 'RECEIPT_STATUS_PENDING', '2': 3},
     {'1': 'RECEIPT_STATUS_OVERDUE', '2': 4},
+    {'1': 'RECEIPT_STATUS_IN_AGREEMENT', '2': 5},
   ],
 };
 
@@ -49,7 +50,8 @@ const ReceiptStatus$json = {
 final $typed_data.Uint8List receiptStatusDescriptor = $convert.base64Decode(
     'Cg1SZWNlaXB0U3RhdHVzEh4KGlJFQ0VJUFRfU1RBVFVTX1VOU1BFQ0lGSUVEEAASFwoTUkVDRU'
     'lQVF9TVEFUVVNfUEFJRBABEhoKFlJFQ0VJUFRfU1RBVFVTX1BBUlRJQUwQAhIaChZSRUNFSVBU'
-    'X1NUQVRVU19QRU5ESU5HEAMSGgoWUkVDRUlQVF9TVEFUVVNfT1ZFUkRVRRAE');
+    'X1NUQVRVU19QRU5ESU5HEAMSGgoWUkVDRUlQVF9TVEFUVVNfT1ZFUkRVRRAEEh8KG1JFQ0VJUF'
+    'RfU1RBVFVTX0lOX0FHUkVFTUVOVBAF');
 
 @$core.Deprecated('Use receiptBalanceDescriptor instead')
 const ReceiptBalance$json = {
@@ -59,6 +61,9 @@ const ReceiptBalance$json = {
     {'1': 'paid_amount', '3': 2, '4': 1, '5': 1, '10': 'paidAmount'},
     {'1': 'balance', '3': 3, '4': 1, '5': 1, '10': 'balance'},
     {'1': 'status', '3': 4, '4': 1, '5': 14, '6': '.involt.v1.ReceiptStatus', '10': 'status'},
+    {'1': 'late_fee', '3': 5, '4': 1, '5': 1, '10': 'lateFee'},
+    {'1': 'late_fee_waived', '3': 6, '4': 1, '5': 8, '10': 'lateFeeWaived'},
+    {'1': 'agreement_id', '3': 7, '4': 1, '5': 9, '10': 'agreementId'},
   ],
 };
 
@@ -67,7 +72,8 @@ final $typed_data.Uint8List receiptBalanceDescriptor = $convert.base64Decode(
     'Cg5SZWNlaXB0QmFsYW5jZRIsCgdyZWFkaW5nGAEgASgLMhIuaW52b2x0LnYxLlJlYWRpbmdSB3'
     'JlYWRpbmcSHwoLcGFpZF9hbW91bnQYAiABKAFSCnBhaWRBbW91bnQSGAoHYmFsYW5jZRgDIAEo'
     'AVIHYmFsYW5jZRIwCgZzdGF0dXMYBCABKA4yGC5pbnZvbHQudjEuUmVjZWlwdFN0YXR1c1IGc3'
-    'RhdHVz');
+    'RhdHVzEhkKCGxhdGVfZmVlGAUgASgBUgdsYXRlRmVlEiYKD2xhdGVfZmVlX3dhaXZlZBgGIAEo'
+    'CFINbGF0ZUZlZVdhaXZlZBIhCgxhZ3JlZW1lbnRfaWQYByABKAlSC2FncmVlbWVudElk');
 
 @$core.Deprecated('Use paymentAllocationDescriptor instead')
 const PaymentAllocation$json = {
@@ -76,13 +82,15 @@ const PaymentAllocation$json = {
     {'1': 'reading_id', '3': 1, '4': 1, '5': 9, '10': 'readingId'},
     {'1': 'period', '3': 2, '4': 1, '5': 9, '10': 'period'},
     {'1': 'amount', '3': 3, '4': 1, '5': 1, '10': 'amount'},
+    {'1': 'late_fee', '3': 4, '4': 1, '5': 1, '10': 'lateFee'},
   ],
 };
 
 /// Descriptor for `PaymentAllocation`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List paymentAllocationDescriptor = $convert.base64Decode(
     'ChFQYXltZW50QWxsb2NhdGlvbhIdCgpyZWFkaW5nX2lkGAEgASgJUglyZWFkaW5nSWQSFgoGcG'
-    'VyaW9kGAIgASgJUgZwZXJpb2QSFgoGYW1vdW50GAMgASgBUgZhbW91bnQ=');
+    'VyaW9kGAIgASgJUgZwZXJpb2QSFgoGYW1vdW50GAMgASgBUgZhbW91bnQSGQoIbGF0ZV9mZWUY'
+    'BCABKAFSB2xhdGVGZWU=');
 
 @$core.Deprecated('Use paymentDescriptor instead')
 const Payment$json = {
@@ -143,6 +151,9 @@ const GetCustomerAccountResponse$json = {
     {'1': 'payments', '3': 3, '4': 3, '5': 11, '6': '.involt.v1.Payment', '10': 'payments'},
     {'1': 'total_debt', '3': 4, '4': 1, '5': 1, '10': 'totalDebt'},
     {'1': 'overdue_count', '3': 5, '4': 1, '5': 5, '10': 'overdueCount'},
+    {'1': 'total_late_fees', '3': 6, '4': 1, '5': 1, '10': 'totalLateFees'},
+    {'1': 'agreements', '3': 7, '4': 3, '5': 11, '6': '.involt.v1.PaymentAgreement', '10': 'agreements'},
+    {'1': 'agreements_enabled', '3': 8, '4': 1, '5': 8, '10': 'agreementsEnabled'},
   ],
 };
 
@@ -152,7 +163,10 @@ final $typed_data.Uint8List getCustomerAccountResponseDescriptor = $convert.base
     '52MS5DdXN0b21lclIIY3VzdG9tZXISNQoIcmVjZWlwdHMYAiADKAsyGS5pbnZvbHQudjEuUmVj'
     'ZWlwdEJhbGFuY2VSCHJlY2VpcHRzEi4KCHBheW1lbnRzGAMgAygLMhIuaW52b2x0LnYxLlBheW'
     '1lbnRSCHBheW1lbnRzEh0KCnRvdGFsX2RlYnQYBCABKAFSCXRvdGFsRGVidBIjCg1vdmVyZHVl'
-    'X2NvdW50GAUgASgFUgxvdmVyZHVlQ291bnQ=');
+    'X2NvdW50GAUgASgFUgxvdmVyZHVlQ291bnQSJgoPdG90YWxfbGF0ZV9mZWVzGAYgASgBUg10b3'
+    'RhbExhdGVGZWVzEjsKCmFncmVlbWVudHMYByADKAsyGy5pbnZvbHQudjEuUGF5bWVudEFncmVl'
+    'bWVudFIKYWdyZWVtZW50cxItChJhZ3JlZW1lbnRzX2VuYWJsZWQYCCABKAhSEWFncmVlbWVudH'
+    'NFbmFibGVk');
 
 @$core.Deprecated('Use registerPaymentRequestDescriptor instead')
 const RegisterPaymentRequest$json = {

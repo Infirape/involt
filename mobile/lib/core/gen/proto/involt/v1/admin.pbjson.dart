@@ -13,9 +13,10 @@ import 'dart:convert' as $convert;
 import 'dart:core' as $core;
 import 'dart:typed_data' as $typed_data;
 
+import 'agreements.pbjson.dart' as $1;
 import 'models.pbjson.dart' as $0;
-import 'payments.pbjson.dart' as $1;
-import 'reports.pbjson.dart' as $2;
+import 'payments.pbjson.dart' as $2;
+import 'reports.pbjson.dart' as $3;
 
 @$core.Deprecated('Use userRoleDescriptor instead')
 const UserRole$json = {
@@ -740,6 +741,12 @@ const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
     {'1': 'GetCashClosing', '2': '.involt.v1.GetCashClosingRequest', '3': '.involt.v1.GetCashClosingResponse'},
     {'1': 'GetCollectionsDashboard', '2': '.involt.v1.GetCollectionsDashboardRequest', '3': '.involt.v1.GetCollectionsDashboardResponse'},
     {'1': 'GetDebtors', '2': '.involt.v1.GetDebtorsRequest', '3': '.involt.v1.GetDebtorsResponse'},
+    {'1': 'GetCollectionPolicy', '2': '.involt.v1.GetCollectionPolicyRequest', '3': '.involt.v1.GetCollectionPolicyResponse'},
+    {'1': 'UpdateCollectionPolicy', '2': '.involt.v1.UpdateCollectionPolicyRequest', '3': '.involt.v1.UpdateCollectionPolicyResponse'},
+    {'1': 'WaiveLateFee', '2': '.involt.v1.WaiveLateFeeRequest', '3': '.involt.v1.WaiveLateFeeResponse'},
+    {'1': 'PreviewAgreement', '2': '.involt.v1.AgreementRequest', '3': '.involt.v1.PreviewAgreementResponse'},
+    {'1': 'CreateAgreement', '2': '.involt.v1.AgreementRequest', '3': '.involt.v1.CreateAgreementResponse'},
+    {'1': 'CancelAgreement', '2': '.involt.v1.CancelAgreementRequest', '3': '.involt.v1.CancelAgreementResponse'},
   ],
 };
 
@@ -799,30 +806,45 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> AdminServi
   '.involt.v1.GetCollectionsRequest': GetCollectionsRequest$json,
   '.involt.v1.GetCollectionsResponse': GetCollectionsResponse$json,
   '.involt.v1.CollectionCustomer': CollectionCustomer$json,
-  '.involt.v1.ReceiptBalance': $1.ReceiptBalance$json,
-  '.involt.v1.GetCustomerAccountRequest': $1.GetCustomerAccountRequest$json,
-  '.involt.v1.GetCustomerAccountResponse': $1.GetCustomerAccountResponse$json,
-  '.involt.v1.Payment': $1.Payment$json,
-  '.involt.v1.PaymentAllocation': $1.PaymentAllocation$json,
-  '.involt.v1.RegisterPaymentRequest': $1.RegisterPaymentRequest$json,
-  '.involt.v1.RegisterPaymentResponse': $1.RegisterPaymentResponse$json,
-  '.involt.v1.VoidPaymentRequest': $1.VoidPaymentRequest$json,
-  '.involt.v1.VoidPaymentResponse': $1.VoidPaymentResponse$json,
-  '.involt.v1.CreateFlatChargeRequest': $1.CreateFlatChargeRequest$json,
-  '.involt.v1.CreateFlatChargeResponse': $1.CreateFlatChargeResponse$json,
-  '.involt.v1.GetCashClosingRequest': $1.GetCashClosingRequest$json,
-  '.involt.v1.GetCashClosingResponse': $1.GetCashClosingResponse$json,
-  '.involt.v1.MethodTotal': $1.MethodTotal$json,
-  '.involt.v1.CollectorTotal': $1.CollectorTotal$json,
-  '.involt.v1.GetCollectionsDashboardRequest': $2.GetCollectionsDashboardRequest$json,
-  '.involt.v1.GetCollectionsDashboardResponse': $2.GetCollectionsDashboardResponse$json,
-  '.involt.v1.CollectionsDashboardTotals': $2.CollectionsDashboardTotals$json,
-  '.involt.v1.SectorCollectionSummary': $2.SectorCollectionSummary$json,
-  '.involt.v1.PeriodCollectionSummary': $2.PeriodCollectionSummary$json,
-  '.involt.v1.AgingTotal': $2.AgingTotal$json,
-  '.involt.v1.GetDebtorsRequest': $2.GetDebtorsRequest$json,
-  '.involt.v1.GetDebtorsResponse': $2.GetDebtorsResponse$json,
-  '.involt.v1.DebtorRow': $2.DebtorRow$json,
+  '.involt.v1.ReceiptBalance': $2.ReceiptBalance$json,
+  '.involt.v1.GetCustomerAccountRequest': $2.GetCustomerAccountRequest$json,
+  '.involt.v1.GetCustomerAccountResponse': $2.GetCustomerAccountResponse$json,
+  '.involt.v1.Payment': $2.Payment$json,
+  '.involt.v1.PaymentAllocation': $2.PaymentAllocation$json,
+  '.involt.v1.PaymentAgreement': $1.PaymentAgreement$json,
+  '.involt.v1.AgreementReceipt': $1.AgreementReceipt$json,
+  '.involt.v1.AgreementInstallment': $1.AgreementInstallment$json,
+  '.involt.v1.RegisterPaymentRequest': $2.RegisterPaymentRequest$json,
+  '.involt.v1.RegisterPaymentResponse': $2.RegisterPaymentResponse$json,
+  '.involt.v1.VoidPaymentRequest': $2.VoidPaymentRequest$json,
+  '.involt.v1.VoidPaymentResponse': $2.VoidPaymentResponse$json,
+  '.involt.v1.CreateFlatChargeRequest': $2.CreateFlatChargeRequest$json,
+  '.involt.v1.CreateFlatChargeResponse': $2.CreateFlatChargeResponse$json,
+  '.involt.v1.GetCashClosingRequest': $2.GetCashClosingRequest$json,
+  '.involt.v1.GetCashClosingResponse': $2.GetCashClosingResponse$json,
+  '.involt.v1.MethodTotal': $2.MethodTotal$json,
+  '.involt.v1.CollectorTotal': $2.CollectorTotal$json,
+  '.involt.v1.GetCollectionsDashboardRequest': $3.GetCollectionsDashboardRequest$json,
+  '.involt.v1.GetCollectionsDashboardResponse': $3.GetCollectionsDashboardResponse$json,
+  '.involt.v1.CollectionsDashboardTotals': $3.CollectionsDashboardTotals$json,
+  '.involt.v1.SectorCollectionSummary': $3.SectorCollectionSummary$json,
+  '.involt.v1.PeriodCollectionSummary': $3.PeriodCollectionSummary$json,
+  '.involt.v1.AgingTotal': $3.AgingTotal$json,
+  '.involt.v1.GetDebtorsRequest': $3.GetDebtorsRequest$json,
+  '.involt.v1.GetDebtorsResponse': $3.GetDebtorsResponse$json,
+  '.involt.v1.DebtorRow': $3.DebtorRow$json,
+  '.involt.v1.GetCollectionPolicyRequest': $1.GetCollectionPolicyRequest$json,
+  '.involt.v1.GetCollectionPolicyResponse': $1.GetCollectionPolicyResponse$json,
+  '.involt.v1.CollectionPolicy': $1.CollectionPolicy$json,
+  '.involt.v1.UpdateCollectionPolicyRequest': $1.UpdateCollectionPolicyRequest$json,
+  '.involt.v1.UpdateCollectionPolicyResponse': $1.UpdateCollectionPolicyResponse$json,
+  '.involt.v1.WaiveLateFeeRequest': $1.WaiveLateFeeRequest$json,
+  '.involt.v1.WaiveLateFeeResponse': $1.WaiveLateFeeResponse$json,
+  '.involt.v1.AgreementRequest': $1.AgreementRequest$json,
+  '.involt.v1.PreviewAgreementResponse': $1.PreviewAgreementResponse$json,
+  '.involt.v1.CreateAgreementResponse': $1.CreateAgreementResponse$json,
+  '.involt.v1.CancelAgreementRequest': $1.CancelAgreementRequest$json,
+  '.involt.v1.CancelAgreementResponse': $1.CancelAgreementResponse$json,
 };
 
 /// Descriptor for `AdminService`. Decode as a `google.protobuf.ServiceDescriptorProto`.
@@ -871,5 +893,15 @@ final $typed_data.Uint8List adminServiceDescriptor = $convert.base64Decode(
     'V0Q29sbGVjdGlvbnNEYXNoYm9hcmQSKS5pbnZvbHQudjEuR2V0Q29sbGVjdGlvbnNEYXNoYm9h'
     'cmRSZXF1ZXN0GiouaW52b2x0LnYxLkdldENvbGxlY3Rpb25zRGFzaGJvYXJkUmVzcG9uc2USSQ'
     'oKR2V0RGVidG9ycxIcLmludm9sdC52MS5HZXREZWJ0b3JzUmVxdWVzdBodLmludm9sdC52MS5H'
-    'ZXREZWJ0b3JzUmVzcG9uc2U=');
+    'ZXREZWJ0b3JzUmVzcG9uc2USZAoTR2V0Q29sbGVjdGlvblBvbGljeRIlLmludm9sdC52MS5HZX'
+    'RDb2xsZWN0aW9uUG9saWN5UmVxdWVzdBomLmludm9sdC52MS5HZXRDb2xsZWN0aW9uUG9saWN5'
+    'UmVzcG9uc2USbQoWVXBkYXRlQ29sbGVjdGlvblBvbGljeRIoLmludm9sdC52MS5VcGRhdGVDb2'
+    'xsZWN0aW9uUG9saWN5UmVxdWVzdBopLmludm9sdC52MS5VcGRhdGVDb2xsZWN0aW9uUG9saWN5'
+    'UmVzcG9uc2USTwoMV2FpdmVMYXRlRmVlEh4uaW52b2x0LnYxLldhaXZlTGF0ZUZlZVJlcXVlc3'
+    'QaHy5pbnZvbHQudjEuV2FpdmVMYXRlRmVlUmVzcG9uc2USVAoQUHJldmlld0FncmVlbWVudBIb'
+    'Lmludm9sdC52MS5BZ3JlZW1lbnRSZXF1ZXN0GiMuaW52b2x0LnYxLlByZXZpZXdBZ3JlZW1lbn'
+    'RSZXNwb25zZRJSCg9DcmVhdGVBZ3JlZW1lbnQSGy5pbnZvbHQudjEuQWdyZWVtZW50UmVxdWVz'
+    'dBoiLmludm9sdC52MS5DcmVhdGVBZ3JlZW1lbnRSZXNwb25zZRJYCg9DYW5jZWxBZ3JlZW1lbn'
+    'QSIS5pbnZvbHQudjEuQ2FuY2VsQWdyZWVtZW50UmVxdWVzdBoiLmludm9sdC52MS5DYW5jZWxB'
+    'Z3JlZW1lbnRSZXNwb25zZQ==');
 

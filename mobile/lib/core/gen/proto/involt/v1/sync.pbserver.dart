@@ -15,33 +15,33 @@ import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import 'sync.pb.dart' as $4;
+import 'sync.pb.dart' as $5;
 import 'sync.pbjson.dart';
 
 export 'sync.pb.dart';
 
 abstract class SyncServiceBase extends $pb.GeneratedService {
-  $async.Future<$4.PushReadingsResponse> pushReadings($pb.ServerContext ctx, $4.PushReadingsRequest request);
-  $async.Future<$4.PullMetadataResponse> pullMetadata($pb.ServerContext ctx, $4.PullMetadataRequest request);
-  $async.Future<$4.UploadPhotoResponse> uploadPhoto($pb.ServerContext ctx, $4.UploadPhotoRequest request);
-  $async.Future<$4.DownloadReceiptResponse> downloadReceipt($pb.ServerContext ctx, $4.DownloadReceiptRequest request);
+  $async.Future<$5.PushReadingsResponse> pushReadings($pb.ServerContext ctx, $5.PushReadingsRequest request);
+  $async.Future<$5.PullMetadataResponse> pullMetadata($pb.ServerContext ctx, $5.PullMetadataRequest request);
+  $async.Future<$5.UploadPhotoResponse> uploadPhoto($pb.ServerContext ctx, $5.UploadPhotoRequest request);
+  $async.Future<$5.DownloadReceiptResponse> downloadReceipt($pb.ServerContext ctx, $5.DownloadReceiptRequest request);
 
   $pb.GeneratedMessage createRequest($core.String methodName) {
     switch (methodName) {
-      case 'PushReadings': return $4.PushReadingsRequest();
-      case 'PullMetadata': return $4.PullMetadataRequest();
-      case 'UploadPhoto': return $4.UploadPhotoRequest();
-      case 'DownloadReceipt': return $4.DownloadReceiptRequest();
+      case 'PushReadings': return $5.PushReadingsRequest();
+      case 'PullMetadata': return $5.PullMetadataRequest();
+      case 'UploadPhoto': return $5.UploadPhotoRequest();
+      case 'DownloadReceipt': return $5.DownloadReceiptRequest();
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }
   }
 
   $async.Future<$pb.GeneratedMessage> handleCall($pb.ServerContext ctx, $core.String methodName, $pb.GeneratedMessage request) {
     switch (methodName) {
-      case 'PushReadings': return this.pushReadings(ctx, request as $4.PushReadingsRequest);
-      case 'PullMetadata': return this.pullMetadata(ctx, request as $4.PullMetadataRequest);
-      case 'UploadPhoto': return this.uploadPhoto(ctx, request as $4.UploadPhotoRequest);
-      case 'DownloadReceipt': return this.downloadReceipt(ctx, request as $4.DownloadReceiptRequest);
+      case 'PushReadings': return this.pushReadings(ctx, request as $5.PushReadingsRequest);
+      case 'PullMetadata': return this.pullMetadata(ctx, request as $5.PullMetadataRequest);
+      case 'UploadPhoto': return this.uploadPhoto(ctx, request as $5.UploadPhotoRequest);
+      case 'DownloadReceipt': return this.downloadReceipt(ctx, request as $5.DownloadReceiptRequest);
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }
   }

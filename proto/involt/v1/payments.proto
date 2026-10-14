@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package involt.v1;
 
+import "involt/v1/agreements.proto";
 import "involt/v1/models.proto";
 
 option go_package = "github.com/infira/involt/backend/internal/gen/involt/v1;involtv1";
@@ -23,6 +24,7 @@ enum ReceiptStatus {
   RECEIPT_STATUS_PARTIAL = 2;
   RECEIPT_STATUS_PENDING = 3;
   RECEIPT_STATUS_OVERDUE = 4;
+  RECEIPT_STATUS_IN_AGREEMENT = 5; // covered by an on-schedule payment agreement
 }
 
 // ReceiptBalance is a receipt with how much has been paid and what is still owed.
@@ -31,12 +33,16 @@ message ReceiptBalance {
   double paid_amount = 2;
   double balance = 3;
   ReceiptStatus status = 4;
+  double late_fee = 5; // unpaid mora owed today
+  bool late_fee_waived = 6;
+  string agreement_id = 7; // active agreement covering this receipt, if any
 }
 
 message PaymentAllocation {
   string reading_id = 1;
   string period = 2;
-  double amount = 3;
+  double amount = 3; // principal
+  double late_fee = 4;
 }
 
 message Payment {
@@ -66,8 +72,11 @@ message GetCustomerAccountResponse {
   Customer customer = 1;
   repeated ReceiptBalance receipts = 2; // every receipt, oldest period first
   repeated Payment payments = 3; // newest first, including voided
-  double total_debt = 4;
+  double total_debt = 4; // principal + mora
   int32 overdue_count = 5;
+  double total_late_fees = 6;
+  repeated PaymentAgreement agreements = 7; // newest first
+  bool agreements_enabled = 8;
 }
 
 message RegisterPaymentRequest {

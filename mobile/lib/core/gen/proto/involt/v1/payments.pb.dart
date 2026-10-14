@@ -14,6 +14,7 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
+import 'agreements.pb.dart' as $1;
 import 'models.pb.dart' as $0;
 import 'payments.pbenum.dart';
 
@@ -26,6 +27,9 @@ class ReceiptBalance extends $pb.GeneratedMessage {
     $core.double? paidAmount,
     $core.double? balance,
     ReceiptStatus? status,
+    $core.double? lateFee,
+    $core.bool? lateFeeWaived,
+    $core.String? agreementId,
   }) {
     final $result = create();
     if (reading != null) {
@@ -40,6 +44,15 @@ class ReceiptBalance extends $pb.GeneratedMessage {
     if (status != null) {
       $result.status = status;
     }
+    if (lateFee != null) {
+      $result.lateFee = lateFee;
+    }
+    if (lateFeeWaived != null) {
+      $result.lateFeeWaived = lateFeeWaived;
+    }
+    if (agreementId != null) {
+      $result.agreementId = agreementId;
+    }
     return $result;
   }
   ReceiptBalance._() : super();
@@ -51,6 +64,9 @@ class ReceiptBalance extends $pb.GeneratedMessage {
     ..a<$core.double>(2, _omitFieldNames ? '' : 'paidAmount', $pb.PbFieldType.OD)
     ..a<$core.double>(3, _omitFieldNames ? '' : 'balance', $pb.PbFieldType.OD)
     ..e<ReceiptStatus>(4, _omitFieldNames ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: ReceiptStatus.RECEIPT_STATUS_UNSPECIFIED, valueOf: ReceiptStatus.valueOf, enumValues: ReceiptStatus.values)
+    ..a<$core.double>(5, _omitFieldNames ? '' : 'lateFee', $pb.PbFieldType.OD)
+    ..aOB(6, _omitFieldNames ? '' : 'lateFeeWaived')
+    ..aOS(7, _omitFieldNames ? '' : 'agreementId')
     ..hasRequiredFields = false
   ;
 
@@ -112,6 +128,33 @@ class ReceiptBalance extends $pb.GeneratedMessage {
   $core.bool hasStatus() => $_has(3);
   @$pb.TagNumber(4)
   void clearStatus() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.double get lateFee => $_getN(4);
+  @$pb.TagNumber(5)
+  set lateFee($core.double v) { $_setDouble(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasLateFee() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearLateFee() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.bool get lateFeeWaived => $_getBF(5);
+  @$pb.TagNumber(6)
+  set lateFeeWaived($core.bool v) { $_setBool(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasLateFeeWaived() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearLateFeeWaived() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.String get agreementId => $_getSZ(6);
+  @$pb.TagNumber(7)
+  set agreementId($core.String v) { $_setString(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasAgreementId() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearAgreementId() => clearField(7);
 }
 
 class PaymentAllocation extends $pb.GeneratedMessage {
@@ -119,6 +162,7 @@ class PaymentAllocation extends $pb.GeneratedMessage {
     $core.String? readingId,
     $core.String? period,
     $core.double? amount,
+    $core.double? lateFee,
   }) {
     final $result = create();
     if (readingId != null) {
@@ -130,6 +174,9 @@ class PaymentAllocation extends $pb.GeneratedMessage {
     if (amount != null) {
       $result.amount = amount;
     }
+    if (lateFee != null) {
+      $result.lateFee = lateFee;
+    }
     return $result;
   }
   PaymentAllocation._() : super();
@@ -140,6 +187,7 @@ class PaymentAllocation extends $pb.GeneratedMessage {
     ..aOS(1, _omitFieldNames ? '' : 'readingId')
     ..aOS(2, _omitFieldNames ? '' : 'period')
     ..a<$core.double>(3, _omitFieldNames ? '' : 'amount', $pb.PbFieldType.OD)
+    ..a<$core.double>(4, _omitFieldNames ? '' : 'lateFee', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -190,6 +238,15 @@ class PaymentAllocation extends $pb.GeneratedMessage {
   $core.bool hasAmount() => $_has(2);
   @$pb.TagNumber(3)
   void clearAmount() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.double get lateFee => $_getN(3);
+  @$pb.TagNumber(4)
+  set lateFee($core.double v) { $_setDouble(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasLateFee() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearLateFee() => clearField(4);
 }
 
 class Payment extends $pb.GeneratedMessage {
@@ -503,6 +560,9 @@ class GetCustomerAccountResponse extends $pb.GeneratedMessage {
     $core.Iterable<Payment>? payments,
     $core.double? totalDebt,
     $core.int? overdueCount,
+    $core.double? totalLateFees,
+    $core.Iterable<$1.PaymentAgreement>? agreements,
+    $core.bool? agreementsEnabled,
   }) {
     final $result = create();
     if (customer != null) {
@@ -520,6 +580,15 @@ class GetCustomerAccountResponse extends $pb.GeneratedMessage {
     if (overdueCount != null) {
       $result.overdueCount = overdueCount;
     }
+    if (totalLateFees != null) {
+      $result.totalLateFees = totalLateFees;
+    }
+    if (agreements != null) {
+      $result.agreements.addAll(agreements);
+    }
+    if (agreementsEnabled != null) {
+      $result.agreementsEnabled = agreementsEnabled;
+    }
     return $result;
   }
   GetCustomerAccountResponse._() : super();
@@ -532,6 +601,9 @@ class GetCustomerAccountResponse extends $pb.GeneratedMessage {
     ..pc<Payment>(3, _omitFieldNames ? '' : 'payments', $pb.PbFieldType.PM, subBuilder: Payment.create)
     ..a<$core.double>(4, _omitFieldNames ? '' : 'totalDebt', $pb.PbFieldType.OD)
     ..a<$core.int>(5, _omitFieldNames ? '' : 'overdueCount', $pb.PbFieldType.O3)
+    ..a<$core.double>(6, _omitFieldNames ? '' : 'totalLateFees', $pb.PbFieldType.OD)
+    ..pc<$1.PaymentAgreement>(7, _omitFieldNames ? '' : 'agreements', $pb.PbFieldType.PM, subBuilder: $1.PaymentAgreement.create)
+    ..aOB(8, _omitFieldNames ? '' : 'agreementsEnabled')
     ..hasRequiredFields = false
   ;
 
@@ -590,6 +662,27 @@ class GetCustomerAccountResponse extends $pb.GeneratedMessage {
   $core.bool hasOverdueCount() => $_has(4);
   @$pb.TagNumber(5)
   void clearOverdueCount() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.double get totalLateFees => $_getN(5);
+  @$pb.TagNumber(6)
+  set totalLateFees($core.double v) { $_setDouble(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasTotalLateFees() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearTotalLateFees() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.List<$1.PaymentAgreement> get agreements => $_getList(6);
+
+  @$pb.TagNumber(8)
+  $core.bool get agreementsEnabled => $_getBF(7);
+  @$pb.TagNumber(8)
+  set agreementsEnabled($core.bool v) { $_setBool(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasAgreementsEnabled() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearAgreementsEnabled() => clearField(8);
 }
 
 class RegisterPaymentRequest extends $pb.GeneratedMessage {

@@ -7,6 +7,7 @@ import { ClosePeriodRequest, ClosePeriodResponse, DeleteCommunityRequest, Delete
 import { MethodKind } from "@bufbuild/protobuf";
 import { CreateFlatChargeRequest, CreateFlatChargeResponse, GetCashClosingRequest, GetCashClosingResponse, GetCustomerAccountRequest, GetCustomerAccountResponse, RegisterPaymentRequest, RegisterPaymentResponse, VoidPaymentRequest, VoidPaymentResponse } from "./payments_pb";
 import { GetCollectionsDashboardRequest, GetCollectionsDashboardResponse, GetDebtorsRequest, GetDebtorsResponse } from "./reports_pb";
+import { AgreementRequest, CancelAgreementRequest, CancelAgreementResponse, CreateAgreementResponse, GetCollectionPolicyRequest, GetCollectionPolicyResponse, PreviewAgreementResponse, UpdateCollectionPolicyRequest, UpdateCollectionPolicyResponse, WaiveLateFeeRequest, WaiveLateFeeResponse } from "./agreements_pb";
 
 /**
  * AdminService handles administrative operations like user management and RBAC.
@@ -335,6 +336,72 @@ export const AdminService = {
       name: "GetDebtors",
       I: GetDebtorsRequest,
       O: GetDebtorsResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * GetCollectionPolicy returns the late fee and agreement rules.
+     *
+     * @generated from rpc involt.v1.AdminService.GetCollectionPolicy
+     */
+    getCollectionPolicy: {
+      name: "GetCollectionPolicy",
+      I: GetCollectionPolicyRequest,
+      O: GetCollectionPolicyResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * UpdateCollectionPolicy changes the late fee and agreement rules (admin only).
+     *
+     * @generated from rpc involt.v1.AdminService.UpdateCollectionPolicy
+     */
+    updateCollectionPolicy: {
+      name: "UpdateCollectionPolicy",
+      I: UpdateCollectionPolicyRequest,
+      O: UpdateCollectionPolicyResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * WaiveLateFee forgives the mora of receipts (admin/supervisor).
+     *
+     * @generated from rpc involt.v1.AdminService.WaiveLateFee
+     */
+    waiveLateFee: {
+      name: "WaiveLateFee",
+      I: WaiveLateFeeRequest,
+      O: WaiveLateFeeResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * PreviewAgreement computes an agreement's totals and schedule without saving it.
+     *
+     * @generated from rpc involt.v1.AdminService.PreviewAgreement
+     */
+    previewAgreement: {
+      name: "PreviewAgreement",
+      I: AgreementRequest,
+      O: PreviewAgreementResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * CreateAgreement signs a payment agreement and collects its initial payment.
+     *
+     * @generated from rpc involt.v1.AdminService.CreateAgreement
+     */
+    createAgreement: {
+      name: "CreateAgreement",
+      I: AgreementRequest,
+      O: CreateAgreementResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * CancelAgreement cancels an active agreement (admin/supervisor).
+     *
+     * @generated from rpc involt.v1.AdminService.CancelAgreement
+     */
+    cancelAgreement: {
+      name: "CancelAgreement",
+      I: CancelAgreementRequest,
+      O: CancelAgreementResponse,
       kind: MethodKind.Unary,
     },
   }
