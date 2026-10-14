@@ -17,6 +17,7 @@ import 'package:protobuf/protobuf.dart' as $pb;
 import 'admin.pbenum.dart';
 import 'models.pb.dart' as $0;
 import 'payments.pb.dart' as $1;
+import 'reports.pb.dart' as $2;
 
 export 'admin.pbenum.dart';
 
@@ -3104,6 +3105,12 @@ class AdminServiceApi {
   ;
   $async.Future<$1.GetCashClosingResponse> getCashClosing($pb.ClientContext? ctx, $1.GetCashClosingRequest request) =>
     _client.invoke<$1.GetCashClosingResponse>(ctx, 'AdminService', 'GetCashClosing', request, $1.GetCashClosingResponse())
+  ;
+  $async.Future<$2.GetCollectionsDashboardResponse> getCollectionsDashboard($pb.ClientContext? ctx, $2.GetCollectionsDashboardRequest request) =>
+    _client.invoke<$2.GetCollectionsDashboardResponse>(ctx, 'AdminService', 'GetCollectionsDashboard', request, $2.GetCollectionsDashboardResponse())
+  ;
+  $async.Future<$2.GetDebtorsResponse> getDebtors($pb.ClientContext? ctx, $2.GetDebtorsRequest request) =>
+    _client.invoke<$2.GetDebtorsResponse>(ctx, 'AdminService', 'GetDebtors', request, $2.GetDebtorsResponse())
   ;
 }
 

@@ -6,6 +6,7 @@
 import { ClosePeriodRequest, ClosePeriodResponse, DeleteCommunityRequest, DeleteCommunityResponse, DeleteCustomerRequest, DeleteCustomerResponse, DeleteSectorRequest, DeleteSectorResponse, GetCollectionsRequest, GetCollectionsResponse, GetCommunitiesRequest, GetCommunitiesResponse, GetCustomersRequest, GetCustomersResponse, GetDashboardStatsRequest, GetDashboardStatsResponse, GetPeriodStatsRequest, GetPeriodStatsResponse, GetReadingsRequest, GetReadingsResponse, GetSectorsRequest, GetSectorsResponse, GetSettingsRequest, GetSettingsResponse, GetUsersRequest, GetUsersResponse, ListPeriodsRequest, ListPeriodsResponse, LoginRequest, LoginResponse, OpenPeriodRequest, OpenPeriodResponse, TogglePaymentStatusRequest, TogglePaymentStatusResponse, UpdateSettingsRequest, UpdateSettingsResponse, UpsertCommunityRequest, UpsertCommunityResponse, UpsertCustomerRequest, UpsertCustomerResponse, UpsertSectorRequest, UpsertSectorResponse, UpsertUserRequest, UpsertUserResponse } from "./admin_pb";
 import { MethodKind } from "@bufbuild/protobuf";
 import { CreateFlatChargeRequest, CreateFlatChargeResponse, GetCashClosingRequest, GetCashClosingResponse, GetCustomerAccountRequest, GetCustomerAccountResponse, RegisterPaymentRequest, RegisterPaymentResponse, VoidPaymentRequest, VoidPaymentResponse } from "./payments_pb";
+import { GetCollectionsDashboardRequest, GetCollectionsDashboardResponse, GetDebtorsRequest, GetDebtorsResponse } from "./reports_pb";
 
 /**
  * AdminService handles administrative operations like user management and RBAC.
@@ -312,6 +313,28 @@ export const AdminService = {
       name: "GetCashClosing",
       I: GetCashClosingRequest,
       O: GetCashClosingResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * GetCollectionsDashboard returns billed vs collected by sector and month, plus debt aging.
+     *
+     * @generated from rpc involt.v1.AdminService.GetCollectionsDashboard
+     */
+    getCollectionsDashboard: {
+      name: "GetCollectionsDashboard",
+      I: GetCollectionsDashboardRequest,
+      O: GetCollectionsDashboardResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * GetDebtors lists customers with outstanding balance and service-cut candidates.
+     *
+     * @generated from rpc involt.v1.AdminService.GetDebtors
+     */
+    getDebtors: {
+      name: "GetDebtors",
+      I: GetDebtorsRequest,
+      O: GetDebtorsResponse,
       kind: MethodKind.Unary,
     },
   }

@@ -15,6 +15,7 @@ import 'dart:typed_data' as $typed_data;
 
 import 'models.pbjson.dart' as $0;
 import 'payments.pbjson.dart' as $1;
+import 'reports.pbjson.dart' as $2;
 
 @$core.Deprecated('Use userRoleDescriptor instead')
 const UserRole$json = {
@@ -737,6 +738,8 @@ const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
     {'1': 'VoidPayment', '2': '.involt.v1.VoidPaymentRequest', '3': '.involt.v1.VoidPaymentResponse'},
     {'1': 'CreateFlatCharge', '2': '.involt.v1.CreateFlatChargeRequest', '3': '.involt.v1.CreateFlatChargeResponse'},
     {'1': 'GetCashClosing', '2': '.involt.v1.GetCashClosingRequest', '3': '.involt.v1.GetCashClosingResponse'},
+    {'1': 'GetCollectionsDashboard', '2': '.involt.v1.GetCollectionsDashboardRequest', '3': '.involt.v1.GetCollectionsDashboardResponse'},
+    {'1': 'GetDebtors', '2': '.involt.v1.GetDebtorsRequest', '3': '.involt.v1.GetDebtorsResponse'},
   ],
 };
 
@@ -811,6 +814,15 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> AdminServi
   '.involt.v1.GetCashClosingResponse': $1.GetCashClosingResponse$json,
   '.involt.v1.MethodTotal': $1.MethodTotal$json,
   '.involt.v1.CollectorTotal': $1.CollectorTotal$json,
+  '.involt.v1.GetCollectionsDashboardRequest': $2.GetCollectionsDashboardRequest$json,
+  '.involt.v1.GetCollectionsDashboardResponse': $2.GetCollectionsDashboardResponse$json,
+  '.involt.v1.CollectionsDashboardTotals': $2.CollectionsDashboardTotals$json,
+  '.involt.v1.SectorCollectionSummary': $2.SectorCollectionSummary$json,
+  '.involt.v1.PeriodCollectionSummary': $2.PeriodCollectionSummary$json,
+  '.involt.v1.AgingTotal': $2.AgingTotal$json,
+  '.involt.v1.GetDebtorsRequest': $2.GetDebtorsRequest$json,
+  '.involt.v1.GetDebtorsResponse': $2.GetDebtorsResponse$json,
+  '.involt.v1.DebtorRow': $2.DebtorRow$json,
 };
 
 /// Descriptor for `AdminService`. Decode as a `google.protobuf.ServiceDescriptorProto`.
@@ -855,5 +867,9 @@ final $typed_data.Uint8List adminServiceDescriptor = $convert.base64Decode(
     'F1ZXN0Gh4uaW52b2x0LnYxLlZvaWRQYXltZW50UmVzcG9uc2USWwoQQ3JlYXRlRmxhdENoYXJn'
     'ZRIiLmludm9sdC52MS5DcmVhdGVGbGF0Q2hhcmdlUmVxdWVzdBojLmludm9sdC52MS5DcmVhdG'
     'VGbGF0Q2hhcmdlUmVzcG9uc2USVQoOR2V0Q2FzaENsb3NpbmcSIC5pbnZvbHQudjEuR2V0Q2Fz'
-    'aENsb3NpbmdSZXF1ZXN0GiEuaW52b2x0LnYxLkdldENhc2hDbG9zaW5nUmVzcG9uc2U=');
+    'aENsb3NpbmdSZXF1ZXN0GiEuaW52b2x0LnYxLkdldENhc2hDbG9zaW5nUmVzcG9uc2UScAoXR2'
+    'V0Q29sbGVjdGlvbnNEYXNoYm9hcmQSKS5pbnZvbHQudjEuR2V0Q29sbGVjdGlvbnNEYXNoYm9h'
+    'cmRSZXF1ZXN0GiouaW52b2x0LnYxLkdldENvbGxlY3Rpb25zRGFzaGJvYXJkUmVzcG9uc2USSQ'
+    'oKR2V0RGVidG9ycxIcLmludm9sdC52MS5HZXREZWJ0b3JzUmVxdWVzdBodLmludm9sdC52MS5H'
+    'ZXREZWJ0b3JzUmVzcG9uc2U=');
 

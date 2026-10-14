@@ -109,6 +109,11 @@ const (
 	// AdminServiceGetCashClosingProcedure is the fully-qualified name of the AdminService's
 	// GetCashClosing RPC.
 	AdminServiceGetCashClosingProcedure = "/involt.v1.AdminService/GetCashClosing"
+	// AdminServiceGetCollectionsDashboardProcedure is the fully-qualified name of the AdminService's
+	// GetCollectionsDashboard RPC.
+	AdminServiceGetCollectionsDashboardProcedure = "/involt.v1.AdminService/GetCollectionsDashboard"
+	// AdminServiceGetDebtorsProcedure is the fully-qualified name of the AdminService's GetDebtors RPC.
+	AdminServiceGetDebtorsProcedure = "/involt.v1.AdminService/GetDebtors"
 )
 
 // AdminServiceClient is a client for the involt.v1.AdminService service.
@@ -169,6 +174,10 @@ type AdminServiceClient interface {
 	CreateFlatCharge(context.Context, *connect.Request[v1.CreateFlatChargeRequest]) (*connect.Response[v1.CreateFlatChargeResponse], error)
 	// GetCashClosing summarizes payments collected in a date range (cierre de caja).
 	GetCashClosing(context.Context, *connect.Request[v1.GetCashClosingRequest]) (*connect.Response[v1.GetCashClosingResponse], error)
+	// GetCollectionsDashboard returns billed vs collected by sector and month, plus debt aging.
+	GetCollectionsDashboard(context.Context, *connect.Request[v1.GetCollectionsDashboardRequest]) (*connect.Response[v1.GetCollectionsDashboardResponse], error)
+	// GetDebtors lists customers with outstanding balance and service-cut candidates.
+	GetDebtors(context.Context, *connect.Request[v1.GetDebtorsRequest]) (*connect.Response[v1.GetDebtorsResponse], error)
 }
 
 // NewAdminServiceClient constructs a client for the involt.v1.AdminService service. By default, it
@@ -344,38 +353,52 @@ func NewAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(adminServiceMethods.ByName("GetCashClosing")),
 			connect.WithClientOptions(opts...),
 		),
+		getCollectionsDashboard: connect.NewClient[v1.GetCollectionsDashboardRequest, v1.GetCollectionsDashboardResponse](
+			httpClient,
+			baseURL+AdminServiceGetCollectionsDashboardProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("GetCollectionsDashboard")),
+			connect.WithClientOptions(opts...),
+		),
+		getDebtors: connect.NewClient[v1.GetDebtorsRequest, v1.GetDebtorsResponse](
+			httpClient,
+			baseURL+AdminServiceGetDebtorsProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("GetDebtors")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // adminServiceClient implements AdminServiceClient.
 type adminServiceClient struct {
-	login               *connect.Client[v1.LoginRequest, v1.LoginResponse]
-	getUsers            *connect.Client[v1.GetUsersRequest, v1.GetUsersResponse]
-	upsertUser          *connect.Client[v1.UpsertUserRequest, v1.UpsertUserResponse]
-	getSectors          *connect.Client[v1.GetSectorsRequest, v1.GetSectorsResponse]
-	getCommunities      *connect.Client[v1.GetCommunitiesRequest, v1.GetCommunitiesResponse]
-	getCustomers        *connect.Client[v1.GetCustomersRequest, v1.GetCustomersResponse]
-	getReadings         *connect.Client[v1.GetReadingsRequest, v1.GetReadingsResponse]
-	getSettings         *connect.Client[v1.GetSettingsRequest, v1.GetSettingsResponse]
-	updateSettings      *connect.Client[v1.UpdateSettingsRequest, v1.UpdateSettingsResponse]
-	upsertCustomer      *connect.Client[v1.UpsertCustomerRequest, v1.UpsertCustomerResponse]
-	deleteCustomer      *connect.Client[v1.DeleteCustomerRequest, v1.DeleteCustomerResponse]
-	getDashboardStats   *connect.Client[v1.GetDashboardStatsRequest, v1.GetDashboardStatsResponse]
-	listPeriods         *connect.Client[v1.ListPeriodsRequest, v1.ListPeriodsResponse]
-	getPeriodStats      *connect.Client[v1.GetPeriodStatsRequest, v1.GetPeriodStatsResponse]
-	openPeriod          *connect.Client[v1.OpenPeriodRequest, v1.OpenPeriodResponse]
-	closePeriod         *connect.Client[v1.ClosePeriodRequest, v1.ClosePeriodResponse]
-	upsertSector        *connect.Client[v1.UpsertSectorRequest, v1.UpsertSectorResponse]
-	deleteSector        *connect.Client[v1.DeleteSectorRequest, v1.DeleteSectorResponse]
-	upsertCommunity     *connect.Client[v1.UpsertCommunityRequest, v1.UpsertCommunityResponse]
-	deleteCommunity     *connect.Client[v1.DeleteCommunityRequest, v1.DeleteCommunityResponse]
-	togglePaymentStatus *connect.Client[v1.TogglePaymentStatusRequest, v1.TogglePaymentStatusResponse]
-	getCollections      *connect.Client[v1.GetCollectionsRequest, v1.GetCollectionsResponse]
-	getCustomerAccount  *connect.Client[v1.GetCustomerAccountRequest, v1.GetCustomerAccountResponse]
-	registerPayment     *connect.Client[v1.RegisterPaymentRequest, v1.RegisterPaymentResponse]
-	voidPayment         *connect.Client[v1.VoidPaymentRequest, v1.VoidPaymentResponse]
-	createFlatCharge    *connect.Client[v1.CreateFlatChargeRequest, v1.CreateFlatChargeResponse]
-	getCashClosing      *connect.Client[v1.GetCashClosingRequest, v1.GetCashClosingResponse]
+	login                   *connect.Client[v1.LoginRequest, v1.LoginResponse]
+	getUsers                *connect.Client[v1.GetUsersRequest, v1.GetUsersResponse]
+	upsertUser              *connect.Client[v1.UpsertUserRequest, v1.UpsertUserResponse]
+	getSectors              *connect.Client[v1.GetSectorsRequest, v1.GetSectorsResponse]
+	getCommunities          *connect.Client[v1.GetCommunitiesRequest, v1.GetCommunitiesResponse]
+	getCustomers            *connect.Client[v1.GetCustomersRequest, v1.GetCustomersResponse]
+	getReadings             *connect.Client[v1.GetReadingsRequest, v1.GetReadingsResponse]
+	getSettings             *connect.Client[v1.GetSettingsRequest, v1.GetSettingsResponse]
+	updateSettings          *connect.Client[v1.UpdateSettingsRequest, v1.UpdateSettingsResponse]
+	upsertCustomer          *connect.Client[v1.UpsertCustomerRequest, v1.UpsertCustomerResponse]
+	deleteCustomer          *connect.Client[v1.DeleteCustomerRequest, v1.DeleteCustomerResponse]
+	getDashboardStats       *connect.Client[v1.GetDashboardStatsRequest, v1.GetDashboardStatsResponse]
+	listPeriods             *connect.Client[v1.ListPeriodsRequest, v1.ListPeriodsResponse]
+	getPeriodStats          *connect.Client[v1.GetPeriodStatsRequest, v1.GetPeriodStatsResponse]
+	openPeriod              *connect.Client[v1.OpenPeriodRequest, v1.OpenPeriodResponse]
+	closePeriod             *connect.Client[v1.ClosePeriodRequest, v1.ClosePeriodResponse]
+	upsertSector            *connect.Client[v1.UpsertSectorRequest, v1.UpsertSectorResponse]
+	deleteSector            *connect.Client[v1.DeleteSectorRequest, v1.DeleteSectorResponse]
+	upsertCommunity         *connect.Client[v1.UpsertCommunityRequest, v1.UpsertCommunityResponse]
+	deleteCommunity         *connect.Client[v1.DeleteCommunityRequest, v1.DeleteCommunityResponse]
+	togglePaymentStatus     *connect.Client[v1.TogglePaymentStatusRequest, v1.TogglePaymentStatusResponse]
+	getCollections          *connect.Client[v1.GetCollectionsRequest, v1.GetCollectionsResponse]
+	getCustomerAccount      *connect.Client[v1.GetCustomerAccountRequest, v1.GetCustomerAccountResponse]
+	registerPayment         *connect.Client[v1.RegisterPaymentRequest, v1.RegisterPaymentResponse]
+	voidPayment             *connect.Client[v1.VoidPaymentRequest, v1.VoidPaymentResponse]
+	createFlatCharge        *connect.Client[v1.CreateFlatChargeRequest, v1.CreateFlatChargeResponse]
+	getCashClosing          *connect.Client[v1.GetCashClosingRequest, v1.GetCashClosingResponse]
+	getCollectionsDashboard *connect.Client[v1.GetCollectionsDashboardRequest, v1.GetCollectionsDashboardResponse]
+	getDebtors              *connect.Client[v1.GetDebtorsRequest, v1.GetDebtorsResponse]
 }
 
 // Login calls involt.v1.AdminService.Login.
@@ -513,6 +536,16 @@ func (c *adminServiceClient) GetCashClosing(ctx context.Context, req *connect.Re
 	return c.getCashClosing.CallUnary(ctx, req)
 }
 
+// GetCollectionsDashboard calls involt.v1.AdminService.GetCollectionsDashboard.
+func (c *adminServiceClient) GetCollectionsDashboard(ctx context.Context, req *connect.Request[v1.GetCollectionsDashboardRequest]) (*connect.Response[v1.GetCollectionsDashboardResponse], error) {
+	return c.getCollectionsDashboard.CallUnary(ctx, req)
+}
+
+// GetDebtors calls involt.v1.AdminService.GetDebtors.
+func (c *adminServiceClient) GetDebtors(ctx context.Context, req *connect.Request[v1.GetDebtorsRequest]) (*connect.Response[v1.GetDebtorsResponse], error) {
+	return c.getDebtors.CallUnary(ctx, req)
+}
+
 // AdminServiceHandler is an implementation of the involt.v1.AdminService service.
 type AdminServiceHandler interface {
 	// Login authenticates a user and returns a JWT token.
@@ -571,6 +604,10 @@ type AdminServiceHandler interface {
 	CreateFlatCharge(context.Context, *connect.Request[v1.CreateFlatChargeRequest]) (*connect.Response[v1.CreateFlatChargeResponse], error)
 	// GetCashClosing summarizes payments collected in a date range (cierre de caja).
 	GetCashClosing(context.Context, *connect.Request[v1.GetCashClosingRequest]) (*connect.Response[v1.GetCashClosingResponse], error)
+	// GetCollectionsDashboard returns billed vs collected by sector and month, plus debt aging.
+	GetCollectionsDashboard(context.Context, *connect.Request[v1.GetCollectionsDashboardRequest]) (*connect.Response[v1.GetCollectionsDashboardResponse], error)
+	// GetDebtors lists customers with outstanding balance and service-cut candidates.
+	GetDebtors(context.Context, *connect.Request[v1.GetDebtorsRequest]) (*connect.Response[v1.GetDebtorsResponse], error)
 }
 
 // NewAdminServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -742,6 +779,18 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(adminServiceMethods.ByName("GetCashClosing")),
 		connect.WithHandlerOptions(opts...),
 	)
+	adminServiceGetCollectionsDashboardHandler := connect.NewUnaryHandler(
+		AdminServiceGetCollectionsDashboardProcedure,
+		svc.GetCollectionsDashboard,
+		connect.WithSchema(adminServiceMethods.ByName("GetCollectionsDashboard")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceGetDebtorsHandler := connect.NewUnaryHandler(
+		AdminServiceGetDebtorsProcedure,
+		svc.GetDebtors,
+		connect.WithSchema(adminServiceMethods.ByName("GetDebtors")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/involt.v1.AdminService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AdminServiceLoginProcedure:
@@ -798,6 +847,10 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 			adminServiceCreateFlatChargeHandler.ServeHTTP(w, r)
 		case AdminServiceGetCashClosingProcedure:
 			adminServiceGetCashClosingHandler.ServeHTTP(w, r)
+		case AdminServiceGetCollectionsDashboardProcedure:
+			adminServiceGetCollectionsDashboardHandler.ServeHTTP(w, r)
+		case AdminServiceGetDebtorsProcedure:
+			adminServiceGetDebtorsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -913,4 +966,12 @@ func (UnimplementedAdminServiceHandler) CreateFlatCharge(context.Context, *conne
 
 func (UnimplementedAdminServiceHandler) GetCashClosing(context.Context, *connect.Request[v1.GetCashClosingRequest]) (*connect.Response[v1.GetCashClosingResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetCashClosing is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) GetCollectionsDashboard(context.Context, *connect.Request[v1.GetCollectionsDashboardRequest]) (*connect.Response[v1.GetCollectionsDashboardResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetCollectionsDashboard is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) GetDebtors(context.Context, *connect.Request[v1.GetDebtorsRequest]) (*connect.Response[v1.GetDebtorsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetDebtors is not implemented"))
 }

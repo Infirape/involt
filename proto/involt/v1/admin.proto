@@ -4,6 +4,7 @@ package involt.v1;
 
 import "involt/v1/models.proto";
 import "involt/v1/payments.proto";
+import "involt/v1/reports.proto";
 
 option go_package = "github.com/infira/involt/backend/internal/gen/involt/v1;involtv1";
 
@@ -91,6 +92,12 @@ service AdminService {
 
   // GetCashClosing summarizes payments collected in a date range (cierre de caja).
   rpc GetCashClosing(GetCashClosingRequest) returns (GetCashClosingResponse);
+
+  // GetCollectionsDashboard returns billed vs collected by sector and month, plus debt aging.
+  rpc GetCollectionsDashboard(GetCollectionsDashboardRequest) returns (GetCollectionsDashboardResponse);
+
+  // GetDebtors lists customers with outstanding balance and service-cut candidates.
+  rpc GetDebtors(GetDebtorsRequest) returns (GetDebtorsResponse);
 }
 
 message UpsertSectorRequest {

@@ -2573,7 +2573,7 @@ var File_involt_v1_admin_proto protoreflect.FileDescriptor
 
 const file_involt_v1_admin_proto_rawDesc = "" +
 	"\n" +
-	"\x15involt/v1/admin.proto\x12\tinvolt.v1\x1a\x16involt/v1/models.proto\x1a\x18involt/v1/payments.proto\"@\n" +
+	"\x15involt/v1/admin.proto\x12\tinvolt.v1\x1a\x16involt/v1/models.proto\x1a\x18involt/v1/payments.proto\x1a\x17involt/v1/reports.proto\"@\n" +
 	"\x13UpsertSectorRequest\x12)\n" +
 	"\x06sector\x18\x01 \x01(\v2\x11.involt.v1.SectorR\x06sector\"A\n" +
 	"\x14UpsertSectorResponse\x12)\n" +
@@ -2741,7 +2741,7 @@ const file_involt_v1_admin_proto_rawDesc = "" +
 	"\x15USER_ROLE_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fUSER_ROLE_ADMIN\x10\x01\x12\x18\n" +
 	"\x14USER_ROLE_SUPERVISOR\x10\x02\x12\x14\n" +
-	"\x10USER_ROLE_READER\x10\x032\xde\x11\n" +
+	"\x10USER_ROLE_READER\x10\x032\x9b\x13\n" +
 	"\fAdminService\x12:\n" +
 	"\x05Login\x12\x17.involt.v1.LoginRequest\x1a\x18.involt.v1.LoginResponse\x12C\n" +
 	"\bGetUsers\x12\x1a.involt.v1.GetUsersRequest\x1a\x1b.involt.v1.GetUsersResponse\x12I\n" +
@@ -2772,7 +2772,10 @@ const file_involt_v1_admin_proto_rawDesc = "" +
 	"\x0fRegisterPayment\x12!.involt.v1.RegisterPaymentRequest\x1a\".involt.v1.RegisterPaymentResponse\x12L\n" +
 	"\vVoidPayment\x12\x1d.involt.v1.VoidPaymentRequest\x1a\x1e.involt.v1.VoidPaymentResponse\x12[\n" +
 	"\x10CreateFlatCharge\x12\".involt.v1.CreateFlatChargeRequest\x1a#.involt.v1.CreateFlatChargeResponse\x12U\n" +
-	"\x0eGetCashClosing\x12 .involt.v1.GetCashClosingRequest\x1a!.involt.v1.GetCashClosingResponseBBZ@github.com/infira/involt/backend/internal/gen/involt/v1;involtv1b\x06proto3"
+	"\x0eGetCashClosing\x12 .involt.v1.GetCashClosingRequest\x1a!.involt.v1.GetCashClosingResponse\x12p\n" +
+	"\x17GetCollectionsDashboard\x12).involt.v1.GetCollectionsDashboardRequest\x1a*.involt.v1.GetCollectionsDashboardResponse\x12I\n" +
+	"\n" +
+	"GetDebtors\x12\x1c.involt.v1.GetDebtorsRequest\x1a\x1d.involt.v1.GetDebtorsResponseBBZ@github.com/infira/involt/backend/internal/gen/involt/v1;involtv1b\x06proto3"
 
 var (
 	file_involt_v1_admin_proto_rawDescOnce sync.Once
@@ -2789,72 +2792,76 @@ func file_involt_v1_admin_proto_rawDescGZIP() []byte {
 var file_involt_v1_admin_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_involt_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 48)
 var file_involt_v1_admin_proto_goTypes = []any{
-	(UserRole)(0),                       // 0: involt.v1.UserRole
-	(*UpsertSectorRequest)(nil),         // 1: involt.v1.UpsertSectorRequest
-	(*UpsertSectorResponse)(nil),        // 2: involt.v1.UpsertSectorResponse
-	(*UpsertCommunityRequest)(nil),      // 3: involt.v1.UpsertCommunityRequest
-	(*UpsertCommunityResponse)(nil),     // 4: involt.v1.UpsertCommunityResponse
-	(*DeleteCustomerRequest)(nil),       // 5: involt.v1.DeleteCustomerRequest
-	(*DeleteCustomerResponse)(nil),      // 6: involt.v1.DeleteCustomerResponse
-	(*LoginRequest)(nil),                // 7: involt.v1.LoginRequest
-	(*LoginResponse)(nil),               // 8: involt.v1.LoginResponse
-	(*GetUsersRequest)(nil),             // 9: involt.v1.GetUsersRequest
-	(*GetUsersResponse)(nil),            // 10: involt.v1.GetUsersResponse
-	(*UpsertUserRequest)(nil),           // 11: involt.v1.UpsertUserRequest
-	(*UpsertUserResponse)(nil),          // 12: involt.v1.UpsertUserResponse
-	(*GetSectorsRequest)(nil),           // 13: involt.v1.GetSectorsRequest
-	(*GetSectorsResponse)(nil),          // 14: involt.v1.GetSectorsResponse
-	(*GetCommunitiesRequest)(nil),       // 15: involt.v1.GetCommunitiesRequest
-	(*GetCommunitiesResponse)(nil),      // 16: involt.v1.GetCommunitiesResponse
-	(*GetCustomersRequest)(nil),         // 17: involt.v1.GetCustomersRequest
-	(*GetCustomersResponse)(nil),        // 18: involt.v1.GetCustomersResponse
-	(*GetReadingsRequest)(nil),          // 19: involt.v1.GetReadingsRequest
-	(*GetReadingsResponse)(nil),         // 20: involt.v1.GetReadingsResponse
-	(*GetSettingsRequest)(nil),          // 21: involt.v1.GetSettingsRequest
-	(*GetSettingsResponse)(nil),         // 22: involt.v1.GetSettingsResponse
-	(*UpdateSettingsRequest)(nil),       // 23: involt.v1.UpdateSettingsRequest
-	(*UpdateSettingsResponse)(nil),      // 24: involt.v1.UpdateSettingsResponse
-	(*UpsertCustomerRequest)(nil),       // 25: involt.v1.UpsertCustomerRequest
-	(*UpsertCustomerResponse)(nil),      // 26: involt.v1.UpsertCustomerResponse
-	(*User)(nil),                        // 27: involt.v1.User
-	(*GetDashboardStatsRequest)(nil),    // 28: involt.v1.GetDashboardStatsRequest
-	(*GetDashboardStatsResponse)(nil),   // 29: involt.v1.GetDashboardStatsResponse
-	(*SectorStat)(nil),                  // 30: involt.v1.SectorStat
-	(*ListPeriodsRequest)(nil),          // 31: involt.v1.ListPeriodsRequest
-	(*ListPeriodsResponse)(nil),         // 32: involt.v1.ListPeriodsResponse
-	(*GetPeriodStatsRequest)(nil),       // 33: involt.v1.GetPeriodStatsRequest
-	(*GetPeriodStatsResponse)(nil),      // 34: involt.v1.GetPeriodStatsResponse
-	(*MissingCustomer)(nil),             // 35: involt.v1.MissingCustomer
-	(*OpenPeriodRequest)(nil),           // 36: involt.v1.OpenPeriodRequest
-	(*OpenPeriodResponse)(nil),          // 37: involt.v1.OpenPeriodResponse
-	(*ClosePeriodRequest)(nil),          // 38: involt.v1.ClosePeriodRequest
-	(*ClosePeriodResponse)(nil),         // 39: involt.v1.ClosePeriodResponse
-	(*TogglePaymentStatusRequest)(nil),  // 40: involt.v1.TogglePaymentStatusRequest
-	(*TogglePaymentStatusResponse)(nil), // 41: involt.v1.TogglePaymentStatusResponse
-	(*GetCollectionsRequest)(nil),       // 42: involt.v1.GetCollectionsRequest
-	(*GetCollectionsResponse)(nil),      // 43: involt.v1.GetCollectionsResponse
-	(*CollectionCustomer)(nil),          // 44: involt.v1.CollectionCustomer
-	(*DeleteSectorRequest)(nil),         // 45: involt.v1.DeleteSectorRequest
-	(*DeleteSectorResponse)(nil),        // 46: involt.v1.DeleteSectorResponse
-	(*DeleteCommunityRequest)(nil),      // 47: involt.v1.DeleteCommunityRequest
-	(*DeleteCommunityResponse)(nil),     // 48: involt.v1.DeleteCommunityResponse
-	(*Sector)(nil),                      // 49: involt.v1.Sector
-	(*Community)(nil),                   // 50: involt.v1.Community
-	(*Customer)(nil),                    // 51: involt.v1.Customer
-	(*Reading)(nil),                     // 52: involt.v1.Reading
-	(*Settings)(nil),                    // 53: involt.v1.Settings
-	(*Period)(nil),                      // 54: involt.v1.Period
-	(*ReceiptBalance)(nil),              // 55: involt.v1.ReceiptBalance
-	(*GetCustomerAccountRequest)(nil),   // 56: involt.v1.GetCustomerAccountRequest
-	(*RegisterPaymentRequest)(nil),      // 57: involt.v1.RegisterPaymentRequest
-	(*VoidPaymentRequest)(nil),          // 58: involt.v1.VoidPaymentRequest
-	(*CreateFlatChargeRequest)(nil),     // 59: involt.v1.CreateFlatChargeRequest
-	(*GetCashClosingRequest)(nil),       // 60: involt.v1.GetCashClosingRequest
-	(*GetCustomerAccountResponse)(nil),  // 61: involt.v1.GetCustomerAccountResponse
-	(*RegisterPaymentResponse)(nil),     // 62: involt.v1.RegisterPaymentResponse
-	(*VoidPaymentResponse)(nil),         // 63: involt.v1.VoidPaymentResponse
-	(*CreateFlatChargeResponse)(nil),    // 64: involt.v1.CreateFlatChargeResponse
-	(*GetCashClosingResponse)(nil),      // 65: involt.v1.GetCashClosingResponse
+	(UserRole)(0),                           // 0: involt.v1.UserRole
+	(*UpsertSectorRequest)(nil),             // 1: involt.v1.UpsertSectorRequest
+	(*UpsertSectorResponse)(nil),            // 2: involt.v1.UpsertSectorResponse
+	(*UpsertCommunityRequest)(nil),          // 3: involt.v1.UpsertCommunityRequest
+	(*UpsertCommunityResponse)(nil),         // 4: involt.v1.UpsertCommunityResponse
+	(*DeleteCustomerRequest)(nil),           // 5: involt.v1.DeleteCustomerRequest
+	(*DeleteCustomerResponse)(nil),          // 6: involt.v1.DeleteCustomerResponse
+	(*LoginRequest)(nil),                    // 7: involt.v1.LoginRequest
+	(*LoginResponse)(nil),                   // 8: involt.v1.LoginResponse
+	(*GetUsersRequest)(nil),                 // 9: involt.v1.GetUsersRequest
+	(*GetUsersResponse)(nil),                // 10: involt.v1.GetUsersResponse
+	(*UpsertUserRequest)(nil),               // 11: involt.v1.UpsertUserRequest
+	(*UpsertUserResponse)(nil),              // 12: involt.v1.UpsertUserResponse
+	(*GetSectorsRequest)(nil),               // 13: involt.v1.GetSectorsRequest
+	(*GetSectorsResponse)(nil),              // 14: involt.v1.GetSectorsResponse
+	(*GetCommunitiesRequest)(nil),           // 15: involt.v1.GetCommunitiesRequest
+	(*GetCommunitiesResponse)(nil),          // 16: involt.v1.GetCommunitiesResponse
+	(*GetCustomersRequest)(nil),             // 17: involt.v1.GetCustomersRequest
+	(*GetCustomersResponse)(nil),            // 18: involt.v1.GetCustomersResponse
+	(*GetReadingsRequest)(nil),              // 19: involt.v1.GetReadingsRequest
+	(*GetReadingsResponse)(nil),             // 20: involt.v1.GetReadingsResponse
+	(*GetSettingsRequest)(nil),              // 21: involt.v1.GetSettingsRequest
+	(*GetSettingsResponse)(nil),             // 22: involt.v1.GetSettingsResponse
+	(*UpdateSettingsRequest)(nil),           // 23: involt.v1.UpdateSettingsRequest
+	(*UpdateSettingsResponse)(nil),          // 24: involt.v1.UpdateSettingsResponse
+	(*UpsertCustomerRequest)(nil),           // 25: involt.v1.UpsertCustomerRequest
+	(*UpsertCustomerResponse)(nil),          // 26: involt.v1.UpsertCustomerResponse
+	(*User)(nil),                            // 27: involt.v1.User
+	(*GetDashboardStatsRequest)(nil),        // 28: involt.v1.GetDashboardStatsRequest
+	(*GetDashboardStatsResponse)(nil),       // 29: involt.v1.GetDashboardStatsResponse
+	(*SectorStat)(nil),                      // 30: involt.v1.SectorStat
+	(*ListPeriodsRequest)(nil),              // 31: involt.v1.ListPeriodsRequest
+	(*ListPeriodsResponse)(nil),             // 32: involt.v1.ListPeriodsResponse
+	(*GetPeriodStatsRequest)(nil),           // 33: involt.v1.GetPeriodStatsRequest
+	(*GetPeriodStatsResponse)(nil),          // 34: involt.v1.GetPeriodStatsResponse
+	(*MissingCustomer)(nil),                 // 35: involt.v1.MissingCustomer
+	(*OpenPeriodRequest)(nil),               // 36: involt.v1.OpenPeriodRequest
+	(*OpenPeriodResponse)(nil),              // 37: involt.v1.OpenPeriodResponse
+	(*ClosePeriodRequest)(nil),              // 38: involt.v1.ClosePeriodRequest
+	(*ClosePeriodResponse)(nil),             // 39: involt.v1.ClosePeriodResponse
+	(*TogglePaymentStatusRequest)(nil),      // 40: involt.v1.TogglePaymentStatusRequest
+	(*TogglePaymentStatusResponse)(nil),     // 41: involt.v1.TogglePaymentStatusResponse
+	(*GetCollectionsRequest)(nil),           // 42: involt.v1.GetCollectionsRequest
+	(*GetCollectionsResponse)(nil),          // 43: involt.v1.GetCollectionsResponse
+	(*CollectionCustomer)(nil),              // 44: involt.v1.CollectionCustomer
+	(*DeleteSectorRequest)(nil),             // 45: involt.v1.DeleteSectorRequest
+	(*DeleteSectorResponse)(nil),            // 46: involt.v1.DeleteSectorResponse
+	(*DeleteCommunityRequest)(nil),          // 47: involt.v1.DeleteCommunityRequest
+	(*DeleteCommunityResponse)(nil),         // 48: involt.v1.DeleteCommunityResponse
+	(*Sector)(nil),                          // 49: involt.v1.Sector
+	(*Community)(nil),                       // 50: involt.v1.Community
+	(*Customer)(nil),                        // 51: involt.v1.Customer
+	(*Reading)(nil),                         // 52: involt.v1.Reading
+	(*Settings)(nil),                        // 53: involt.v1.Settings
+	(*Period)(nil),                          // 54: involt.v1.Period
+	(*ReceiptBalance)(nil),                  // 55: involt.v1.ReceiptBalance
+	(*GetCustomerAccountRequest)(nil),       // 56: involt.v1.GetCustomerAccountRequest
+	(*RegisterPaymentRequest)(nil),          // 57: involt.v1.RegisterPaymentRequest
+	(*VoidPaymentRequest)(nil),              // 58: involt.v1.VoidPaymentRequest
+	(*CreateFlatChargeRequest)(nil),         // 59: involt.v1.CreateFlatChargeRequest
+	(*GetCashClosingRequest)(nil),           // 60: involt.v1.GetCashClosingRequest
+	(*GetCollectionsDashboardRequest)(nil),  // 61: involt.v1.GetCollectionsDashboardRequest
+	(*GetDebtorsRequest)(nil),               // 62: involt.v1.GetDebtorsRequest
+	(*GetCustomerAccountResponse)(nil),      // 63: involt.v1.GetCustomerAccountResponse
+	(*RegisterPaymentResponse)(nil),         // 64: involt.v1.RegisterPaymentResponse
+	(*VoidPaymentResponse)(nil),             // 65: involt.v1.VoidPaymentResponse
+	(*CreateFlatChargeResponse)(nil),        // 66: involt.v1.CreateFlatChargeResponse
+	(*GetCashClosingResponse)(nil),          // 67: involt.v1.GetCashClosingResponse
+	(*GetCollectionsDashboardResponse)(nil), // 68: involt.v1.GetCollectionsDashboardResponse
+	(*GetDebtorsResponse)(nil),              // 69: involt.v1.GetDebtorsResponse
 }
 var file_involt_v1_admin_proto_depIdxs = []int32{
 	49, // 0: involt.v1.UpsertSectorRequest.sector:type_name -> involt.v1.Sector
@@ -2913,35 +2920,39 @@ var file_involt_v1_admin_proto_depIdxs = []int32{
 	58, // 53: involt.v1.AdminService.VoidPayment:input_type -> involt.v1.VoidPaymentRequest
 	59, // 54: involt.v1.AdminService.CreateFlatCharge:input_type -> involt.v1.CreateFlatChargeRequest
 	60, // 55: involt.v1.AdminService.GetCashClosing:input_type -> involt.v1.GetCashClosingRequest
-	8,  // 56: involt.v1.AdminService.Login:output_type -> involt.v1.LoginResponse
-	10, // 57: involt.v1.AdminService.GetUsers:output_type -> involt.v1.GetUsersResponse
-	12, // 58: involt.v1.AdminService.UpsertUser:output_type -> involt.v1.UpsertUserResponse
-	14, // 59: involt.v1.AdminService.GetSectors:output_type -> involt.v1.GetSectorsResponse
-	16, // 60: involt.v1.AdminService.GetCommunities:output_type -> involt.v1.GetCommunitiesResponse
-	18, // 61: involt.v1.AdminService.GetCustomers:output_type -> involt.v1.GetCustomersResponse
-	20, // 62: involt.v1.AdminService.GetReadings:output_type -> involt.v1.GetReadingsResponse
-	22, // 63: involt.v1.AdminService.GetSettings:output_type -> involt.v1.GetSettingsResponse
-	24, // 64: involt.v1.AdminService.UpdateSettings:output_type -> involt.v1.UpdateSettingsResponse
-	26, // 65: involt.v1.AdminService.UpsertCustomer:output_type -> involt.v1.UpsertCustomerResponse
-	6,  // 66: involt.v1.AdminService.DeleteCustomer:output_type -> involt.v1.DeleteCustomerResponse
-	29, // 67: involt.v1.AdminService.GetDashboardStats:output_type -> involt.v1.GetDashboardStatsResponse
-	32, // 68: involt.v1.AdminService.ListPeriods:output_type -> involt.v1.ListPeriodsResponse
-	34, // 69: involt.v1.AdminService.GetPeriodStats:output_type -> involt.v1.GetPeriodStatsResponse
-	37, // 70: involt.v1.AdminService.OpenPeriod:output_type -> involt.v1.OpenPeriodResponse
-	39, // 71: involt.v1.AdminService.ClosePeriod:output_type -> involt.v1.ClosePeriodResponse
-	2,  // 72: involt.v1.AdminService.UpsertSector:output_type -> involt.v1.UpsertSectorResponse
-	46, // 73: involt.v1.AdminService.DeleteSector:output_type -> involt.v1.DeleteSectorResponse
-	4,  // 74: involt.v1.AdminService.UpsertCommunity:output_type -> involt.v1.UpsertCommunityResponse
-	48, // 75: involt.v1.AdminService.DeleteCommunity:output_type -> involt.v1.DeleteCommunityResponse
-	41, // 76: involt.v1.AdminService.TogglePaymentStatus:output_type -> involt.v1.TogglePaymentStatusResponse
-	43, // 77: involt.v1.AdminService.GetCollections:output_type -> involt.v1.GetCollectionsResponse
-	61, // 78: involt.v1.AdminService.GetCustomerAccount:output_type -> involt.v1.GetCustomerAccountResponse
-	62, // 79: involt.v1.AdminService.RegisterPayment:output_type -> involt.v1.RegisterPaymentResponse
-	63, // 80: involt.v1.AdminService.VoidPayment:output_type -> involt.v1.VoidPaymentResponse
-	64, // 81: involt.v1.AdminService.CreateFlatCharge:output_type -> involt.v1.CreateFlatChargeResponse
-	65, // 82: involt.v1.AdminService.GetCashClosing:output_type -> involt.v1.GetCashClosingResponse
-	56, // [56:83] is the sub-list for method output_type
-	29, // [29:56] is the sub-list for method input_type
+	61, // 56: involt.v1.AdminService.GetCollectionsDashboard:input_type -> involt.v1.GetCollectionsDashboardRequest
+	62, // 57: involt.v1.AdminService.GetDebtors:input_type -> involt.v1.GetDebtorsRequest
+	8,  // 58: involt.v1.AdminService.Login:output_type -> involt.v1.LoginResponse
+	10, // 59: involt.v1.AdminService.GetUsers:output_type -> involt.v1.GetUsersResponse
+	12, // 60: involt.v1.AdminService.UpsertUser:output_type -> involt.v1.UpsertUserResponse
+	14, // 61: involt.v1.AdminService.GetSectors:output_type -> involt.v1.GetSectorsResponse
+	16, // 62: involt.v1.AdminService.GetCommunities:output_type -> involt.v1.GetCommunitiesResponse
+	18, // 63: involt.v1.AdminService.GetCustomers:output_type -> involt.v1.GetCustomersResponse
+	20, // 64: involt.v1.AdminService.GetReadings:output_type -> involt.v1.GetReadingsResponse
+	22, // 65: involt.v1.AdminService.GetSettings:output_type -> involt.v1.GetSettingsResponse
+	24, // 66: involt.v1.AdminService.UpdateSettings:output_type -> involt.v1.UpdateSettingsResponse
+	26, // 67: involt.v1.AdminService.UpsertCustomer:output_type -> involt.v1.UpsertCustomerResponse
+	6,  // 68: involt.v1.AdminService.DeleteCustomer:output_type -> involt.v1.DeleteCustomerResponse
+	29, // 69: involt.v1.AdminService.GetDashboardStats:output_type -> involt.v1.GetDashboardStatsResponse
+	32, // 70: involt.v1.AdminService.ListPeriods:output_type -> involt.v1.ListPeriodsResponse
+	34, // 71: involt.v1.AdminService.GetPeriodStats:output_type -> involt.v1.GetPeriodStatsResponse
+	37, // 72: involt.v1.AdminService.OpenPeriod:output_type -> involt.v1.OpenPeriodResponse
+	39, // 73: involt.v1.AdminService.ClosePeriod:output_type -> involt.v1.ClosePeriodResponse
+	2,  // 74: involt.v1.AdminService.UpsertSector:output_type -> involt.v1.UpsertSectorResponse
+	46, // 75: involt.v1.AdminService.DeleteSector:output_type -> involt.v1.DeleteSectorResponse
+	4,  // 76: involt.v1.AdminService.UpsertCommunity:output_type -> involt.v1.UpsertCommunityResponse
+	48, // 77: involt.v1.AdminService.DeleteCommunity:output_type -> involt.v1.DeleteCommunityResponse
+	41, // 78: involt.v1.AdminService.TogglePaymentStatus:output_type -> involt.v1.TogglePaymentStatusResponse
+	43, // 79: involt.v1.AdminService.GetCollections:output_type -> involt.v1.GetCollectionsResponse
+	63, // 80: involt.v1.AdminService.GetCustomerAccount:output_type -> involt.v1.GetCustomerAccountResponse
+	64, // 81: involt.v1.AdminService.RegisterPayment:output_type -> involt.v1.RegisterPaymentResponse
+	65, // 82: involt.v1.AdminService.VoidPayment:output_type -> involt.v1.VoidPaymentResponse
+	66, // 83: involt.v1.AdminService.CreateFlatCharge:output_type -> involt.v1.CreateFlatChargeResponse
+	67, // 84: involt.v1.AdminService.GetCashClosing:output_type -> involt.v1.GetCashClosingResponse
+	68, // 85: involt.v1.AdminService.GetCollectionsDashboard:output_type -> involt.v1.GetCollectionsDashboardResponse
+	69, // 86: involt.v1.AdminService.GetDebtors:output_type -> involt.v1.GetDebtorsResponse
+	58, // [58:87] is the sub-list for method output_type
+	29, // [29:58] is the sub-list for method input_type
 	29, // [29:29] is the sub-list for extension type_name
 	29, // [29:29] is the sub-list for extension extendee
 	0,  // [0:29] is the sub-list for field type_name
@@ -2954,6 +2965,7 @@ func file_involt_v1_admin_proto_init() {
 	}
 	file_involt_v1_models_proto_init()
 	file_involt_v1_payments_proto_init()
+	file_involt_v1_reports_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
