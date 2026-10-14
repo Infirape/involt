@@ -1,3 +1,4 @@
+import { AgreementStatus } from "@/app/gen/involt/v1/agreements_pb";
 import { PaymentMethod, ReceiptStatus } from "@/app/gen/involt/v1/payments_pb";
 
 export const PAYMENT_METHOD_OPTIONS: { value: PaymentMethod; label: string }[] = [
@@ -46,6 +47,11 @@ export const RECEIPT_STATUS_STYLES: Record<ReceiptStatus, StatusStyle> = {
     className: "bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20",
     swatch: "bg-red-500/10 border-red-500/20",
   },
+  [ReceiptStatus.IN_AGREEMENT]: {
+    label: "Convenio",
+    className: "bg-cyan-500/10 text-cyan-300 border-cyan-500/25 hover:bg-cyan-500/20",
+    swatch: "bg-cyan-500/15 border-cyan-500/30",
+  },
   [ReceiptStatus.UNSPECIFIED]: {
     label: "—",
     className: "bg-zinc-800 text-zinc-500 border-zinc-700",
@@ -59,4 +65,36 @@ export function formatPeriod(period: string): string {
   const [year, month] = period.split("-");
   const name = MONTHS[Number.parseInt(month, 10) - 1];
   return name ? `${name} ${year}` : period;
+}
+
+export const AGREEMENT_STATUS_STYLES: Record<
+  AgreementStatus,
+  { label: string; className: string }
+> = {
+  [AgreementStatus.ACTIVE]: {
+    label: "Al día",
+    className: "text-cyan-300 bg-cyan-500/10 border-cyan-500/25",
+  },
+  [AgreementStatus.IN_DEFAULT]: {
+    label: "En mora",
+    className: "text-red-400 bg-red-500/10 border-red-500/25",
+  },
+  [AgreementStatus.COMPLETED]: {
+    label: "Completado",
+    className: "text-emerald-400 bg-emerald-500/10 border-emerald-500/25",
+  },
+  [AgreementStatus.CANCELLED]: {
+    label: "Anulado",
+    className: "text-zinc-400 bg-zinc-800 border-zinc-700",
+  },
+  [AgreementStatus.UNSPECIFIED]: {
+    label: "—",
+    className: "text-zinc-500 bg-zinc-800 border-zinc-700",
+  },
+};
+
+/** Formats a YYYY-MM-DD date as dd/mm/yyyy without timezone shifts. */
+export function formatDay(isoDay: string): string {
+  const [y, m, d] = isoDay.split("-");
+  return d && m && y ? `${d}/${m}/${y}` : isoDay;
 }

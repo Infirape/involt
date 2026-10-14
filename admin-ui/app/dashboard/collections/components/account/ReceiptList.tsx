@@ -1,4 +1,4 @@
-import { FileText } from "lucide-react";
+import { BadgePercent, FileText } from "lucide-react";
 import { useState } from "react";
 import type { ReceiptBalance } from "@/app/gen/involt/v1/payments_pb";
 import { openReceiptPdf } from "../../lib/api";
@@ -11,9 +11,17 @@ interface ReceiptListProps {
   selectedIds: Set<string>;
   onToggle: (readingId: string) => void;
   onToggleAll: (select: boolean) => void;
+  /** When set, receipts with mora show a "condonar" action (managers only). */
+  onWaive?: (receipt: ReceiptBalance) => void;
 }
 
-export function ReceiptList({ receipts, selectedIds, onToggle, onToggleAll }: ReceiptListProps) {
+export function ReceiptList({
+  receipts,
+  selectedIds,
+  onToggle,
+  onToggleAll,
+  onWaive,
+}: ReceiptListProps) {
   const [showSettled, setShowSettled] = useState(false);
   const outstanding = receipts.filter((r) => r.balance > 0);
   const visible = showSettled ? receipts : outstanding;
@@ -57,6 +65,7 @@ export function ReceiptList({ receipts, selectedIds, onToggle, onToggleAll }: Re
               receipt={receipt}
               selected={selectedIds.has(rid(receipt))}
               onToggle={onToggle}
+              onWaive={onWaive}
             />
           ))}
         </ul>
@@ -71,10 +80,12 @@ function ReceiptRow({
   receipt,
   selected,
   onToggle,
+  onWaive,
 }: {
   receipt: ReceiptBalance;
   selected: boolean;
   onToggle: (readingId: string) => void;
+  onWaive?: (receipt: ReceiptBalance) => void;
 }) {
   const reading = receipt.reading;
   if (!reading) return null;
@@ -95,12 +106,30 @@ function ReceiptRow({
       <div className="w-20 font-medium text-zinc-200">{formatPeriod(reading.period)}</div>
       <StatusPill status={receipt.status} />
       <div className="ml-auto text-right tabular-nums">
-        <div className="text-zinc-200 font-semibold">{formatSoles(receipt.balance)}</div>
+        <div className="text-zinc-200 font-semibold">
+          {formatSoles(receipt.balance + receipt.lateFee)}
+        </div>
         <div className="text-[10px] text-zinc-500">
           de {formatSoles(reading.totalToPay)}
           {receipt.paidAmount > 0 && ` · pagó ${formatSoles(receipt.paidAmount)}`}
         </div>
+        {receipt.lateFee > 0 && (
+          <div className="text-[10px] text-amber-300">+ mora {formatSoles(receipt.lateFee)}</div>
+        )}
+        {receipt.lateFeeWaived && payable && (
+          <div className="text-[10px] text-zinc-500">mora condonada</div>
+        )}
       </div>
+      {onWaive && receipt.lateFee > 0 && (
+        <button
+          type="button"
+          onClick={() => onWaive(receipt)}
+          title="Condonar mora"
+          className="p-1.5 rounded-lg text-zinc-500 hover:text-amber-300 hover:bg-zinc-800"
+        >
+          <BadgePercent className="w-3.5 h-3.5" />
+        </button>
+      )}
       <button
         type="button"
         onClick={() => openReceiptPdf(reading.id)}

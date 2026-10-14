@@ -43,6 +43,16 @@ export function DebtorsTable({ debtors, onOpen }: DebtorsTableProps) {
                     <Scissors className="w-3 h-3" /> CORTE
                   </span>
                 )}
+                {d.inAgreement && (
+                  <span className="px-1.5 py-0.5 rounded-md bg-cyan-500/10 border border-cyan-500/25 text-cyan-300 text-[10px] font-bold">
+                    CONVENIO
+                  </span>
+                )}
+                {d.agreementInDefault && (
+                  <span className="px-1.5 py-0.5 rounded-md bg-red-500/10 border border-red-500/25 text-red-400 text-[10px] font-bold">
+                    CONVENIO EN MORA
+                  </span>
+                )}
                 <span className="truncate max-w-[240px]">{d.customerName}</span>
               </div>
               <div className="text-[10px] font-mono text-zinc-600">{d.customerCode}</div>

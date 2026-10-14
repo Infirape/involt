@@ -1,17 +1,19 @@
 "use client";
 
-import { BarChart3, DollarSign, Grid3x3, Receipt, UserX, Wallet } from "lucide-react";
-import { useMemo, useState } from "react";
+import { BarChart3, DollarSign, Grid3x3, Receipt, Settings2, UserX, Wallet } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { CollectionsMatrix } from "./components/CollectionsMatrix";
 import { CashClosing } from "./components/closing/CashClosing";
 import { CollectionsDashboard } from "./components/dashboard/CollectionsDashboard";
 import { DebtorsView } from "./components/debtors/DebtorsView";
 import { CashDesk } from "./components/desk/CashDesk";
+import { CollectionPolicyForm } from "./components/policy/CollectionPolicyForm";
 import { SectorSidebar } from "./components/SectorSidebar";
 import { DEFAULT_DEBTOR_FILTERS, type DebtorFilters } from "./hooks/useDebtors";
 import { useSectors } from "./hooks/useSectors";
 
-type Tab = "summary" | "matrix" | "debtors" | "desk" | "closing";
+type Tab = "summary" | "matrix" | "debtors" | "desk" | "closing" | "policy";
 
 const TABS: { id: Tab; label: string; icon: typeof Grid3x3 }[] = [
   { id: "summary", label: "Resumen", icon: BarChart3 },
@@ -19,11 +21,18 @@ const TABS: { id: Tab; label: string; icon: typeof Grid3x3 }[] = [
   { id: "debtors", label: "Morosos", icon: UserX },
   { id: "desk", label: "Caja", icon: Wallet },
   { id: "closing", label: "Cierre de caja", icon: Receipt },
+  { id: "policy", label: "Políticas", icon: Settings2 },
 ];
 
 export default function CollectionsPage() {
   const [tab, setTab] = useState<Tab>("summary");
   const sectors = useSectors();
+  const { isAdmin } = useAuth();
+  // The role comes from localStorage: only trust it after mount to avoid a hydration mismatch.
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
+  const showPolicy = isMounted && isAdmin;
+  const tabs = TABS.filter((t) => t.id !== "policy" || showPolicy);
   // Lifted so the dashboard's "candidatos a corte" tile can open a pre-filtered list.
   const [debtorFilters, setDebtorFilters] = useState<DebtorFilters>(DEFAULT_DEBTOR_FILTERS);
   const communities = useMemo(
@@ -53,7 +62,7 @@ export default function CollectionsPage() {
           role="tablist"
           className="flex items-center bg-zinc-900/80 border border-zinc-800 rounded-xl p-1"
         >
-          {TABS.map(({ id, label, icon: Icon }) => (
+          {tabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               type="button"
@@ -104,6 +113,7 @@ export default function CollectionsPage() {
       )}
       {tab === "desk" && <CashDesk />}
       {tab === "closing" && <CashClosing />}
+      {tab === "policy" && showPolicy && <CollectionPolicyForm />}
     </div>
   );
 }

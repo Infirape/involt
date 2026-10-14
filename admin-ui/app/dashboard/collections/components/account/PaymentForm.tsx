@@ -6,8 +6,10 @@ import { methodNeedsReference, PAYMENT_METHOD_OPTIONS } from "../../lib/labels";
 import { formatSoles, parseAmount } from "../../lib/money";
 
 interface PaymentFormProps {
-  /** Sum of the selected receipts' balances; the default and maximum amount. */
+  /** Sum of the selected receipts' balances plus mora; the default and maximum amount. */
   selectedBalance: number;
+  /** Amount suggested from outside (e.g. "cobrar cuota"); key changes re-apply it. */
+  preset?: { amount: number; key: number } | null;
   selectedIds: string[];
   submitting: boolean;
   onSubmit: (input: PaymentInput) => Promise<boolean>;
@@ -19,6 +21,7 @@ const labelClass = "text-[11px] font-semibold text-zinc-400 uppercase tracking-w
 
 export function PaymentForm({
   selectedBalance,
+  preset,
   selectedIds,
   submitting,
   onSubmit,
@@ -30,6 +33,9 @@ export function PaymentForm({
 
   // Changing the selection resets the amount to "pay everything selected".
   useEffect(() => setAmount(selectedBalance.toFixed(2)), [selectedBalance]);
+  useEffect(() => {
+    if (preset) setAmount(preset.amount.toFixed(2));
+  }, [preset]);
 
   const parsed = parseAmount(amount);
   const exceeds = parsed !== null && parsed > selectedBalance;

@@ -3,6 +3,10 @@ import { Code } from "@connectrpc/connect";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
+  CancelAgreementRequestSchema,
+  WaiveLateFeeRequestSchema,
+} from "@/app/gen/involt/v1/agreements_pb";
+import {
   CreateFlatChargeRequestSchema,
   GetCustomerAccountRequestSchema,
   type GetCustomerAccountResponse,
@@ -106,7 +110,58 @@ export function useCustomerAccount(customerId: string | null, onChanged?: () => 
     [refresh],
   );
 
-  return { account, loading, submitting, registerPayment, voidPayment, refresh };
+  /** Runs an account action with the shared submitting flag, refreshing on success. */
+  const run = useCallback(
+    async (action: () => Promise<unknown>, success: string, fallback: string, overrides = {}) => {
+      setSubmitting(true);
+      try {
+        await action();
+        toast.success(success);
+        refresh();
+        return true;
+      } catch (err) {
+        toast.error(rpcErrorMessage(err, fallback, overrides));
+        return false;
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [refresh],
+  );
+
+  const waiveLateFee = useCallback(
+    (readingIds: string[], reason: string) =>
+      run(
+        () => adminClient.waiveLateFee(create(WaiveLateFeeRequestSchema, { readingIds, reason })),
+        "Mora condonada",
+        "Error al condonar la mora",
+      ),
+    [run],
+  );
+
+  const cancelAgreement = useCallback(
+    (agreementId: string, reason: string) =>
+      run(
+        () =>
+          adminClient.cancelAgreement(
+            create(CancelAgreementRequestSchema, { agreementId, reason }),
+          ),
+        "Convenio anulado",
+        "Error al anular el convenio",
+      ),
+    [run],
+  );
+
+  return {
+    account,
+    loading,
+    submitting,
+    registerPayment,
+    voidPayment,
+    waiveLateFee,
+    cancelAgreement,
+    refresh,
+  };
 }
 
 /** Bills a period without meter reading. Returns the new reading id, or null on failure. */

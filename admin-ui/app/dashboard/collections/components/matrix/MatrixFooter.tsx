@@ -8,6 +8,7 @@ const LEGEND = [
   ReceiptStatus.PARTIAL,
   ReceiptStatus.PENDING,
   ReceiptStatus.OVERDUE,
+  ReceiptStatus.IN_AGREEMENT,
 ];
 
 export function MatrixFooter({ totals }: { totals: MatrixTotals }) {
