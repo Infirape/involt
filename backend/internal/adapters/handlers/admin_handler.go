@@ -29,6 +29,9 @@ type AdminHandler struct {
 	periodRepo   ports.PeriodRepository
 	jwtService   *auth.JWTService
 	pdfGen       ports.ReceiptGenerator
+	paymentRepo  ports.PaymentRepository
+	voucherGen   ports.PaymentVoucherGenerator
+	clock        func() time.Time
 }
 
 func NewAdminHandler(
@@ -39,6 +42,8 @@ func NewAdminHandler(
 	periodRepo ports.PeriodRepository,
 	jwtSecret string,
 	pdfGen ports.ReceiptGenerator,
+	paymentRepo ports.PaymentRepository,
+	voucherGen ports.PaymentVoucherGenerator,
 ) *AdminHandler {
 	return &AdminHandler{
 		adminRepo:    adminRepo,
@@ -48,6 +53,8 @@ func NewAdminHandler(
 		periodRepo:   periodRepo,
 		jwtService:   auth.NewJWTService(jwtSecret),
 		pdfGen:       pdfGen,
+		paymentRepo:  paymentRepo,
+		voucherGen:   voucherGen,
 	}
 }
 

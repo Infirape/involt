@@ -56,6 +56,7 @@ func main() {
 	settingsRepo := repositories.NewSettingsRepository(db)
 	adminRepo := repositories.NewPostgresAdminRepository(db)
 	periodRepo := repositories.NewPostgresPeriodRepository(db)
+	paymentRepo := repositories.NewPostgresPaymentRepository(db)
 	pdfGen := pdf.NewMarotoGenerator()
 
 	// 3. Initialize Handlers
@@ -66,7 +67,7 @@ func main() {
 
 	syncHandler := handlers.NewSyncHandler(metaRepo, customerRepo, readingRepo, periodRepo, adminRepo, pdfGen)
 	settingsHandler := handlers.NewSettingsHandler(settingsRepo)
-	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, periodRepo, jwtSecret, pdfGen)
+	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, periodRepo, jwtSecret, pdfGen, paymentRepo, pdfGen)
 
 	// 4. Setup Mux
 	mux := http.NewServeMux()
@@ -101,6 +102,7 @@ func main() {
 	// REST endpoints for PDF export
 	mux.HandleFunc("/admin/readings/bulk-pdf", adminSvcHandler.BulkPDF)
 	mux.HandleFunc("/admin/readings/pdf/", adminSvcHandler.DownloadReadingPDF)
+	mux.HandleFunc("/admin/payments/pdf/", adminSvcHandler.DownloadPaymentVoucher)
 
 	// API Health check
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -174,5 +176,11 @@ func initSchema(db *sqlx.DB) error {
 	}
 	_, _ = db.Exec(`ALTER TABLE readings ADD COLUMN IF NOT EXISTS is_paid BOOLEAN NOT NULL DEFAULT FALSE;`)
 	_, _ = db.Exec(`ALTER TABLE readings ADD COLUMN IF NOT EXISTS payment_date TIMESTAMPTZ;`)
+	if _, err := db.Exec(paymentsSchemaSQL); err != nil {
+		log.Printf("⚠️ Notice during payments schema: %v", err)
+	}
 	return nil
 }
+
+//go:embed payments_schema.sql
+var paymentsSchemaSQL string

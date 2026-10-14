@@ -3,151 +3,142 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"math"
 
 	"connectrpc.com/connect"
-	"github.com/google/uuid"
 
 	"github.com/infira/involt/backend/internal/adapters/auth"
 	"github.com/infira/involt/backend/internal/domain"
 	involtv1 "github.com/infira/involt/backend/internal/gen/involt/v1"
 )
 
-// TogglePaymentStatus updates the is_paid flag of a reading.
+// TogglePaymentStatus is kept for older clients. Marking as paid registers a cash payment for the
+// receipt's outstanding balance (creating a flat charge if the period has no reading); un-paying is
+// no longer allowed because it would erase the audit trail — use VoidPayment instead.
 func (h *AdminHandler) TogglePaymentStatus(
 	ctx context.Context,
 	req *connect.Request[involtv1.TogglePaymentStatusRequest],
 ) (*connect.Response[involtv1.TogglePaymentStatusResponse], error) {
-	_, ok := auth.GetUserFromContext(ctx)
-	if !ok {
-		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("authentication required"))
+	if !req.Msg.IsPaid {
+		return nil, connect.NewError(connect.CodeFailedPrecondition, fmt.Errorf("payments can no longer be unmarked; void the payment instead"))
+	}
+
+	customerID := req.Msg.CustomerId
+	if req.Msg.ReadingId != "" {
+		reading, err := h.readingRepo.GetByID(ctx, req.Msg.ReadingId)
+		if err != nil || reading == nil {
+			return nil, connect.NewError(connect.CodeNotFound, fmt.Errorf("reading %s not found", req.Msg.ReadingId))
+		}
+		customerID = reading.CustomerID
+	} else if customerID == "" || req.Msg.Period == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("reading_id or both customer_id and period are required"))
+	}
+
+	user, customer, err := h.authorizeCustomer(ctx, customerID)
+	if err != nil {
+		return nil, err
 	}
 
 	readingID := req.Msg.ReadingId
-	isPaid := req.Msg.IsPaid
-
 	if readingID == "" {
-		if req.Msg.CustomerId == "" || req.Msg.Period == "" {
-			return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("reading_id or both customer_id and period are required"))
-		}
-
-		// Look up reading
-		reading, err := h.readingRepo.GetByCustomerAndPeriod(ctx, req.Msg.CustomerId, req.Msg.Period)
+		reading, err := h.readingRepo.GetByCustomerAndPeriod(ctx, customerID, req.Msg.Period)
 		if err != nil {
 			return nil, connect.NewError(connect.CodeInternal, err)
 		}
-
-		if reading != nil {
-			readingID = reading.ID
-		} else {
-			// Create a default/dummy reading representing a flat/fixed fee for this period
-			// Get default settings to retrieve cargo_fijo, mantenimiento, alumbrado_publico
-			settings, err := h.metaRepo.GetSettings(ctx)
+		if reading == nil {
+			reading, err = h.createFlatCharge(ctx, customerID, req.Msg.Period, req.Msg.TotalToPay, req.Msg.Observation)
 			if err != nil {
-				return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("failed to get default settings: %w", err))
+				return nil, err
 			}
+		}
+		readingID = reading.ID
+	}
 
-			// Generate a new UUID
-			newUUID := uuid.New().String()
-			readingID = newUUID
-
-			// Create reading record
-			cargoFijo := settings.CargoFijo
-			alumbrado := settings.Alumbrado
-			mantenimiento := settings.Mantenimiento
-			totalToPay := cargoFijo + alumbrado + mantenimiento
-
-			if req.Msg.TotalToPay > 0 {
-				totalToPay = req.Msg.TotalToPay
-				cargoFijo = req.Msg.TotalToPay
-				alumbrado = 0
-				mantenimiento = 0
-			}
-
-			newReading := &domain.Reading{
-				ID:               newUUID,
-				CustomerID:       req.Msg.CustomerId,
-				PreviousValue:    0,
-				CurrentValue:     0,
-				Consumption:      0,
-				Period:           req.Msg.Period,
-				CargoFijo:        cargoFijo,
-				AlumbradoPublico: alumbrado,
-				Mantenimiento:    mantenimiento,
-				TotalToPay:       totalToPay,
-				Observation:      req.Msg.Observation,
-				IsPaid:           isPaid,
-			}
-
-			if err := h.readingRepo.Save(ctx, newReading); err != nil {
-				return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("failed to save dummy reading: %w", err))
-			}
+	debts, err := h.outstandingDebts(ctx, customerID, []string{readingID})
+	if err != nil {
+		return nil, err
+	}
+	if balance := debts[0].Balance; balance > 0 {
+		if _, err := h.recordPayment(ctx, user, customer, []string{readingID}, balance, domain.PaymentMethodCash, "", req.Msg.Observation); err != nil {
+			return nil, err
 		}
 	}
 
-	if err := h.readingRepo.UpdatePaymentStatus(ctx, readingID, isPaid); err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
-	}
-
-	return connect.NewResponse(&involtv1.TogglePaymentStatusResponse{
-		ReadingId: readingID,
-		IsPaid:    isPaid,
-	}), nil
+	return connect.NewResponse(&involtv1.TogglePaymentStatusResponse{ReadingId: readingID, IsPaid: true}), nil
 }
 
-// GetCollections returns the payment matrix for a sector across the given periods.
+// GetCollections returns the payment matrix for a sector across the given periods, with each
+// receipt's balance and status, every customer's total debt and the billed/collected totals.
 func (h *AdminHandler) GetCollections(
 	ctx context.Context,
 	req *connect.Request[involtv1.GetCollectionsRequest],
 ) (*connect.Response[involtv1.GetCollectionsResponse], error) {
-	_, ok := auth.GetUserFromContext(ctx)
+	user, ok := auth.GetUserFromContext(ctx)
 	if !ok {
 		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("authentication required"))
 	}
-
 	if req.Msg.SectorId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("sector_id is required"))
+	}
+	if !canAccessSector(user, req.Msg.SectorId) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("sector not assigned"))
 	}
 
 	customers, err := h.customerRepo.ListBySector(ctx, req.Msg.SectorId)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
-
 	readings, err := h.readingRepo.ListBySector(ctx, req.Msg.SectorId, req.Msg.Periods)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
+	paid, err := h.paymentRepo.PaidAmounts(ctx, readingIDs(readings))
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+	debts, err := h.paymentRepo.DebtByCustomer(ctx, req.Msg.SectorId)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
 
-	customerRows := make([]*involtv1.CollectionCustomer, 0, len(customers))
-	readingsByCustomer := make(map[string][]*involtv1.Reading, len(customers))
 	customerNamesByID := make(map[string]string, len(customers))
 	for _, customer := range customers {
 		customerNamesByID[customer.ID] = customer.Name
-		readingsByCustomer[customer.ID] = nil
 	}
 
-	protoReadings := make([]*involtv1.Reading, 0, len(readings))
-	for _, r := range readings {
+	resp := &involtv1.GetCollectionsResponse{}
+	readingsByCustomer := make(map[string][]domain.Reading, len(customers))
+	protoByCustomer := make(map[string][]*involtv1.Reading, len(customers))
+	var billedCents, collectedCents int64
+	for i := range readings {
+		r := &readings[i]
 		if r.CustomerName == "" {
 			r.CustomerName = customerNamesByID[r.CustomerID]
 		}
-		protoReading := domain.MapReadingToProto(&r)
-		protoReadings = append(protoReadings, protoReading)
-		if _, ok := readingsByCustomer[r.CustomerID]; ok {
-			readingsByCustomer[r.CustomerID] = append(readingsByCustomer[r.CustomerID], protoReading)
-		}
-	}
+		protoReading := domain.MapReadingToProto(r)
+		resp.Readings = append(resp.Readings, protoReading)
+		readingsByCustomer[r.CustomerID] = append(readingsByCustomer[r.CustomerID], *r)
+		protoByCustomer[r.CustomerID] = append(protoByCustomer[r.CustomerID], protoReading)
 
-	for _, customer := range customers {
-		customer := customer
-		customerRows = append(customerRows, &involtv1.CollectionCustomer{
-			Customer: domain.MapCustomerToProto(&customer),
-			Readings: readingsByCustomer[customer.ID],
+		billedCents += toCentsRounded(r.TotalToPay)
+		collectedCents += toCentsRounded(min(paid[r.ID], r.TotalToPay))
+	}
+	resp.TotalBilled = float64(billedCents) / 100
+	resp.TotalCollected = float64(collectedCents) / 100
+
+	now := h.now()
+	for i := range customers {
+		customer := &customers[i]
+		resp.Customers = append(resp.Customers, &involtv1.CollectionCustomer{
+			Customer:  domain.MapCustomerToProto(customer),
+			Readings:  protoByCustomer[customer.ID],
+			Receipts:  buildReceiptBalances(readingsByCustomer[customer.ID], paid, now),
+			TotalDebt: debts[customer.ID],
 		})
 	}
+	return connect.NewResponse(resp), nil
+}
 
-	return connect.NewResponse(&involtv1.GetCollectionsResponse{
-		Readings:  protoReadings,
-		Customers: customerRows,
-	}), nil
+func toCentsRounded(v float64) int64 {
+	return int64(math.Round(v * 100))
 }
