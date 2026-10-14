@@ -1,24 +1,40 @@
 "use client";
 
-import { DollarSign, Grid3x3, Receipt, Wallet } from "lucide-react";
-import { useState } from "react";
+import { BarChart3, DollarSign, Grid3x3, Receipt, UserX, Wallet } from "lucide-react";
+import { useMemo, useState } from "react";
 import { CollectionsMatrix } from "./components/CollectionsMatrix";
 import { CashClosing } from "./components/closing/CashClosing";
+import { CollectionsDashboard } from "./components/dashboard/CollectionsDashboard";
+import { DebtorsView } from "./components/debtors/DebtorsView";
 import { CashDesk } from "./components/desk/CashDesk";
 import { SectorSidebar } from "./components/SectorSidebar";
+import { DEFAULT_DEBTOR_FILTERS, type DebtorFilters } from "./hooks/useDebtors";
 import { useSectors } from "./hooks/useSectors";
 
-type Tab = "matrix" | "desk" | "closing";
+type Tab = "summary" | "matrix" | "debtors" | "desk" | "closing";
 
 const TABS: { id: Tab; label: string; icon: typeof Grid3x3 }[] = [
+  { id: "summary", label: "Resumen", icon: BarChart3 },
   { id: "matrix", label: "Por caserío", icon: Grid3x3 },
+  { id: "debtors", label: "Morosos", icon: UserX },
   { id: "desk", label: "Caja", icon: Wallet },
   { id: "closing", label: "Cierre de caja", icon: Receipt },
 ];
 
 export default function CollectionsPage() {
-  const [tab, setTab] = useState<Tab>("matrix");
+  const [tab, setTab] = useState<Tab>("summary");
   const sectors = useSectors();
+  // Lifted so the dashboard's "candidatos a corte" tile can open a pre-filtered list.
+  const [debtorFilters, setDebtorFilters] = useState<DebtorFilters>(DEFAULT_DEBTOR_FILTERS);
+  const communities = useMemo(
+    () =>
+      Object.entries(sectors.communitiesWithSectors).map(([id, c]) => ({
+        id,
+        name: c.name,
+        sectors: c.sectors,
+      })),
+    [sectors.communitiesWithSectors],
+  );
 
   return (
     <div className="h-full flex flex-col gap-5 p-6">
@@ -29,7 +45,7 @@ export default function CollectionsPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-white">Cobranzas</h1>
-            <p className="text-sm text-zinc-400">Pagos, deudas y cierre de caja</p>
+            <p className="text-sm text-zinc-400">Resumen, morosos, pagos y cierre de caja</p>
           </div>
         </div>
 
@@ -55,6 +71,22 @@ export default function CollectionsPage() {
         </div>
       </div>
 
+      {tab === "summary" && (
+        <CollectionsDashboard
+          communities={communities}
+          onShowCutCandidates={() => {
+            setDebtorFilters({ ...DEFAULT_DEBTOR_FILTERS, onlyCutCandidates: true });
+            setTab("debtors");
+          }}
+        />
+      )}
+      {tab === "debtors" && (
+        <DebtorsView
+          filters={debtorFilters}
+          onFiltersChange={setDebtorFilters}
+          communities={communities}
+        />
+      )}
       {tab === "matrix" && (
         <div className="flex gap-4 flex-1 min-h-0">
           <SectorSidebar
