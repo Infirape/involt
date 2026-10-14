@@ -31,6 +31,7 @@ type AdminHandler struct {
 	pdfGen       ports.ReceiptGenerator
 	paymentRepo  ports.PaymentRepository
 	voucherGen   ports.PaymentVoucherGenerator
+	reportRepo   ports.CollectionsReportRepository
 	clock        func() time.Time
 }
 
@@ -44,6 +45,7 @@ func NewAdminHandler(
 	pdfGen ports.ReceiptGenerator,
 	paymentRepo ports.PaymentRepository,
 	voucherGen ports.PaymentVoucherGenerator,
+	reportRepo ports.CollectionsReportRepository,
 ) *AdminHandler {
 	return &AdminHandler{
 		adminRepo:    adminRepo,
@@ -55,6 +57,7 @@ func NewAdminHandler(
 		pdfGen:       pdfGen,
 		paymentRepo:  paymentRepo,
 		voucherGen:   voucherGen,
+		reportRepo:   reportRepo,
 	}
 }
 

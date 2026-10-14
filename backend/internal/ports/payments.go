@@ -35,3 +35,22 @@ type PaymentRepository interface {
 type PaymentVoucherGenerator interface {
 	GenerateVoucher(ctx context.Context, payment *domain.Payment, customer *domain.Customer, settings *domain.Settings) ([]byte, error)
 }
+
+// ReceiptLineFilter scopes collection reports. Empty fields mean "no restriction";
+// AllowedSectorIDs (non-nil) enforces RBAC for non-admin users.
+type ReceiptLineFilter struct {
+	AllowedSectorIDs []string
+	CommunityID      string
+	SectorID         string
+	FromPeriod       string // YYYY-MM inclusive
+	ToPeriod         string // YYYY-MM inclusive
+	OnlyOutstanding  bool
+}
+
+// CollectionsReportRepository provides read models for dashboards and debtor lists.
+type CollectionsReportRepository interface {
+	ListReceiptLines(ctx context.Context, filter ReceiptLineFilter) ([]domain.ReceiptLine, error)
+	LastPaymentDates(ctx context.Context, customerIDs []string) (map[string]time.Time, error)
+	// CashInByMonth sums non-voided payments by Lima calendar month (YYYY-MM) of paid_at.
+	CashInByMonth(ctx context.Context, filter ReceiptLineFilter) (map[string]float64, error)
+}

@@ -47,8 +47,11 @@ CREATE TABLE IF NOT EXISTS customers (
     initial_reading double precision DEFAULT 0,
     address text DEFAULT ''::text NOT NULL,
     contract_start date,
-    created_at timestamp with time zone DEFAULT now()
+    created_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
 );
+-- Soft delete column used by the customer repository (older databases lack it).
+ALTER TABLE customers ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
 
 -- Periods
 CREATE TABLE IF NOT EXISTS periods (
