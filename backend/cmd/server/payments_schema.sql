@@ -40,7 +40,9 @@ SELECT 'legacy-' || r.id, r.customer_id, r.total_to_pay, 'CASH',
        COALESCE(
            r.payment_date,
            CASE WHEN r."timestamp" > '2000-01-01' THEN r."timestamp" END,
-           CASE WHEN r.period ~ '^\d{4}-\d{2}$' THEN to_date(r.period, 'YYYY-MM')::timestamptz END,
+           -- Noon Lima time on the 1st, so the payment stays in its billing month in Lima.
+           CASE WHEN r.period ~ '^\d{4}-\d{2}$'
+                THEN (to_date(r.period, 'YYYY-MM') + interval '12 hours') AT TIME ZONE 'America/Lima' END,
            now()
        )
 FROM readings r

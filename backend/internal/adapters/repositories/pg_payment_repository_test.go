@@ -257,4 +257,7 @@ func TestPaymentsSchemaBackfillAvoidsZeroTimestamps(t *testing.T) {
 	if p.PaidAt.Year() < 2000 {
 		t.Fatalf("legacy paid_at = %v, must not be a zero timestamp", p.PaidAt)
 	}
+	if month := p.PaidAt.In(time.FixedZone("Lima", -5*3600)).Format("2006-01"); month != "2026-09" {
+		t.Fatalf("legacy payment falls in %s in Lima, want its billing period 2026-09", month)
+	}
 }
