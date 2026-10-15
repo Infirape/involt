@@ -1,6 +1,7 @@
 import { create } from "@bufbuild/protobuf";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { ServiceStatus } from "@/app/gen/involt/v1/models_pb";
 import { GetDebtorsRequestSchema, type GetDebtorsResponse } from "@/app/gen/involt/v1/reports_pb";
 import { adminClient } from "@/lib/rpc";
 import { rpcErrorMessage } from "../lib/api";
@@ -13,6 +14,7 @@ export interface DebtorFilters {
   minDebt: number;
   cutThreshold: number;
   onlyCutCandidates: boolean;
+  serviceStatus: ServiceStatus;
 }
 
 export const DEFAULT_DEBTOR_FILTERS: DebtorFilters = {
@@ -23,6 +25,7 @@ export const DEFAULT_DEBTOR_FILTERS: DebtorFilters = {
   minDebt: 0,
   cutThreshold: 2,
   onlyCutCandidates: false,
+  serviceStatus: ServiceStatus.UNSPECIFIED,
 };
 
 /** Debtors list (morosos) with debounced search and reload. */

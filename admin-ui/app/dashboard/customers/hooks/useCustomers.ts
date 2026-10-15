@@ -6,6 +6,7 @@ import {
   type Customer,
   CustomerSchema,
   type Sector,
+  ServiceStatus,
 } from "@/app/gen/involt/v1/models_pb";
 import { adminClient } from "@/lib/rpc";
 import { generateUUID } from "@/lib/utils";
@@ -33,6 +34,7 @@ export function useCustomers(initialSectorId = "") {
     sectorId: initialSectorId,
     searchQuery: "",
     communityId: "",
+    serviceStatus: ServiceStatus.UNSPECIFIED,
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,6 +49,7 @@ export function useCustomers(initialSectorId = "") {
       sectorId: string,
       searchQuery: string,
       communityId: string,
+      serviceStatus: ServiceStatus = ServiceStatus.UNSPECIFIED,
     ) => {
       try {
         const [customersResp, sectorsResp] = await Promise.all([
@@ -56,6 +59,7 @@ export function useCustomers(initialSectorId = "") {
             pageNumber: page,
             pageSize: size,
             communityId,
+            serviceStatus,
           }),
           adminClient.getSectors({}),
         ]);
@@ -79,12 +83,18 @@ export function useCustomers(initialSectorId = "") {
     [],
   );
 
-  const { sectorId, searchQuery, communityId } = filters;
+  const { sectorId, searchQuery, communityId, serviceStatus } = filters;
   const { pageNumber, pageSize } = pagination;
 
   useEffect(() => {
-    fetchAll(pageNumber, pageSize, sectorId, searchQuery, communityId);
-  }, [pageNumber, pageSize, sectorId, searchQuery, communityId, fetchAll]);
+    fetchAll(pageNumber, pageSize, sectorId, searchQuery, communityId, serviceStatus);
+  }, [pageNumber, pageSize, sectorId, searchQuery, communityId, serviceStatus, fetchAll]);
+
+  /** Refetches the current page (e.g. after a service status change). */
+  const reload = useCallback(
+    () => fetchAll(pageNumber, pageSize, sectorId, searchQuery, communityId, serviceStatus),
+    [fetchAll, pageNumber, pageSize, sectorId, searchQuery, communityId, serviceStatus],
+  );
 
   const handleOpenModal = useCallback(
     (customer: Partial<Customer> | null = null) => {
@@ -194,6 +204,7 @@ export function useCustomers(initialSectorId = "") {
     pagination,
     setPagination,
     filters,
+    reload,
     setFilters,
     isModalOpen,
     setIsModalOpen,

@@ -2,6 +2,7 @@ import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { PaymentAgreement } from "@/app/gen/involt/v1/agreements_pb";
 import type { Payment, ReceiptBalance } from "@/app/gen/involt/v1/payments_pb";
+import { ServiceStatusDialog } from "@/components/dashboard/service-status/ServiceStatusDialog";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { type PaymentInput, useCustomerAccount } from "../../hooks/useCustomerAccount";
 import { formatPeriod } from "../../lib/labels";
@@ -41,6 +42,7 @@ export function CustomerAccount({
   const [waiving, setWaiving] = useState<ReceiptBalance | null>(null);
   const [cancelling, setCancelling] = useState<PaymentAgreement | null>(null);
   const [planning, setPlanning] = useState(false);
+  const [changingStatus, setChangingStatus] = useState(false);
 
   const outstanding = useMemo(
     () => (account?.receipts ?? []).filter((r) => r.balance > 0 && r.reading),
@@ -97,6 +99,8 @@ export function CustomerAccount({
         totalDebt={account.totalDebt}
         totalLateFees={account.totalLateFees}
         overdueCount={account.overdueCount}
+        serviceStatus={account.customer.serviceStatus}
+        onChangeStatus={isAdmin ? () => setChangingStatus(true) : undefined}
       />
       {lastPayment && (
         <LastPaymentBanner payment={lastPayment} onDismiss={() => setLastPayment(null)} />
@@ -168,6 +172,19 @@ export function CustomerAccount({
           onCancel={() => setCancelling(null)}
           onConfirm={async (reason) => {
             if (await acct.cancelAgreement(cancelling.id, reason)) setCancelling(null);
+          }}
+        />
+      )}
+      {changingStatus && (
+        <ServiceStatusDialog
+          customerId={customerId}
+          customerName={account.customer.name}
+          customerCode={account.customer.code}
+          currentStatus={account.customer.serviceStatus}
+          onClose={() => setChangingStatus(false)}
+          onChanged={() => {
+            setChangingStatus(false);
+            acct.refresh();
           }}
         />
       )}

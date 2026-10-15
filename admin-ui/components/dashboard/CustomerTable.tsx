@@ -1,20 +1,17 @@
 "use client";
 
-import {
-  ArrowUpRight,
-  ChevronLeft,
-  ChevronRight,
-  Filter,
-  Plus,
-  Search,
-  Trash2,
-} from "lucide-react";
-import { forwardRef, useEffect, useImperativeHandle } from "react";
+import { ArrowUpRight, Filter, Plus, Search, Trash2, ZapOff } from "lucide-react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useCustomers } from "@/app/dashboard/customers/hooks/useCustomers";
-import { ConnectionType } from "@/app/gen/involt/v1/models_pb";
+import { ConnectionType, type Customer, ServiceStatus } from "@/app/gen/involt/v1/models_pb";
 import { CustomerModal } from "@/components/dashboard/CustomerModal";
+import { CustomerPaginator } from "@/components/dashboard/CustomerPaginator";
+import { ServiceStatusBadge } from "@/components/dashboard/service-status/ServiceStatusBadge";
+import { ServiceStatusDialog } from "@/components/dashboard/service-status/ServiceStatusDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { SERVICE_STATUS_OPTIONS } from "@/lib/serviceStatus";
 
 export interface CustomerTableHandle {
   openNewModal: () => void;
@@ -45,7 +42,10 @@ export const CustomerTable = forwardRef<CustomerTableHandle, CustomerTableProps>
       handleSave,
       handleDeleteCustomer,
       totalPages,
+      reload,
     } = useCustomers(sectorId);
+    const { isAdmin } = useAuth();
+    const [statusCustomer, setStatusCustomer] = useState<Customer | null>(null);
 
     // Expose openNewModal to parent
     useImperativeHandle(
@@ -121,6 +121,24 @@ export const CustomerTable = forwardRef<CustomerTableHandle, CustomerTableProps>
                     </option>
                   ))}
                 </select>
+                <select
+                  aria-label="Estado de servicio"
+                  value={filters.serviceStatus}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      serviceStatus: Number(e.target.value) as ServiceStatus,
+                    }))
+                  }
+                  className="h-10 px-4 bg-white/5 border border-white/5 rounded-xl text-[10px] font-bold uppercase tracking-widest focus:border-primary/30 outline-none transition-all cursor-pointer"
+                >
+                  <option value={ServiceStatus.UNSPECIFIED}>Todos los estados</option>
+                  {SERVICE_STATUS_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             )}
           </div>
@@ -134,6 +152,7 @@ export const CustomerTable = forwardRef<CustomerTableHandle, CustomerTableProps>
                 <th className="px-6 py-4">Cliente</th>
                 <th className="px-6 py-4">{communityId ? "Sector" : "Comunidad"}</th>
                 <th className="px-6 py-4">Conexión</th>
+                <th className="px-6 py-4">Servicio</th>
                 {showActions && <th className="px-6 py-4 text-right">Acciones</th>}
               </tr>
             </thead>
@@ -141,7 +160,7 @@ export const CustomerTable = forwardRef<CustomerTableHandle, CustomerTableProps>
               {data.loading && data.customers.length === 0
                 ? [1, 2, 3].map((i) => (
                     <tr key={i} className="animate-pulse">
-                      <td colSpan={showActions ? 5 : 4} className="px-6 py-6">
+                      <td colSpan={showActions ? 6 : 5} className="px-6 py-6">
                         <div className="h-4 bg-white/5 rounded w-full" />
                       </td>
                     </tr>
@@ -171,9 +190,23 @@ export const CustomerTable = forwardRef<CustomerTableHandle, CustomerTableProps>
                           {ConnectionType[c.connectionType]}
                         </span>
                       </td>
+                      <td className="px-6 py-4">
+                        <ServiceStatusBadge status={c.serviceStatus} />
+                      </td>
                       {showActions && (
                         <td className="px-6 py-4 text-right">
                           <div className="flex justify-end gap-2">
+                            {isAdmin && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                title="Cambiar estado de servicio"
+                                onClick={() => setStatusCustomer(c)}
+                                className="w-8 h-8 rounded-lg hover:bg-amber-500/10 text-amber-300/60 hover:text-amber-300 transition-all"
+                              >
+                                <ZapOff className="w-4 h-4" />
+                              </Button>
+                            )}
                             <Button
                               variant="ghost"
                               size="icon"
@@ -199,35 +232,26 @@ export const CustomerTable = forwardRef<CustomerTableHandle, CustomerTableProps>
           </table>
         </div>
 
-        {/* Paginator - ALWAYS VISIBLE */}
-        <div className="flex items-center justify-between py-2">
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
-            Total: {data.totalCount} suministros
-          </p>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              disabled={pagination.pageNumber === 1}
-              onClick={() => setPagination((p) => ({ ...p, pageNumber: p.pageNumber - 1 }))}
-              className="w-8 h-8 rounded-lg border-white/10 hover:bg-white/10"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
-            <span className="text-[10px] font-black uppercase tracking-widest">
-              {pagination.pageNumber} / {totalPages || 1}
-            </span>
-            <Button
-              variant="outline"
-              size="icon"
-              disabled={pagination.pageNumber === totalPages || totalPages === 0}
-              onClick={() => setPagination((p) => ({ ...p, pageNumber: p.pageNumber + 1 }))}
-              className="w-8 h-8 rounded-lg border-white/10 hover:bg-white/10"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
+        <CustomerPaginator
+          totalCount={data.totalCount}
+          pageNumber={pagination.pageNumber}
+          totalPages={totalPages}
+          onPage={(pageNumber) => setPagination((p) => ({ ...p, pageNumber }))}
+        />
+
+        {statusCustomer && (
+          <ServiceStatusDialog
+            customerId={statusCustomer.id}
+            customerName={statusCustomer.name}
+            customerCode={statusCustomer.code}
+            currentStatus={statusCustomer.serviceStatus}
+            onClose={() => setStatusCustomer(null)}
+            onChanged={() => {
+              setStatusCustomer(null);
+              void reload();
+            }}
+          />
+        )}
 
         {/* Reusable Edit/New Customer Modal */}
         <CustomerModal

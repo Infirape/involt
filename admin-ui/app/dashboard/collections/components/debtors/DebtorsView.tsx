@@ -1,5 +1,9 @@
 import { Download, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
+import { ServiceStatus } from "@/app/gen/involt/v1/models_pb";
+import type { DebtorRow } from "@/app/gen/involt/v1/reports_pb";
+import { ServiceStatusDialog } from "@/components/dashboard/service-status/ServiceStatusDialog";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { type DebtorFilters, useDebtors } from "../../hooks/useDebtors";
 import { downloadReport } from "../../lib/api";
 import { formatSoles } from "../../lib/money";
@@ -22,12 +26,15 @@ const toQuery = (f: DebtorFilters) => ({
   min_debt: f.minDebt,
   cut_threshold: f.cutThreshold,
   only_cut_candidates: f.onlyCutCandidates,
+  service_status: f.serviceStatus,
 });
 
 /** Morosos: who owes, how much and for how long; export and jump to the cash desk. */
 export function DebtorsView({ filters, onFiltersChange, communities }: DebtorsViewProps) {
   const { data, loading, reload } = useDebtors(filters);
   const [openCustomerId, setOpenCustomerId] = useState<string | null>(null);
+  const [cutting, setCutting] = useState<DebtorRow | null>(null);
+  const { isAdmin } = useAuth();
   const patch = useCallback(
     (p: Partial<DebtorFilters>) => onFiltersChange({ ...filters, ...p }),
     [filters, onFiltersChange],
@@ -71,7 +78,11 @@ export function DebtorsView({ filters, onFiltersChange, communities }: DebtorsVi
 
       <div className="flex-1 min-h-[50vh] bg-zinc-900/60 border border-zinc-800 rounded-2xl overflow-auto">
         {data ? (
-          <DebtorsTable debtors={data.debtors} onOpen={setOpenCustomerId} />
+          <DebtorsTable
+            debtors={data.debtors}
+            onOpen={setOpenCustomerId}
+            onRegisterCut={isAdmin ? setCutting : undefined}
+          />
         ) : (
           <div className="flex justify-center py-16">
             <Loader2 className="w-6 h-6 text-zinc-600 animate-spin" />
@@ -79,6 +90,20 @@ export function DebtorsView({ filters, onFiltersChange, communities }: DebtorsVi
         )}
       </div>
 
+      {cutting && (
+        <ServiceStatusDialog
+          customerId={cutting.customerId}
+          customerName={cutting.customerName}
+          customerCode={cutting.customerCode}
+          currentStatus={cutting.serviceStatus}
+          initialStatus={ServiceStatus.TEMPORARY_CUT}
+          onClose={() => setCutting(null)}
+          onChanged={() => {
+            setCutting(null);
+            reload();
+          }}
+        />
+      )}
       {openCustomerId && (
         <AccountDrawer
           customerId={openCustomerId}

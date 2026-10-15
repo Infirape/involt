@@ -64,6 +64,7 @@ function toCustomerRows(entries: CollectionCustomer[], periods: string[]): Custo
       customerId: customer.id,
       customerCode: customer.code,
       customerName: customer.name,
+      serviceStatus: customer.serviceStatus,
       totalDebt: entry.totalDebt,
       cells,
     });

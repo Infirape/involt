@@ -39,7 +39,11 @@ export function KpiTiles({ totals, onShowCutCandidates }: KpiTilesProps) {
         <p className="text-xl xl:text-2xl font-bold tabular-nums whitespace-nowrap text-white mt-1">
           {totals.cutCandidates}
         </p>
-        <p className="text-[11px] text-cyan-400 mt-1">Ver lista →</p>
+        <p className="text-[11px] text-zinc-500 mt-1">
+          En corte: <span className="text-amber-300 tabular-nums">{totals.temporaryCutCount}</span>{" "}
+          · Sin energía: <span className="text-red-400 tabular-nums">{totals.noPowerCount}</span>
+        </p>
+        <p className="text-[11px] text-cyan-400 mt-0.5">Ver lista →</p>
       </button>
     </div>
   );

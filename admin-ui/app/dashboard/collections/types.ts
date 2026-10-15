@@ -1,4 +1,5 @@
 // Shared types for the collections billing module.
+import type { ServiceStatus } from "@/app/gen/involt/v1/models_pb";
 import type { ReceiptStatus } from "@/app/gen/involt/v1/payments_pb";
 
 export interface SectorTab {
@@ -24,6 +25,7 @@ export interface CustomerRow {
   customerId: string;
   customerCode: string;
   customerName: string;
+  serviceStatus: ServiceStatus;
   /** Outstanding balance across all periods, not only the visible ones. */
   totalDebt: number;
   cells: Record<string, MatrixCell>;

@@ -1,4 +1,6 @@
 import { Search } from "lucide-react";
+import { ServiceStatus } from "@/app/gen/involt/v1/models_pb";
+import { SERVICE_STATUS_OPTIONS } from "@/lib/serviceStatus";
 import type { DebtorFilters } from "../../hooks/useDebtors";
 import type { SectorTab } from "../../types";
 
@@ -101,6 +103,21 @@ export function DebtorsFilters({ filters, onChange, communities }: DebtorsFilter
           {[1, 2, 3, 4, 6].map((n) => (
             <option key={n} value={n}>
               {n} {n === 1 ? "recibo vencido" : "recibos vencidos"}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="text-[11px] text-zinc-500 flex flex-col gap-1">
+        Servicio
+        <select
+          value={filters.serviceStatus}
+          onChange={(e) => onChange({ serviceStatus: Number(e.target.value) as ServiceStatus })}
+          className={inputClass}
+        >
+          <option value={ServiceStatus.UNSPECIFIED}>Todos</option>
+          {SERVICE_STATUS_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
             </option>
           ))}
         </select>

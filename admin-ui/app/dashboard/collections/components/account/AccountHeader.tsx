@@ -1,5 +1,7 @@
-import { AlertTriangle, CheckCircle2, Printer, X } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Printer, X, ZapOff } from "lucide-react";
+import type { ServiceStatus } from "@/app/gen/involt/v1/models_pb";
 import type { Payment } from "@/app/gen/involt/v1/payments_pb";
+import { ServiceStatusBadge } from "@/components/dashboard/service-status/ServiceStatusBadge";
 import { openPaymentVoucher } from "../../lib/api";
 import { formatSoles } from "../../lib/money";
 
@@ -9,6 +11,9 @@ interface AccountSummaryProps {
   totalDebt: number;
   totalLateFees: number;
   overdueCount: number;
+  serviceStatus: ServiceStatus;
+  /** Admins only: opens the service status dialog. */
+  onChangeStatus?: () => void;
 }
 
 export function AccountSummary(props: AccountSummaryProps) {
@@ -17,6 +22,18 @@ export function AccountSummary(props: AccountSummaryProps) {
       <div className="min-w-0">
         <p className="text-[11px] font-mono text-zinc-500">{props.code}</p>
         <h3 className="text-base font-bold text-white truncate">{props.name}</h3>
+        <div className="mt-1 flex items-center gap-2">
+          <ServiceStatusBadge status={props.serviceStatus} />
+          {props.onChangeStatus && (
+            <button
+              type="button"
+              onClick={props.onChangeStatus}
+              className="text-[11px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
+            >
+              <ZapOff className="w-3 h-3" /> Cambiar estado
+            </button>
+          )}
+        </div>
       </div>
       <div className="text-right shrink-0">
         <p className="text-[10px] uppercase tracking-wider text-zinc-500">Deuda total</p>

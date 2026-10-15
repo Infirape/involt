@@ -1,5 +1,6 @@
 import { FileText, Plus } from "lucide-react";
 import { ReceiptStatus } from "@/app/gen/involt/v1/payments_pb";
+import { ServiceStatusBadge } from "@/components/dashboard/service-status/ServiceStatusBadge";
 import { openReceiptPdf } from "../../lib/api";
 import { formatPeriod, RECEIPT_STATUS_STYLES } from "../../lib/labels";
 import { formatSoles } from "../../lib/money";
@@ -51,7 +52,10 @@ export function MatrixTable({ rows, periods, onOpenCustomer, onEmptyCell }: Matr
                 <div className="text-zinc-200 font-medium truncate group-hover:text-cyan-300">
                   {row.customerName}
                 </div>
-                <div className="text-[10px] font-mono text-zinc-600">{row.customerCode}</div>
+                <div className="flex items-center gap-1.5 text-[10px] font-mono text-zinc-600">
+                  {row.customerCode}
+                  <ServiceStatusBadge status={row.serviceStatus} hideWhenActive />
+                </div>
               </button>
             </td>
             {periods.map((period) => (

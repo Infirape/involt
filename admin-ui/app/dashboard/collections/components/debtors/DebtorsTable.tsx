@@ -1,14 +1,18 @@
 import { Scissors } from "lucide-react";
+import { ServiceStatus } from "@/app/gen/involt/v1/models_pb";
 import type { DebtorRow } from "@/app/gen/involt/v1/reports_pb";
+import { ServiceStatusBadge } from "@/components/dashboard/service-status/ServiceStatusBadge";
 import { formatPeriod } from "../../lib/labels";
 import { formatLimaDateTime, formatSoles } from "../../lib/money";
 
 interface DebtorsTableProps {
   debtors: DebtorRow[];
   onOpen: (customerId: string) => void;
+  /** Admins only: register a service cut for a debtor. */
+  onRegisterCut?: (debtor: DebtorRow) => void;
 }
 
-export function DebtorsTable({ debtors, onOpen }: DebtorsTableProps) {
+export function DebtorsTable({ debtors, onOpen, onRegisterCut }: DebtorsTableProps) {
   if (debtors.length === 0) {
     return (
       <p className="text-sm text-zinc-500 text-center py-16">
@@ -55,7 +59,10 @@ export function DebtorsTable({ debtors, onOpen }: DebtorsTableProps) {
                 )}
                 <span className="truncate max-w-[240px]">{d.customerName}</span>
               </div>
-              <div className="text-[10px] font-mono text-zinc-600">{d.customerCode}</div>
+              <div className="flex items-center gap-1.5 text-[10px] font-mono text-zinc-600">
+                {d.customerCode}
+                <ServiceStatusBadge status={d.serviceStatus} hideWhenActive />
+              </div>
             </td>
             <td className="px-3 py-2 text-zinc-400">
               {d.sectorName}
@@ -84,7 +91,16 @@ export function DebtorsTable({ debtors, onOpen }: DebtorsTableProps) {
             <td className="px-3 py-2 text-zinc-500 whitespace-nowrap">
               {d.lastPaymentAt ? formatLimaDateTime(d.lastPaymentAt).split(",")[0] : "Nunca"}
             </td>
-            <td className="px-3 py-2 text-right">
+            <td className="px-3 py-2 text-right whitespace-nowrap">
+              {onRegisterCut && d.cutCandidate && d.serviceStatus === ServiceStatus.ACTIVE && (
+                <button
+                  type="button"
+                  onClick={() => onRegisterCut(d)}
+                  className="mr-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-red-500/10 text-red-400 border border-red-500/25 hover:bg-red-500/20"
+                >
+                  Registrar corte
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => onOpen(d.customerId)}
