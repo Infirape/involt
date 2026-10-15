@@ -25,6 +25,8 @@ type Settings struct {
 	Alumbrado       float64   `db:"alumbrado"`
 	Mantenimiento   float64   `db:"mantenimiento"`
 	IGV             bool      `db:"igv"`
+	// ReceiptCopies is DUPLICATE (usuario + administrativo) or SINGLE (solo usuario).
+	ReceiptCopies   string    `db:"receipt_copies"`
 	CreatedAt       time.Time `db:"created_at"`
 	UpdatedAt       time.Time `db:"updated_at"`
 }

@@ -265,13 +265,7 @@ func (g *MarotoGenerator) Generate(ctx context.Context, reading *domain.Reading,
 		Build()
 
 	m := maroto.New(cfg)
-	g.addReceiptComponents(m, reading, customer, settings, community, sector, "USUARIO", history)
-	
-	m.AddRows(row.New(8).Add(
-		col.New(12).WithStyle(&props.Cell{BorderType: border.Bottom, BorderThickness: 0.1, BorderColor: defaultBorderColor}),
-	))
-	
-	g.addReceiptComponents(m, reading, customer, settings, community, sector, "ADMINISTRATIVO", history)
+	g.addReceiptCopies(m, reading, customer, settings, community, sector, history)
 
 	document, err := m.Generate()
 	if err != nil {
@@ -302,13 +296,7 @@ func (g *MarotoGenerator) GenerateBatch(ctx context.Context, readings []domain.R
 		
 		g.enrichReadingDates(&r, settings)
 		
-		g.addReceiptComponents(m, &r, customer, settings, customer.CommunityName, customer.SectorName, "USUARIO", historyMap[r.CustomerID])
-		
-		m.AddRows(row.New(8).Add(
-			col.New(12).WithStyle(&props.Cell{BorderType: border.Bottom, BorderThickness: 0.1, BorderColor: defaultBorderColor}),
-		))
-		
-		g.addReceiptComponents(m, &r, customer, settings, customer.CommunityName, customer.SectorName, "ADMINISTRATIVO", historyMap[r.CustomerID])
+		g.addReceiptCopies(m, &r, customer, settings, customer.CommunityName, customer.SectorName, historyMap[r.CustomerID])
 		
 		if (i + 1) < len(readings) {
 			m.AddRows(row.New(10))
@@ -321,6 +309,19 @@ func (g *MarotoGenerator) GenerateBatch(ctx context.Context, readings []domain.R
 	}
 
 	return g.applyWatermark(document.GetBytes())
+}
+
+// addReceiptCopies prints the copies configured in settings (usuario, and administrativo when
+// receipts are duplicated), separated by a cut line.
+func (g *MarotoGenerator) addReceiptCopies(m core.Maroto, reading *domain.Reading, customer *domain.Customer, settings *domain.Settings, community, sector string, history []domain.Reading) {
+	for i, label := range settings.ReceiptCopyLabels() {
+		if i > 0 {
+			m.AddRows(row.New(8).Add(
+				col.New(12).WithStyle(&props.Cell{BorderType: border.Bottom, BorderThickness: 0.1, BorderColor: defaultBorderColor}),
+			))
+		}
+		g.addReceiptComponents(m, reading, customer, settings, community, sector, label, history)
+	}
 }
 
 func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Reading, customer *domain.Customer, settings *domain.Settings, community, sector string, copyType string, history []domain.Reading) {

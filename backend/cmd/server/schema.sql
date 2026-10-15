@@ -118,3 +118,6 @@ CREATE TABLE IF NOT EXISTS app_configs (
     key text PRIMARY KEY,
     value text
 );
+
+-- Consumption receipt copies: DUPLICATE (usuario + administrativo) or SINGLE (solo usuario).
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS receipt_copies text NOT NULL DEFAULT 'DUPLICATE';

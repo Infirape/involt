@@ -569,6 +569,7 @@ func (h *AdminHandler) GetSettings(
 			Alumbrado:       safeFloat(settings.Alumbrado),
 			Mantenimiento:   safeFloat(settings.Mantenimiento),
 			Igv:             settings.IGV,
+			ReceiptCopies:   receiptCopiesToProto(settings.ReceiptCopies),
 		},
 	}), nil
 }
@@ -595,6 +596,7 @@ func (h *AdminHandler) UpdateSettings(
 		Alumbrado:       safeFloat(s.Alumbrado),
 		Mantenimiento:   safeFloat(s.Mantenimiento),
 		IGV:             s.Igv,
+		ReceiptCopies:   receiptCopiesFromProto(s.ReceiptCopies),
 	}
 
 	err := h.metaRepo.SaveSettings(ctx, domainSettings)

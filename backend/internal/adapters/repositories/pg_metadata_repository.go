@@ -81,7 +81,7 @@ func (r *PostgresMetadataRepository) GetAppConfig(ctx context.Context) (*domain.
 
 func (r *PostgresMetadataRepository) GetSettings(ctx context.Context) (*domain.Settings, error) {
 	var settings domain.Settings
-	query := `SELECT id, municipalidad, empresa, ruc, direccion, telefono, email, dias_vencimiento, tarifa_kwh, cargo_fijo, alumbrado, mantenimiento, igv, created_at, updated_at 
+	query := `SELECT id, municipalidad, empresa, ruc, direccion, telefono, email, dias_vencimiento, tarifa_kwh, cargo_fijo, alumbrado, mantenimiento, igv, receipt_copies, created_at, updated_at 
 			 FROM settings WHERE id = 'main'`
 	err := r.db.GetContext(ctx, &settings, query)
 	return &settings, err
@@ -89,8 +89,8 @@ func (r *PostgresMetadataRepository) GetSettings(ctx context.Context) (*domain.S
 
 func (r *PostgresMetadataRepository) SaveSettings(ctx context.Context, s *domain.Settings) error {
 	query := `
-		INSERT INTO settings (id, municipalidad, empresa, ruc, direccion, telefono, email, dias_vencimiento, tarifa_kwh, cargo_fijo, alumbrado, mantenimiento, igv, updated_at)
-		VALUES ('main', $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW())
+		INSERT INTO settings (id, municipalidad, empresa, ruc, direccion, telefono, email, dias_vencimiento, tarifa_kwh, cargo_fijo, alumbrado, mantenimiento, igv, receipt_copies, updated_at)
+		VALUES ('main', $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, NOW())
 		ON CONFLICT (id) DO UPDATE SET
 			municipalidad = $1,
 			empresa = $2,
@@ -104,9 +104,10 @@ func (r *PostgresMetadataRepository) SaveSettings(ctx context.Context, s *domain
 			alumbrado = $10,
 			mantenimiento = $11,
 			igv = $12,
+			receipt_copies = $13,
 			updated_at = NOW()`
 	_, err := r.db.ExecContext(ctx, query,
 		s.Municipalidad, s.Empresa, s.RUC, s.Direccion, s.Telefono, s.Email, s.DiasVencimiento,
-		s.TarifaKWh, s.CargoFijo, s.Alumbrado, s.Mantenimiento, s.IGV)
+		s.TarifaKWh, s.CargoFijo, s.Alumbrado, s.Mantenimiento, s.IGV, domain.NormalizeReceiptCopies(s.ReceiptCopies))
 	return err
 }
