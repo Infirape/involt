@@ -36,7 +36,9 @@ export function KpiTiles({ totals, onShowCutCandidates }: KpiTilesProps) {
         <p className="text-[10px] uppercase tracking-wider text-zinc-500 flex items-center gap-1.5">
           <Scissors className="w-3.5 h-3.5 text-red-400" /> Candidatos a corte
         </p>
-        <p className="text-2xl font-bold tabular-nums text-white mt-1">{totals.cutCandidates}</p>
+        <p className="text-xl xl:text-2xl font-bold tabular-nums whitespace-nowrap text-white mt-1">
+          {totals.cutCandidates}
+        </p>
         <p className="text-[11px] text-cyan-400 mt-1">Ver lista →</p>
       </button>
     </div>
@@ -62,7 +64,9 @@ function Tile({
         {icon}
         {label}
       </p>
-      <p className="text-2xl font-bold tabular-nums text-white mt-1">{value}</p>
+      <p className="text-xl xl:text-2xl font-bold tabular-nums whitespace-nowrap text-white mt-1">
+        {value}
+      </p>
       {hint && <p className="text-[11px] text-zinc-500 mt-1">{hint}</p>}
       {children}
     </div>

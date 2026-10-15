@@ -88,7 +88,7 @@ export function CollectionsMatrix({ selectedSectorId, selectedSector }: Collecti
         ) : (
           <MatrixTable
             rows={visibleRows}
-            periods={matrix.periods}
+            periods={matrix.rowPeriods}
             onOpenCustomer={(customerId, readingId) => setDrawer({ customerId, readingId })}
             onEmptyCell={setFlatCell}
           />

@@ -79,6 +79,9 @@ export function useCollections(selectedSectorId: string) {
     new Date().getMonth() < 6 ? "H1" : "H2",
   );
   const [customerRows, setCustomerRows] = useState<CustomerRow[]>([]);
+  // Periods the current rows were built for; they lag `periods` until the refetch lands, so
+  // the table never looks up cells for months it has no data for yet.
+  const [rowPeriods, setRowPeriods] = useState<string[]>([]);
   const [totals, setTotals] = useState<MatrixTotals>({ billed: 0, collected: 0 });
   const [loading, setLoading] = useState(false);
   const [reloadToken, setReloadToken] = useState(0);
@@ -115,6 +118,7 @@ export function useCollections(selectedSectorId: string) {
 
         const rows = toCustomerRows(resp.customers, periods);
         setCustomerRows(rows);
+        setRowPeriods(periods);
         setTotals({ billed: resp.totalBilled, collected: resp.totalCollected });
       } catch {
         if (!cancelled) toast.error("Error al cargar datos de cobranza");
@@ -133,6 +137,7 @@ export function useCollections(selectedSectorId: string) {
 
   return {
     periods,
+    rowPeriods,
     customerRows,
     totals,
     loading,
