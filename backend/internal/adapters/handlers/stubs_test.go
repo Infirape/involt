@@ -132,6 +132,14 @@ func (s *settingsMetaStub) GetSettings(context.Context) (*domain.Settings, error
 	return s.settings, nil
 }
 
+func (s *settingsMetaStub) ListCommunities(context.Context) ([]domain.Community, error) {
+	return []domain.Community{{ID: "com-1", Name: "Chetilla"}}, nil
+}
+
+func (s *settingsMetaStub) ListSectors(context.Context) ([]domain.Sector, error) {
+	return []domain.Sector{{ID: "s2", Name: "Alto"}}, nil
+}
+
 // fakePaymentRepo is an in-memory PaymentRepository.
 type fakePaymentRepo struct {
 	payments []*domain.Payment

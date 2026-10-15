@@ -37,6 +37,7 @@ func (h *AdminHandler) GetCollectionsDashboard(
 
 	scope := reportScope(user)
 	scope.CommunityID = req.Msg.CommunityId
+	scope.SectorID = req.Msg.SectorId
 	inRange := scope
 	inRange.FromPeriod, inRange.ToPeriod = from, to
 	outstanding := scope

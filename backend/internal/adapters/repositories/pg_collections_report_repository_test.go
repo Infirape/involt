@@ -106,3 +106,44 @@ func TestLastPaymentDatesAndCashIn(t *testing.T) {
 		t.Fatalf("sector filter should exclude cust-1 payments, got %+v", other)
 	}
 }
+
+func TestListCustomersIncludesSuppliesWithoutReceipts(t *testing.T) {
+	repo := seedReportData(t)
+	ctx := context.Background()
+
+	all, err := repo.ListCustomers(ctx, ports.ReceiptLineFilter{FromPeriod: "2030-01"})
+	if err != nil {
+		t.Fatalf("ListCustomers: %v", err)
+	}
+	if len(all) != 2 || all[0].SectorName != "Alto" || all[1].CustomerCode != "CHE001" {
+		t.Fatalf("customers = %+v (deleted excluded, ordered by sector then code, periods ignored)", all)
+	}
+	scoped, _ := repo.ListCustomers(ctx, ports.ReceiptLineFilter{SectorID: "sec-1"})
+	if len(scoped) != 1 || scoped[0].CommunityName != "Chetilla" {
+		t.Fatalf("scoped customers = %+v", scoped)
+	}
+}
+
+func TestListPaymentLines(t *testing.T) {
+	repo := seedReportData(t)
+	ctx := context.Background()
+	month := time.Now().In(time.FixedZone("Lima", -5*3600)).Format("2006-01")
+
+	lines, err := repo.ListPaymentLines(ctx, ports.ReceiptLineFilter{FromPeriod: month, ToPeriod: month})
+	if err != nil {
+		t.Fatalf("ListPaymentLines: %v", err)
+	}
+	if len(lines) != 1 {
+		t.Fatalf("lines = %+v", lines)
+	}
+	l := lines[0]
+	if l.CustomerCode != "CHE001" || l.SectorName != "Centro" || l.Period != "2026-08" || l.Amount != 10 || l.ReceiptNumber == 0 || l.Method != "CASH" {
+		t.Fatalf("line = %+v", l)
+	}
+	if other, _ := repo.ListPaymentLines(ctx, ports.ReceiptLineFilter{SectorID: "sec-2"}); len(other) != 0 {
+		t.Fatalf("sector filter ignored: %+v", other)
+	}
+	if past, _ := repo.ListPaymentLines(ctx, ports.ReceiptLineFilter{ToPeriod: "2020-01"}); len(past) != 0 {
+		t.Fatalf("period filter ignored: %+v", past)
+	}
+}

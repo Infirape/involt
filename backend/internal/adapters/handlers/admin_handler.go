@@ -35,6 +35,7 @@ type AdminHandler struct {
 	policyRepo   ports.CollectionPolicyRepository
 	agreementRepo ports.AgreementRepository
 	agreementDoc ports.AgreementDocumentGenerator
+	workbookGen  ports.ReportWorkbookGenerator
 	clock        func() time.Time
 }
 
@@ -52,6 +53,7 @@ func NewAdminHandler(
 	policyRepo ports.CollectionPolicyRepository,
 	agreementRepo ports.AgreementRepository,
 	agreementDoc ports.AgreementDocumentGenerator,
+	workbookGen ports.ReportWorkbookGenerator,
 ) *AdminHandler {
 	return &AdminHandler{
 		adminRepo:    adminRepo,
@@ -67,6 +69,7 @@ func NewAdminHandler(
 		policyRepo:   policyRepo,
 		agreementRepo: agreementRepo,
 		agreementDoc: agreementDoc,
+		workbookGen:  workbookGen,
 	}
 }
 

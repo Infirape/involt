@@ -55,4 +55,9 @@ type CollectionsReportRepository interface {
 	LastPaymentDates(ctx context.Context, customerIDs []string) (map[string]time.Time, error)
 	// CashInByMonth sums non-voided payments by Lima calendar month (YYYY-MM) of paid_at.
 	CashInByMonth(ctx context.Context, filter ReceiptLineFilter) (map[string]float64, error)
+	// ListCustomers returns every active supply in scope (periods are ignored), by sector and code.
+	ListCustomers(ctx context.Context, filter ReceiptLineFilter) ([]domain.CustomerLine, error)
+	// ListPaymentLines returns non-voided allocations whose payment's Lima month is within
+	// FromPeriod..ToPeriod, in scope, oldest first.
+	ListPaymentLines(ctx context.Context, filter ReceiptLineFilter) ([]domain.PaymentLine, error)
 }

@@ -15,8 +15,9 @@ type reportRepoStub struct {
 	lines    []domain.ReceiptLine
 	cash     map[string]float64
 	last     map[string]time.Time
-	filters  []ports.ReceiptLineFilter
-	cashSeen ports.ReceiptLineFilter
+	filters     []ports.ReceiptLineFilter
+	cashSeen    ports.ReceiptLineFilter
+	paymentSeen ports.ReceiptLineFilter
 }
 
 func (s *reportRepoStub) ListReceiptLines(_ context.Context, f ports.ReceiptLineFilter) ([]domain.ReceiptLine, error) {
@@ -39,6 +40,30 @@ func (s *reportRepoStub) ListReceiptLines(_ context.Context, f ports.ReceiptLine
 
 func (s *reportRepoStub) LastPaymentDates(context.Context, []string) (map[string]time.Time, error) {
 	return s.last, nil
+}
+
+func (s *reportRepoStub) ListCustomers(_ context.Context, f ports.ReceiptLineFilter) ([]domain.CustomerLine, error) {
+	seen := map[string]bool{}
+	var out []domain.CustomerLine
+	for _, l := range s.lines {
+		if (f.SectorID != "" && l.SectorID != f.SectorID) || seen[l.CustomerID] {
+			continue
+		}
+		seen[l.CustomerID] = true
+		out = append(out, domain.CustomerLine{CustomerID: l.CustomerID, CustomerCode: l.CustomerCode, CustomerName: l.CustomerName, SectorName: l.SectorName})
+	}
+	return out, nil
+}
+
+func (s *reportRepoStub) ListPaymentLines(_ context.Context, f ports.ReceiptLineFilter) ([]domain.PaymentLine, error) {
+	s.paymentSeen = f
+	var out []domain.PaymentLine
+	for _, l := range s.lines {
+		if l.Paid > 0 && (f.SectorID == "" || l.SectorID == f.SectorID) {
+			out = append(out, domain.PaymentLine{CustomerCode: l.CustomerCode, SectorName: l.SectorName, Period: l.Period, Amount: l.Paid})
+		}
+	}
+	return out, nil
 }
 
 func (s *reportRepoStub) CashInByMonth(_ context.Context, f ports.ReceiptLineFilter) (map[string]float64, error) {
@@ -225,5 +250,24 @@ func TestDebtorsWithAgreementInDefaultAreFlagged(t *testing.T) {
 	caro := resp.Msg.GetDebtors()[0]
 	if !caro.GetAgreementInDefault() || caro.GetInAgreement() || !caro.GetCutCandidate() {
 		t.Fatalf("caro in default = %+v", caro)
+	}
+}
+
+func TestGetCollectionsDashboardFiltersBySector(t *testing.T) {
+	h, repo := newReportsHandler()
+	resp, err := h.GetCollectionsDashboard(contextWithUser("admin", "ADMIN"), connect.NewRequest(&involtv1.GetCollectionsDashboardRequest{SectorId: "s2"}))
+	if err != nil {
+		t.Fatalf("GetCollectionsDashboard: %v", err)
+	}
+	for _, f := range repo.filters {
+		if f.SectorID != "s2" {
+			t.Fatalf("every query must filter by sector, got %+v", f)
+		}
+	}
+	if repo.cashSeen.SectorID != "s2" {
+		t.Fatalf("cash query must filter by sector, got %+v", repo.cashSeen)
+	}
+	if got := resp.Msg.GetTotals().GetBilled(); got != 12 {
+		t.Fatalf("billed for Alto = %v, want 12", got)
 	}
 }

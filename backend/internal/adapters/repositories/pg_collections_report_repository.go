@@ -130,3 +130,51 @@ func (r *PostgresCollectionsReportRepository) CashInByMonth(ctx context.Context,
 	}
 	return result, nil
 }
+
+func (r *PostgresCollectionsReportRepository) ListCustomers(ctx context.Context, filter ports.ReceiptLineFilter) ([]domain.CustomerLine, error) {
+	var args []any
+	conds := customerScope(filter, &args)
+	query := `SELECT c.id AS customer_id, c.code AS customer_code, c.name AS customer_name,
+		COALESCE(cm.name, '') AS community_name, COALESCE(s.name, '') AS sector_name
+		FROM customers c
+		LEFT JOIN sectors s ON s.id = c.sector_id
+		LEFT JOIN communities cm ON cm.id = c.community_id
+		WHERE ` + strings.Join(conds, " AND ") + `
+		ORDER BY sector_name, c.code`
+	customers := []domain.CustomerLine{}
+	if err := r.db.SelectContext(ctx, &customers, query, args...); err != nil {
+		return nil, fmt.Errorf("error listing customers for report: %w", err)
+	}
+	return customers, nil
+}
+
+func (r *PostgresCollectionsReportRepository) ListPaymentLines(ctx context.Context, filter ports.ReceiptLineFilter) ([]domain.PaymentLine, error) {
+	const monthExpr = `to_char(p.paid_at AT TIME ZONE 'America/Lima', 'YYYY-MM')`
+	var args []any
+	conds := append(customerScope(filter, &args), "p.voided_at IS NULL")
+	if filter.FromPeriod != "" {
+		args = append(args, filter.FromPeriod)
+		conds = append(conds, fmt.Sprintf("%s >= $%d", monthExpr, len(args)))
+	}
+	if filter.ToPeriod != "" {
+		args = append(args, filter.ToPeriod)
+		conds = append(conds, fmt.Sprintf("%s <= $%d", monthExpr, len(args)))
+	}
+	query := `SELECT p.receipt_number, p.paid_at, p.method, p.collected_by_email,
+		c.code AS customer_code, c.name AS customer_name,
+		COALESCE(cm.name, '') AS community_name, COALESCE(s.name, '') AS sector_name,
+		COALESCE(` + readingPeriodExpr + `, '') AS period, pa.amount, pa.late_fee
+		FROM payment_allocations pa
+		JOIN payments p ON p.id = pa.payment_id
+		JOIN readings r ON r.id = pa.reading_id
+		JOIN customers c ON c.id = p.customer_id
+		LEFT JOIN sectors s ON s.id = c.sector_id
+		LEFT JOIN communities cm ON cm.id = c.community_id
+		WHERE ` + strings.Join(conds, " AND ") + `
+		ORDER BY p.paid_at, p.receipt_number, period`
+	lines := []domain.PaymentLine{}
+	if err := r.db.SelectContext(ctx, &lines, query, args...); err != nil {
+		return nil, fmt.Errorf("error listing payment lines: %w", err)
+	}
+	return lines, nil
+}

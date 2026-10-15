@@ -15,6 +15,7 @@ import (
 	"golang.org/x/net/http2/h2c"
 
 	"github.com/infira/involt/backend/internal/adapters/auth"
+	"github.com/infira/involt/backend/internal/adapters/excel"
 	"github.com/infira/involt/backend/internal/adapters/handlers"
 	"github.com/infira/involt/backend/internal/adapters/pdf"
 	"github.com/infira/involt/backend/internal/adapters/repositories"
@@ -70,7 +71,7 @@ func main() {
 
 	syncHandler := handlers.NewSyncHandler(metaRepo, customerRepo, readingRepo, periodRepo, adminRepo, pdfGen)
 	settingsHandler := handlers.NewSettingsHandler(settingsRepo)
-	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, periodRepo, jwtSecret, pdfGen, paymentRepo, pdfGen, reportRepo, policyRepo, agreementRepo, pdfGen)
+	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, periodRepo, jwtSecret, pdfGen, paymentRepo, pdfGen, reportRepo, policyRepo, agreementRepo, pdfGen, excel.NewGenerator())
 
 	// 4. Setup Mux
 	mux := http.NewServeMux()
@@ -107,6 +108,11 @@ func main() {
 	mux.HandleFunc("/admin/readings/pdf/", adminSvcHandler.DownloadReadingPDF)
 	mux.HandleFunc("/admin/payments/pdf/", adminSvcHandler.DownloadPaymentVoucher)
 	mux.HandleFunc("/admin/agreements/pdf/", adminSvcHandler.DownloadAgreementPDF)
+
+	// REST endpoints for Excel reports
+	mux.HandleFunc("/admin/reports/debtors.xlsx", adminSvcHandler.ExportDebtorsXLSX)
+	mux.HandleFunc("/admin/reports/cash-closing.xlsx", adminSvcHandler.ExportCashClosingXLSX)
+	mux.HandleFunc("/admin/reports/collections.xlsx", adminSvcHandler.ExportCollectionsXLSX)
 
 	// API Health check
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
