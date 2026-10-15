@@ -59,6 +59,8 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
   $async.Future<$1.PreviewAgreementResponse> previewAgreement($pb.ServerContext ctx, $1.AgreementRequest request);
   $async.Future<$1.CreateAgreementResponse> createAgreement($pb.ServerContext ctx, $1.AgreementRequest request);
   $async.Future<$1.CancelAgreementResponse> cancelAgreement($pb.ServerContext ctx, $1.CancelAgreementRequest request);
+  $async.Future<$4.SetCustomerServiceStatusResponse> setCustomerServiceStatus($pb.ServerContext ctx, $4.SetCustomerServiceStatusRequest request);
+  $async.Future<$4.GetCustomerStatusHistoryResponse> getCustomerStatusHistory($pb.ServerContext ctx, $4.GetCustomerStatusHistoryRequest request);
 
   $pb.GeneratedMessage createRequest($core.String methodName) {
     switch (methodName) {
@@ -97,6 +99,8 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'PreviewAgreement': return $1.AgreementRequest();
       case 'CreateAgreement': return $1.AgreementRequest();
       case 'CancelAgreement': return $1.CancelAgreementRequest();
+      case 'SetCustomerServiceStatus': return $4.SetCustomerServiceStatusRequest();
+      case 'GetCustomerStatusHistory': return $4.GetCustomerStatusHistoryRequest();
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }
   }
@@ -138,6 +142,8 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'PreviewAgreement': return this.previewAgreement(ctx, request as $1.AgreementRequest);
       case 'CreateAgreement': return this.createAgreement(ctx, request as $1.AgreementRequest);
       case 'CancelAgreement': return this.cancelAgreement(ctx, request as $1.CancelAgreementRequest);
+      case 'SetCustomerServiceStatus': return this.setCustomerServiceStatus(ctx, request as $4.SetCustomerServiceStatusRequest);
+      case 'GetCustomerStatusHistory': return this.getCustomerStatusHistory(ctx, request as $4.GetCustomerStatusHistoryRequest);
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }
   }

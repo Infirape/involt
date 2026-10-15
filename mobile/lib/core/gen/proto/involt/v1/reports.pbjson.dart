@@ -102,6 +102,8 @@ const CollectionsDashboardTotals$json = {
     {'1': 'overdue_debt', '3': 4, '4': 1, '5': 1, '10': 'overdueDebt'},
     {'1': 'debtor_count', '3': 5, '4': 1, '5': 5, '10': 'debtorCount'},
     {'1': 'cut_candidates', '3': 6, '4': 1, '5': 5, '10': 'cutCandidates'},
+    {'1': 'temporary_cut_count', '3': 7, '4': 1, '5': 5, '10': 'temporaryCutCount'},
+    {'1': 'no_power_count', '3': 8, '4': 1, '5': 5, '10': 'noPowerCount'},
   ],
 };
 
@@ -110,7 +112,9 @@ final $typed_data.Uint8List collectionsDashboardTotalsDescriptor = $convert.base
     'ChpDb2xsZWN0aW9uc0Rhc2hib2FyZFRvdGFscxIWCgZiaWxsZWQYASABKAFSBmJpbGxlZBIcCg'
     'ljb2xsZWN0ZWQYAiABKAFSCWNvbGxlY3RlZBIdCgp0b3RhbF9kZWJ0GAMgASgBUgl0b3RhbERl'
     'YnQSIQoMb3ZlcmR1ZV9kZWJ0GAQgASgBUgtvdmVyZHVlRGVidBIhCgxkZWJ0b3JfY291bnQYBS'
-    'ABKAVSC2RlYnRvckNvdW50EiUKDmN1dF9jYW5kaWRhdGVzGAYgASgFUg1jdXRDYW5kaWRhdGVz');
+    'ABKAVSC2RlYnRvckNvdW50EiUKDmN1dF9jYW5kaWRhdGVzGAYgASgFUg1jdXRDYW5kaWRhdGVz'
+    'Ei4KE3RlbXBvcmFyeV9jdXRfY291bnQYByABKAVSEXRlbXBvcmFyeUN1dENvdW50EiQKDm5vX3'
+    'Bvd2VyX2NvdW50GAggASgFUgxub1Bvd2VyQ291bnQ=');
 
 @$core.Deprecated('Use getCollectionsDashboardRequestDescriptor instead')
 const GetCollectionsDashboardRequest$json = {
@@ -173,6 +177,7 @@ const DebtorRow$json = {
     {'1': 'cut_candidate', '3': 14, '4': 1, '5': 8, '10': 'cutCandidate'},
     {'1': 'in_agreement', '3': 15, '4': 1, '5': 8, '10': 'inAgreement'},
     {'1': 'agreement_in_default', '3': 16, '4': 1, '5': 8, '10': 'agreementInDefault'},
+    {'1': 'service_status', '3': 17, '4': 1, '5': 14, '6': '.involt.v1.ServiceStatus', '10': 'serviceStatus'},
   ],
 };
 
@@ -189,7 +194,8 @@ final $typed_data.Uint8List debtorRowDescriptor = $convert.base64Decode(
     'BVILZGF5c092ZXJkdWUSJgoPbGFzdF9wYXltZW50X2F0GA0gASgJUg1sYXN0UGF5bWVudEF0Ei'
     'MKDWN1dF9jYW5kaWRhdGUYDiABKAhSDGN1dENhbmRpZGF0ZRIhCgxpbl9hZ3JlZW1lbnQYDyAB'
     'KAhSC2luQWdyZWVtZW50EjAKFGFncmVlbWVudF9pbl9kZWZhdWx0GBAgASgIUhJhZ3JlZW1lbn'
-    'RJbkRlZmF1bHQ=');
+    'RJbkRlZmF1bHQSPwoOc2VydmljZV9zdGF0dXMYESABKA4yGC5pbnZvbHQudjEuU2VydmljZVN0'
+    'YXR1c1INc2VydmljZVN0YXR1cw==');
 
 @$core.Deprecated('Use getDebtorsRequestDescriptor instead')
 const GetDebtorsRequest$json = {
@@ -202,6 +208,7 @@ const GetDebtorsRequest$json = {
     {'1': 'min_debt', '3': 5, '4': 1, '5': 1, '10': 'minDebt'},
     {'1': 'cut_threshold', '3': 6, '4': 1, '5': 5, '10': 'cutThreshold'},
     {'1': 'only_cut_candidates', '3': 7, '4': 1, '5': 8, '10': 'onlyCutCandidates'},
+    {'1': 'service_status', '3': 8, '4': 1, '5': 14, '6': '.involt.v1.ServiceStatus', '10': 'serviceStatus'},
   ],
 };
 
@@ -211,7 +218,9 @@ final $typed_data.Uint8List getDebtorsRequestDescriptor = $convert.base64Decode(
     'sKCXNlY3Rvcl9pZBgCIAEoCVIIc2VjdG9ySWQSFgoGc2VhcmNoGAMgASgJUgZzZWFyY2gSMAoU'
     'bWluX292ZXJkdWVfcmVjZWlwdHMYBCABKAVSEm1pbk92ZXJkdWVSZWNlaXB0cxIZCghtaW5fZG'
     'VidBgFIAEoAVIHbWluRGVidBIjCg1jdXRfdGhyZXNob2xkGAYgASgFUgxjdXRUaHJlc2hvbGQS'
-    'LgoTb25seV9jdXRfY2FuZGlkYXRlcxgHIAEoCFIRb25seUN1dENhbmRpZGF0ZXM=');
+    'LgoTb25seV9jdXRfY2FuZGlkYXRlcxgHIAEoCFIRb25seUN1dENhbmRpZGF0ZXMSPwoOc2Vydm'
+    'ljZV9zdGF0dXMYCCABKA4yGC5pbnZvbHQudjEuU2VydmljZVN0YXR1c1INc2VydmljZVN0YXR1'
+    'cw==');
 
 @$core.Deprecated('Use getDebtorsResponseDescriptor instead')
 const GetDebtorsResponse$json = {

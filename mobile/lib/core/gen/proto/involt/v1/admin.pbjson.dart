@@ -34,6 +34,81 @@ final $typed_data.Uint8List userRoleDescriptor = $convert.base64Decode(
     'CghVc2VyUm9sZRIZChVVU0VSX1JPTEVfVU5TUEVDSUZJRUQQABITCg9VU0VSX1JPTEVfQURNSU'
     '4QARIYChRVU0VSX1JPTEVfU1VQRVJWSVNPUhACEhQKEFVTRVJfUk9MRV9SRUFERVIQAw==');
 
+@$core.Deprecated('Use setCustomerServiceStatusRequestDescriptor instead')
+const SetCustomerServiceStatusRequest$json = {
+  '1': 'SetCustomerServiceStatusRequest',
+  '2': [
+    {'1': 'customer_id', '3': 1, '4': 1, '5': 9, '10': 'customerId'},
+    {'1': 'status', '3': 2, '4': 1, '5': 14, '6': '.involt.v1.ServiceStatus', '10': 'status'},
+    {'1': 'reason', '3': 3, '4': 1, '5': 9, '10': 'reason'},
+  ],
+};
+
+/// Descriptor for `SetCustomerServiceStatusRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List setCustomerServiceStatusRequestDescriptor = $convert.base64Decode(
+    'Ch9TZXRDdXN0b21lclNlcnZpY2VTdGF0dXNSZXF1ZXN0Eh8KC2N1c3RvbWVyX2lkGAEgASgJUg'
+    'pjdXN0b21lcklkEjAKBnN0YXR1cxgCIAEoDjIYLmludm9sdC52MS5TZXJ2aWNlU3RhdHVzUgZz'
+    'dGF0dXMSFgoGcmVhc29uGAMgASgJUgZyZWFzb24=');
+
+@$core.Deprecated('Use setCustomerServiceStatusResponseDescriptor instead')
+const SetCustomerServiceStatusResponse$json = {
+  '1': 'SetCustomerServiceStatusResponse',
+  '2': [
+    {'1': 'customer', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Customer', '10': 'customer'},
+  ],
+};
+
+/// Descriptor for `SetCustomerServiceStatusResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List setCustomerServiceStatusResponseDescriptor = $convert.base64Decode(
+    'CiBTZXRDdXN0b21lclNlcnZpY2VTdGF0dXNSZXNwb25zZRIvCghjdXN0b21lchgBIAEoCzITLm'
+    'ludm9sdC52MS5DdXN0b21lclIIY3VzdG9tZXI=');
+
+@$core.Deprecated('Use serviceStatusChangeDescriptor instead')
+const ServiceStatusChange$json = {
+  '1': 'ServiceStatusChange',
+  '2': [
+    {'1': 'previous_status', '3': 1, '4': 1, '5': 14, '6': '.involt.v1.ServiceStatus', '10': 'previousStatus'},
+    {'1': 'status', '3': 2, '4': 1, '5': 14, '6': '.involt.v1.ServiceStatus', '10': 'status'},
+    {'1': 'reason', '3': 3, '4': 1, '5': 9, '10': 'reason'},
+    {'1': 'changed_by_email', '3': 4, '4': 1, '5': 9, '10': 'changedByEmail'},
+    {'1': 'changed_at', '3': 5, '4': 1, '5': 9, '10': 'changedAt'},
+  ],
+};
+
+/// Descriptor for `ServiceStatusChange`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List serviceStatusChangeDescriptor = $convert.base64Decode(
+    'ChNTZXJ2aWNlU3RhdHVzQ2hhbmdlEkEKD3ByZXZpb3VzX3N0YXR1cxgBIAEoDjIYLmludm9sdC'
+    '52MS5TZXJ2aWNlU3RhdHVzUg5wcmV2aW91c1N0YXR1cxIwCgZzdGF0dXMYAiABKA4yGC5pbnZv'
+    'bHQudjEuU2VydmljZVN0YXR1c1IGc3RhdHVzEhYKBnJlYXNvbhgDIAEoCVIGcmVhc29uEigKEG'
+    'NoYW5nZWRfYnlfZW1haWwYBCABKAlSDmNoYW5nZWRCeUVtYWlsEh0KCmNoYW5nZWRfYXQYBSAB'
+    'KAlSCWNoYW5nZWRBdA==');
+
+@$core.Deprecated('Use getCustomerStatusHistoryRequestDescriptor instead')
+const GetCustomerStatusHistoryRequest$json = {
+  '1': 'GetCustomerStatusHistoryRequest',
+  '2': [
+    {'1': 'customer_id', '3': 1, '4': 1, '5': 9, '10': 'customerId'},
+  ],
+};
+
+/// Descriptor for `GetCustomerStatusHistoryRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getCustomerStatusHistoryRequestDescriptor = $convert.base64Decode(
+    'Ch9HZXRDdXN0b21lclN0YXR1c0hpc3RvcnlSZXF1ZXN0Eh8KC2N1c3RvbWVyX2lkGAEgASgJUg'
+    'pjdXN0b21lcklk');
+
+@$core.Deprecated('Use getCustomerStatusHistoryResponseDescriptor instead')
+const GetCustomerStatusHistoryResponse$json = {
+  '1': 'GetCustomerStatusHistoryResponse',
+  '2': [
+    {'1': 'changes', '3': 1, '4': 3, '5': 11, '6': '.involt.v1.ServiceStatusChange', '10': 'changes'},
+  ],
+};
+
+/// Descriptor for `GetCustomerStatusHistoryResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getCustomerStatusHistoryResponseDescriptor = $convert.base64Decode(
+    'CiBHZXRDdXN0b21lclN0YXR1c0hpc3RvcnlSZXNwb25zZRI4CgdjaGFuZ2VzGAEgAygLMh4uaW'
+    '52b2x0LnYxLlNlcnZpY2VTdGF0dXNDaGFuZ2VSB2NoYW5nZXM=');
+
 @$core.Deprecated('Use upsertSectorRequestDescriptor instead')
 const UpsertSectorRequest$json = {
   '1': 'UpsertSectorRequest',
@@ -241,6 +316,7 @@ const GetCustomersRequest$json = {
     {'1': 'page_size', '3': 4, '4': 1, '5': 5, '10': 'pageSize'},
     {'1': 'exclude_period_id', '3': 5, '4': 1, '5': 9, '10': 'excludePeriodId'},
     {'1': 'community_id', '3': 6, '4': 1, '5': 9, '10': 'communityId'},
+    {'1': 'service_status', '3': 7, '4': 1, '5': 14, '6': '.involt.v1.ServiceStatus', '10': 'serviceStatus'},
   ],
 };
 
@@ -250,7 +326,8 @@ final $typed_data.Uint8List getCustomersRequestDescriptor = $convert.base64Decod
     'VhcmNoX3F1ZXJ5GAIgASgJUgtzZWFyY2hRdWVyeRIfCgtwYWdlX251bWJlchgDIAEoBVIKcGFn'
     'ZU51bWJlchIbCglwYWdlX3NpemUYBCABKAVSCHBhZ2VTaXplEioKEWV4Y2x1ZGVfcGVyaW9kX2'
     'lkGAUgASgJUg9leGNsdWRlUGVyaW9kSWQSIQoMY29tbXVuaXR5X2lkGAYgASgJUgtjb21tdW5p'
-    'dHlJZA==');
+    'dHlJZBI/Cg5zZXJ2aWNlX3N0YXR1cxgHIAEoDjIYLmludm9sdC52MS5TZXJ2aWNlU3RhdHVzUg'
+    '1zZXJ2aWNlU3RhdHVz');
 
 @$core.Deprecated('Use getCustomersResponseDescriptor instead')
 const GetCustomersResponse$json = {
@@ -747,6 +824,8 @@ const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
     {'1': 'PreviewAgreement', '2': '.involt.v1.AgreementRequest', '3': '.involt.v1.PreviewAgreementResponse'},
     {'1': 'CreateAgreement', '2': '.involt.v1.AgreementRequest', '3': '.involt.v1.CreateAgreementResponse'},
     {'1': 'CancelAgreement', '2': '.involt.v1.CancelAgreementRequest', '3': '.involt.v1.CancelAgreementResponse'},
+    {'1': 'SetCustomerServiceStatus', '2': '.involt.v1.SetCustomerServiceStatusRequest', '3': '.involt.v1.SetCustomerServiceStatusResponse'},
+    {'1': 'GetCustomerStatusHistory', '2': '.involt.v1.GetCustomerStatusHistoryRequest', '3': '.involt.v1.GetCustomerStatusHistoryResponse'},
   ],
 };
 
@@ -845,6 +924,11 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> AdminServi
   '.involt.v1.CreateAgreementResponse': $1.CreateAgreementResponse$json,
   '.involt.v1.CancelAgreementRequest': $1.CancelAgreementRequest$json,
   '.involt.v1.CancelAgreementResponse': $1.CancelAgreementResponse$json,
+  '.involt.v1.SetCustomerServiceStatusRequest': SetCustomerServiceStatusRequest$json,
+  '.involt.v1.SetCustomerServiceStatusResponse': SetCustomerServiceStatusResponse$json,
+  '.involt.v1.GetCustomerStatusHistoryRequest': GetCustomerStatusHistoryRequest$json,
+  '.involt.v1.GetCustomerStatusHistoryResponse': GetCustomerStatusHistoryResponse$json,
+  '.involt.v1.ServiceStatusChange': ServiceStatusChange$json,
 };
 
 /// Descriptor for `AdminService`. Decode as a `google.protobuf.ServiceDescriptorProto`.
@@ -903,5 +987,9 @@ final $typed_data.Uint8List adminServiceDescriptor = $convert.base64Decode(
     'RSZXNwb25zZRJSCg9DcmVhdGVBZ3JlZW1lbnQSGy5pbnZvbHQudjEuQWdyZWVtZW50UmVxdWVz'
     'dBoiLmludm9sdC52MS5DcmVhdGVBZ3JlZW1lbnRSZXNwb25zZRJYCg9DYW5jZWxBZ3JlZW1lbn'
     'QSIS5pbnZvbHQudjEuQ2FuY2VsQWdyZWVtZW50UmVxdWVzdBoiLmludm9sdC52MS5DYW5jZWxB'
-    'Z3JlZW1lbnRSZXNwb25zZQ==');
+    'Z3JlZW1lbnRSZXNwb25zZRJzChhTZXRDdXN0b21lclNlcnZpY2VTdGF0dXMSKi5pbnZvbHQudj'
+    'EuU2V0Q3VzdG9tZXJTZXJ2aWNlU3RhdHVzUmVxdWVzdBorLmludm9sdC52MS5TZXRDdXN0b21l'
+    'clNlcnZpY2VTdGF0dXNSZXNwb25zZRJzChhHZXRDdXN0b21lclN0YXR1c0hpc3RvcnkSKi5pbn'
+    'ZvbHQudjEuR2V0Q3VzdG9tZXJTdGF0dXNIaXN0b3J5UmVxdWVzdBorLmludm9sdC52MS5HZXRD'
+    'dXN0b21lclN0YXR1c0hpc3RvcnlSZXNwb25zZQ==');
 

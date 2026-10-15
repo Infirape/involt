@@ -13,6 +13,7 @@ import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
+import 'models.pbenum.dart' as $0;
 import 'reports.pbenum.dart';
 
 export 'reports.pbenum.dart';
@@ -371,6 +372,8 @@ class CollectionsDashboardTotals extends $pb.GeneratedMessage {
     $core.double? overdueDebt,
     $core.int? debtorCount,
     $core.int? cutCandidates,
+    $core.int? temporaryCutCount,
+    $core.int? noPowerCount,
   }) {
     final $result = create();
     if (billed != null) {
@@ -391,6 +394,12 @@ class CollectionsDashboardTotals extends $pb.GeneratedMessage {
     if (cutCandidates != null) {
       $result.cutCandidates = cutCandidates;
     }
+    if (temporaryCutCount != null) {
+      $result.temporaryCutCount = temporaryCutCount;
+    }
+    if (noPowerCount != null) {
+      $result.noPowerCount = noPowerCount;
+    }
     return $result;
   }
   CollectionsDashboardTotals._() : super();
@@ -404,6 +413,8 @@ class CollectionsDashboardTotals extends $pb.GeneratedMessage {
     ..a<$core.double>(4, _omitFieldNames ? '' : 'overdueDebt', $pb.PbFieldType.OD)
     ..a<$core.int>(5, _omitFieldNames ? '' : 'debtorCount', $pb.PbFieldType.O3)
     ..a<$core.int>(6, _omitFieldNames ? '' : 'cutCandidates', $pb.PbFieldType.O3)
+    ..a<$core.int>(7, _omitFieldNames ? '' : 'temporaryCutCount', $pb.PbFieldType.O3)
+    ..a<$core.int>(8, _omitFieldNames ? '' : 'noPowerCount', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -481,6 +492,24 @@ class CollectionsDashboardTotals extends $pb.GeneratedMessage {
   $core.bool hasCutCandidates() => $_has(5);
   @$pb.TagNumber(6)
   void clearCutCandidates() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.int get temporaryCutCount => $_getIZ(6);
+  @$pb.TagNumber(7)
+  set temporaryCutCount($core.int v) { $_setSignedInt32(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasTemporaryCutCount() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearTemporaryCutCount() => clearField(7);
+
+  @$pb.TagNumber(8)
+  $core.int get noPowerCount => $_getIZ(7);
+  @$pb.TagNumber(8)
+  set noPowerCount($core.int v) { $_setSignedInt32(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasNoPowerCount() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearNoPowerCount() => clearField(8);
 }
 
 class GetCollectionsDashboardRequest extends $pb.GeneratedMessage {
@@ -711,6 +740,7 @@ class DebtorRow extends $pb.GeneratedMessage {
     $core.bool? cutCandidate,
     $core.bool? inAgreement,
     $core.bool? agreementInDefault,
+    $0.ServiceStatus? serviceStatus,
   }) {
     final $result = create();
     if (customerId != null) {
@@ -761,6 +791,9 @@ class DebtorRow extends $pb.GeneratedMessage {
     if (agreementInDefault != null) {
       $result.agreementInDefault = agreementInDefault;
     }
+    if (serviceStatus != null) {
+      $result.serviceStatus = serviceStatus;
+    }
     return $result;
   }
   DebtorRow._() : super();
@@ -784,6 +817,7 @@ class DebtorRow extends $pb.GeneratedMessage {
     ..aOB(14, _omitFieldNames ? '' : 'cutCandidate')
     ..aOB(15, _omitFieldNames ? '' : 'inAgreement')
     ..aOB(16, _omitFieldNames ? '' : 'agreementInDefault')
+    ..e<$0.ServiceStatus>(17, _omitFieldNames ? '' : 'serviceStatus', $pb.PbFieldType.OE, defaultOrMaker: $0.ServiceStatus.SERVICE_STATUS_UNSPECIFIED, valueOf: $0.ServiceStatus.valueOf, enumValues: $0.ServiceStatus.values)
     ..hasRequiredFields = false
   ;
 
@@ -951,6 +985,15 @@ class DebtorRow extends $pb.GeneratedMessage {
   $core.bool hasAgreementInDefault() => $_has(15);
   @$pb.TagNumber(16)
   void clearAgreementInDefault() => clearField(16);
+
+  @$pb.TagNumber(17)
+  $0.ServiceStatus get serviceStatus => $_getN(16);
+  @$pb.TagNumber(17)
+  set serviceStatus($0.ServiceStatus v) { setField(17, v); }
+  @$pb.TagNumber(17)
+  $core.bool hasServiceStatus() => $_has(16);
+  @$pb.TagNumber(17)
+  void clearServiceStatus() => clearField(17);
 }
 
 class GetDebtorsRequest extends $pb.GeneratedMessage {
@@ -962,6 +1005,7 @@ class GetDebtorsRequest extends $pb.GeneratedMessage {
     $core.double? minDebt,
     $core.int? cutThreshold,
     $core.bool? onlyCutCandidates,
+    $0.ServiceStatus? serviceStatus,
   }) {
     final $result = create();
     if (communityId != null) {
@@ -985,6 +1029,9 @@ class GetDebtorsRequest extends $pb.GeneratedMessage {
     if (onlyCutCandidates != null) {
       $result.onlyCutCandidates = onlyCutCandidates;
     }
+    if (serviceStatus != null) {
+      $result.serviceStatus = serviceStatus;
+    }
     return $result;
   }
   GetDebtorsRequest._() : super();
@@ -999,6 +1046,7 @@ class GetDebtorsRequest extends $pb.GeneratedMessage {
     ..a<$core.double>(5, _omitFieldNames ? '' : 'minDebt', $pb.PbFieldType.OD)
     ..a<$core.int>(6, _omitFieldNames ? '' : 'cutThreshold', $pb.PbFieldType.O3)
     ..aOB(7, _omitFieldNames ? '' : 'onlyCutCandidates')
+    ..e<$0.ServiceStatus>(8, _omitFieldNames ? '' : 'serviceStatus', $pb.PbFieldType.OE, defaultOrMaker: $0.ServiceStatus.SERVICE_STATUS_UNSPECIFIED, valueOf: $0.ServiceStatus.valueOf, enumValues: $0.ServiceStatus.values)
     ..hasRequiredFields = false
   ;
 
@@ -1085,6 +1133,15 @@ class GetDebtorsRequest extends $pb.GeneratedMessage {
   $core.bool hasOnlyCutCandidates() => $_has(6);
   @$pb.TagNumber(7)
   void clearOnlyCutCandidates() => clearField(7);
+
+  @$pb.TagNumber(8)
+  $0.ServiceStatus get serviceStatus => $_getN(7);
+  @$pb.TagNumber(8)
+  set serviceStatus($0.ServiceStatus v) { setField(8, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasServiceStatus() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearServiceStatus() => clearField(8);
 }
 
 class GetDebtorsResponse extends $pb.GeneratedMessage {

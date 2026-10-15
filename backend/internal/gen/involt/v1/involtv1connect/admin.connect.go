@@ -132,6 +132,12 @@ const (
 	// AdminServiceCancelAgreementProcedure is the fully-qualified name of the AdminService's
 	// CancelAgreement RPC.
 	AdminServiceCancelAgreementProcedure = "/involt.v1.AdminService/CancelAgreement"
+	// AdminServiceSetCustomerServiceStatusProcedure is the fully-qualified name of the AdminService's
+	// SetCustomerServiceStatus RPC.
+	AdminServiceSetCustomerServiceStatusProcedure = "/involt.v1.AdminService/SetCustomerServiceStatus"
+	// AdminServiceGetCustomerStatusHistoryProcedure is the fully-qualified name of the AdminService's
+	// GetCustomerStatusHistory RPC.
+	AdminServiceGetCustomerStatusHistoryProcedure = "/involt.v1.AdminService/GetCustomerStatusHistory"
 )
 
 // AdminServiceClient is a client for the involt.v1.AdminService service.
@@ -208,6 +214,10 @@ type AdminServiceClient interface {
 	CreateAgreement(context.Context, *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.CreateAgreementResponse], error)
 	// CancelAgreement cancels an active agreement (admin/supervisor).
 	CancelAgreement(context.Context, *connect.Request[v1.CancelAgreementRequest]) (*connect.Response[v1.CancelAgreementResponse], error)
+	// SetCustomerServiceStatus changes a supply's service status (admin only, reason required).
+	SetCustomerServiceStatus(context.Context, *connect.Request[v1.SetCustomerServiceStatusRequest]) (*connect.Response[v1.SetCustomerServiceStatusResponse], error)
+	// GetCustomerStatusHistory lists a supply's service status changes, newest first.
+	GetCustomerStatusHistory(context.Context, *connect.Request[v1.GetCustomerStatusHistoryRequest]) (*connect.Response[v1.GetCustomerStatusHistoryResponse], error)
 }
 
 // NewAdminServiceClient constructs a client for the involt.v1.AdminService service. By default, it
@@ -431,46 +441,60 @@ func NewAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(adminServiceMethods.ByName("CancelAgreement")),
 			connect.WithClientOptions(opts...),
 		),
+		setCustomerServiceStatus: connect.NewClient[v1.SetCustomerServiceStatusRequest, v1.SetCustomerServiceStatusResponse](
+			httpClient,
+			baseURL+AdminServiceSetCustomerServiceStatusProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("SetCustomerServiceStatus")),
+			connect.WithClientOptions(opts...),
+		),
+		getCustomerStatusHistory: connect.NewClient[v1.GetCustomerStatusHistoryRequest, v1.GetCustomerStatusHistoryResponse](
+			httpClient,
+			baseURL+AdminServiceGetCustomerStatusHistoryProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("GetCustomerStatusHistory")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // adminServiceClient implements AdminServiceClient.
 type adminServiceClient struct {
-	login                   *connect.Client[v1.LoginRequest, v1.LoginResponse]
-	getUsers                *connect.Client[v1.GetUsersRequest, v1.GetUsersResponse]
-	upsertUser              *connect.Client[v1.UpsertUserRequest, v1.UpsertUserResponse]
-	getSectors              *connect.Client[v1.GetSectorsRequest, v1.GetSectorsResponse]
-	getCommunities          *connect.Client[v1.GetCommunitiesRequest, v1.GetCommunitiesResponse]
-	getCustomers            *connect.Client[v1.GetCustomersRequest, v1.GetCustomersResponse]
-	getReadings             *connect.Client[v1.GetReadingsRequest, v1.GetReadingsResponse]
-	getSettings             *connect.Client[v1.GetSettingsRequest, v1.GetSettingsResponse]
-	updateSettings          *connect.Client[v1.UpdateSettingsRequest, v1.UpdateSettingsResponse]
-	upsertCustomer          *connect.Client[v1.UpsertCustomerRequest, v1.UpsertCustomerResponse]
-	deleteCustomer          *connect.Client[v1.DeleteCustomerRequest, v1.DeleteCustomerResponse]
-	getDashboardStats       *connect.Client[v1.GetDashboardStatsRequest, v1.GetDashboardStatsResponse]
-	listPeriods             *connect.Client[v1.ListPeriodsRequest, v1.ListPeriodsResponse]
-	getPeriodStats          *connect.Client[v1.GetPeriodStatsRequest, v1.GetPeriodStatsResponse]
-	openPeriod              *connect.Client[v1.OpenPeriodRequest, v1.OpenPeriodResponse]
-	closePeriod             *connect.Client[v1.ClosePeriodRequest, v1.ClosePeriodResponse]
-	upsertSector            *connect.Client[v1.UpsertSectorRequest, v1.UpsertSectorResponse]
-	deleteSector            *connect.Client[v1.DeleteSectorRequest, v1.DeleteSectorResponse]
-	upsertCommunity         *connect.Client[v1.UpsertCommunityRequest, v1.UpsertCommunityResponse]
-	deleteCommunity         *connect.Client[v1.DeleteCommunityRequest, v1.DeleteCommunityResponse]
-	togglePaymentStatus     *connect.Client[v1.TogglePaymentStatusRequest, v1.TogglePaymentStatusResponse]
-	getCollections          *connect.Client[v1.GetCollectionsRequest, v1.GetCollectionsResponse]
-	getCustomerAccount      *connect.Client[v1.GetCustomerAccountRequest, v1.GetCustomerAccountResponse]
-	registerPayment         *connect.Client[v1.RegisterPaymentRequest, v1.RegisterPaymentResponse]
-	voidPayment             *connect.Client[v1.VoidPaymentRequest, v1.VoidPaymentResponse]
-	createFlatCharge        *connect.Client[v1.CreateFlatChargeRequest, v1.CreateFlatChargeResponse]
-	getCashClosing          *connect.Client[v1.GetCashClosingRequest, v1.GetCashClosingResponse]
-	getCollectionsDashboard *connect.Client[v1.GetCollectionsDashboardRequest, v1.GetCollectionsDashboardResponse]
-	getDebtors              *connect.Client[v1.GetDebtorsRequest, v1.GetDebtorsResponse]
-	getCollectionPolicy     *connect.Client[v1.GetCollectionPolicyRequest, v1.GetCollectionPolicyResponse]
-	updateCollectionPolicy  *connect.Client[v1.UpdateCollectionPolicyRequest, v1.UpdateCollectionPolicyResponse]
-	waiveLateFee            *connect.Client[v1.WaiveLateFeeRequest, v1.WaiveLateFeeResponse]
-	previewAgreement        *connect.Client[v1.AgreementRequest, v1.PreviewAgreementResponse]
-	createAgreement         *connect.Client[v1.AgreementRequest, v1.CreateAgreementResponse]
-	cancelAgreement         *connect.Client[v1.CancelAgreementRequest, v1.CancelAgreementResponse]
+	login                    *connect.Client[v1.LoginRequest, v1.LoginResponse]
+	getUsers                 *connect.Client[v1.GetUsersRequest, v1.GetUsersResponse]
+	upsertUser               *connect.Client[v1.UpsertUserRequest, v1.UpsertUserResponse]
+	getSectors               *connect.Client[v1.GetSectorsRequest, v1.GetSectorsResponse]
+	getCommunities           *connect.Client[v1.GetCommunitiesRequest, v1.GetCommunitiesResponse]
+	getCustomers             *connect.Client[v1.GetCustomersRequest, v1.GetCustomersResponse]
+	getReadings              *connect.Client[v1.GetReadingsRequest, v1.GetReadingsResponse]
+	getSettings              *connect.Client[v1.GetSettingsRequest, v1.GetSettingsResponse]
+	updateSettings           *connect.Client[v1.UpdateSettingsRequest, v1.UpdateSettingsResponse]
+	upsertCustomer           *connect.Client[v1.UpsertCustomerRequest, v1.UpsertCustomerResponse]
+	deleteCustomer           *connect.Client[v1.DeleteCustomerRequest, v1.DeleteCustomerResponse]
+	getDashboardStats        *connect.Client[v1.GetDashboardStatsRequest, v1.GetDashboardStatsResponse]
+	listPeriods              *connect.Client[v1.ListPeriodsRequest, v1.ListPeriodsResponse]
+	getPeriodStats           *connect.Client[v1.GetPeriodStatsRequest, v1.GetPeriodStatsResponse]
+	openPeriod               *connect.Client[v1.OpenPeriodRequest, v1.OpenPeriodResponse]
+	closePeriod              *connect.Client[v1.ClosePeriodRequest, v1.ClosePeriodResponse]
+	upsertSector             *connect.Client[v1.UpsertSectorRequest, v1.UpsertSectorResponse]
+	deleteSector             *connect.Client[v1.DeleteSectorRequest, v1.DeleteSectorResponse]
+	upsertCommunity          *connect.Client[v1.UpsertCommunityRequest, v1.UpsertCommunityResponse]
+	deleteCommunity          *connect.Client[v1.DeleteCommunityRequest, v1.DeleteCommunityResponse]
+	togglePaymentStatus      *connect.Client[v1.TogglePaymentStatusRequest, v1.TogglePaymentStatusResponse]
+	getCollections           *connect.Client[v1.GetCollectionsRequest, v1.GetCollectionsResponse]
+	getCustomerAccount       *connect.Client[v1.GetCustomerAccountRequest, v1.GetCustomerAccountResponse]
+	registerPayment          *connect.Client[v1.RegisterPaymentRequest, v1.RegisterPaymentResponse]
+	voidPayment              *connect.Client[v1.VoidPaymentRequest, v1.VoidPaymentResponse]
+	createFlatCharge         *connect.Client[v1.CreateFlatChargeRequest, v1.CreateFlatChargeResponse]
+	getCashClosing           *connect.Client[v1.GetCashClosingRequest, v1.GetCashClosingResponse]
+	getCollectionsDashboard  *connect.Client[v1.GetCollectionsDashboardRequest, v1.GetCollectionsDashboardResponse]
+	getDebtors               *connect.Client[v1.GetDebtorsRequest, v1.GetDebtorsResponse]
+	getCollectionPolicy      *connect.Client[v1.GetCollectionPolicyRequest, v1.GetCollectionPolicyResponse]
+	updateCollectionPolicy   *connect.Client[v1.UpdateCollectionPolicyRequest, v1.UpdateCollectionPolicyResponse]
+	waiveLateFee             *connect.Client[v1.WaiveLateFeeRequest, v1.WaiveLateFeeResponse]
+	previewAgreement         *connect.Client[v1.AgreementRequest, v1.PreviewAgreementResponse]
+	createAgreement          *connect.Client[v1.AgreementRequest, v1.CreateAgreementResponse]
+	cancelAgreement          *connect.Client[v1.CancelAgreementRequest, v1.CancelAgreementResponse]
+	setCustomerServiceStatus *connect.Client[v1.SetCustomerServiceStatusRequest, v1.SetCustomerServiceStatusResponse]
+	getCustomerStatusHistory *connect.Client[v1.GetCustomerStatusHistoryRequest, v1.GetCustomerStatusHistoryResponse]
 }
 
 // Login calls involt.v1.AdminService.Login.
@@ -648,6 +672,16 @@ func (c *adminServiceClient) CancelAgreement(ctx context.Context, req *connect.R
 	return c.cancelAgreement.CallUnary(ctx, req)
 }
 
+// SetCustomerServiceStatus calls involt.v1.AdminService.SetCustomerServiceStatus.
+func (c *adminServiceClient) SetCustomerServiceStatus(ctx context.Context, req *connect.Request[v1.SetCustomerServiceStatusRequest]) (*connect.Response[v1.SetCustomerServiceStatusResponse], error) {
+	return c.setCustomerServiceStatus.CallUnary(ctx, req)
+}
+
+// GetCustomerStatusHistory calls involt.v1.AdminService.GetCustomerStatusHistory.
+func (c *adminServiceClient) GetCustomerStatusHistory(ctx context.Context, req *connect.Request[v1.GetCustomerStatusHistoryRequest]) (*connect.Response[v1.GetCustomerStatusHistoryResponse], error) {
+	return c.getCustomerStatusHistory.CallUnary(ctx, req)
+}
+
 // AdminServiceHandler is an implementation of the involt.v1.AdminService service.
 type AdminServiceHandler interface {
 	// Login authenticates a user and returns a JWT token.
@@ -722,6 +756,10 @@ type AdminServiceHandler interface {
 	CreateAgreement(context.Context, *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.CreateAgreementResponse], error)
 	// CancelAgreement cancels an active agreement (admin/supervisor).
 	CancelAgreement(context.Context, *connect.Request[v1.CancelAgreementRequest]) (*connect.Response[v1.CancelAgreementResponse], error)
+	// SetCustomerServiceStatus changes a supply's service status (admin only, reason required).
+	SetCustomerServiceStatus(context.Context, *connect.Request[v1.SetCustomerServiceStatusRequest]) (*connect.Response[v1.SetCustomerServiceStatusResponse], error)
+	// GetCustomerStatusHistory lists a supply's service status changes, newest first.
+	GetCustomerStatusHistory(context.Context, *connect.Request[v1.GetCustomerStatusHistoryRequest]) (*connect.Response[v1.GetCustomerStatusHistoryResponse], error)
 }
 
 // NewAdminServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -941,6 +979,18 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(adminServiceMethods.ByName("CancelAgreement")),
 		connect.WithHandlerOptions(opts...),
 	)
+	adminServiceSetCustomerServiceStatusHandler := connect.NewUnaryHandler(
+		AdminServiceSetCustomerServiceStatusProcedure,
+		svc.SetCustomerServiceStatus,
+		connect.WithSchema(adminServiceMethods.ByName("SetCustomerServiceStatus")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceGetCustomerStatusHistoryHandler := connect.NewUnaryHandler(
+		AdminServiceGetCustomerStatusHistoryProcedure,
+		svc.GetCustomerStatusHistory,
+		connect.WithSchema(adminServiceMethods.ByName("GetCustomerStatusHistory")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/involt.v1.AdminService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AdminServiceLoginProcedure:
@@ -1013,6 +1063,10 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 			adminServiceCreateAgreementHandler.ServeHTTP(w, r)
 		case AdminServiceCancelAgreementProcedure:
 			adminServiceCancelAgreementHandler.ServeHTTP(w, r)
+		case AdminServiceSetCustomerServiceStatusProcedure:
+			adminServiceSetCustomerServiceStatusHandler.ServeHTTP(w, r)
+		case AdminServiceGetCustomerStatusHistoryProcedure:
+			adminServiceGetCustomerStatusHistoryHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -1160,4 +1214,12 @@ func (UnimplementedAdminServiceHandler) CreateAgreement(context.Context, *connec
 
 func (UnimplementedAdminServiceHandler) CancelAgreement(context.Context, *connect.Request[v1.CancelAgreementRequest]) (*connect.Response[v1.CancelAgreementResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.CancelAgreement is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) SetCustomerServiceStatus(context.Context, *connect.Request[v1.SetCustomerServiceStatusRequest]) (*connect.Response[v1.SetCustomerServiceStatusResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.SetCustomerServiceStatus is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) GetCustomerStatusHistory(context.Context, *connect.Request[v1.GetCustomerStatusHistoryRequest]) (*connect.Response[v1.GetCustomerStatusHistoryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetCustomerStatusHistory is not implemented"))
 }

@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package involt.v1;
 
+import "involt/v1/models.proto";
+
 option go_package = "github.com/infira/involt/backend/internal/gen/involt/v1;involtv1";
 
 enum AgingBucket {
@@ -46,6 +48,8 @@ message CollectionsDashboardTotals {
   double overdue_debt = 4;
   int32 debtor_count = 5;
   int32 cut_candidates = 6;
+  int32 temporary_cut_count = 7; // supplies in corte temporal (current, in scope)
+  int32 no_power_count = 8; // supplies sin energía (current, in scope)
 }
 
 message GetCollectionsDashboardRequest {
@@ -82,6 +86,7 @@ message DebtorRow {
   bool cut_candidate = 14;
   bool in_agreement = 15; // has an on-schedule agreement
   bool agreement_in_default = 16;
+  ServiceStatus service_status = 17;
 }
 
 message GetDebtorsRequest {
@@ -92,6 +97,7 @@ message GetDebtorsRequest {
   double min_debt = 5;
   int32 cut_threshold = 6; // default 2
   bool only_cut_candidates = 7;
+  ServiceStatus service_status = 8; // optional filter
 }
 
 message GetDebtorsResponse {

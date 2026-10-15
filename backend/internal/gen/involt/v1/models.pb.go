@@ -71,6 +71,59 @@ func (ConnectionType) EnumDescriptor() ([]byte, []int) {
 	return file_involt_v1_models_proto_rawDescGZIP(), []int{0}
 }
 
+// ServiceStatus is whether a supply currently has electricity (set by admins).
+type ServiceStatus int32
+
+const (
+	ServiceStatus_SERVICE_STATUS_UNSPECIFIED   ServiceStatus = 0
+	ServiceStatus_SERVICE_STATUS_ACTIVE        ServiceStatus = 1 // con servicio
+	ServiceStatus_SERVICE_STATUS_TEMPORARY_CUT ServiceStatus = 2 // corte temporal
+	ServiceStatus_SERVICE_STATUS_NO_POWER      ServiceStatus = 3 // sin energía
+)
+
+// Enum value maps for ServiceStatus.
+var (
+	ServiceStatus_name = map[int32]string{
+		0: "SERVICE_STATUS_UNSPECIFIED",
+		1: "SERVICE_STATUS_ACTIVE",
+		2: "SERVICE_STATUS_TEMPORARY_CUT",
+		3: "SERVICE_STATUS_NO_POWER",
+	}
+	ServiceStatus_value = map[string]int32{
+		"SERVICE_STATUS_UNSPECIFIED":   0,
+		"SERVICE_STATUS_ACTIVE":        1,
+		"SERVICE_STATUS_TEMPORARY_CUT": 2,
+		"SERVICE_STATUS_NO_POWER":      3,
+	}
+)
+
+func (x ServiceStatus) Enum() *ServiceStatus {
+	p := new(ServiceStatus)
+	*p = x
+	return p
+}
+
+func (x ServiceStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ServiceStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_involt_v1_models_proto_enumTypes[1].Descriptor()
+}
+
+func (ServiceStatus) Type() protoreflect.EnumType {
+	return &file_involt_v1_models_proto_enumTypes[1]
+}
+
+func (x ServiceStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ServiceStatus.Descriptor instead.
+func (ServiceStatus) EnumDescriptor() ([]byte, []int) {
+	return file_involt_v1_models_proto_rawDescGZIP(), []int{1}
+}
+
 type PeriodStatus int32
 
 const (
@@ -104,11 +157,11 @@ func (x PeriodStatus) String() string {
 }
 
 func (PeriodStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_involt_v1_models_proto_enumTypes[1].Descriptor()
+	return file_involt_v1_models_proto_enumTypes[2].Descriptor()
 }
 
 func (PeriodStatus) Type() protoreflect.EnumType {
-	return &file_involt_v1_models_proto_enumTypes[1]
+	return &file_involt_v1_models_proto_enumTypes[2]
 }
 
 func (x PeriodStatus) Number() protoreflect.EnumNumber {
@@ -117,7 +170,7 @@ func (x PeriodStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use PeriodStatus.Descriptor instead.
 func (PeriodStatus) EnumDescriptor() ([]byte, []int) {
-	return file_involt_v1_models_proto_rawDescGZIP(), []int{1}
+	return file_involt_v1_models_proto_rawDescGZIP(), []int{2}
 }
 
 // Community represents a village or Caserio (e.g., Alto Chetilla, Cadena).
@@ -244,23 +297,25 @@ func (x *Sector) GetName() string {
 
 // Customer contains the master data for a water/electricity user.
 type Customer struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Code             string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"` // e.g., ACH001
-	Name             string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	CommunityId      string                 `protobuf:"bytes,4,opt,name=community_id,json=communityId,proto3" json:"community_id,omitempty"`
-	SectorId         string                 `protobuf:"bytes,5,opt,name=sector_id,json=sectorId,proto3" json:"sector_id,omitempty"`
-	ConnectionType   ConnectionType         `protobuf:"varint,6,opt,name=connection_type,json=connectionType,proto3,enum=involt.v1.ConnectionType" json:"connection_type,omitempty"`
-	Tariff           float64                `protobuf:"fixed64,7,opt,name=tariff,proto3" json:"tariff,omitempty"`
-	MeterNumber      string                 `protobuf:"bytes,8,opt,name=meter_number,json=meterNumber,proto3" json:"meter_number,omitempty"`
-	Latitude         float64                `protobuf:"fixed64,9,opt,name=latitude,proto3" json:"latitude,omitempty"`
-	Longitude        float64                `protobuf:"fixed64,10,opt,name=longitude,proto3" json:"longitude,omitempty"`
-	InitialReading   float64                `protobuf:"fixed64,11,opt,name=initial_reading,json=initialReading,proto3" json:"initial_reading,omitempty"`
-	Address          string                 `protobuf:"bytes,12,opt,name=address,proto3" json:"address,omitempty"`
-	ContractStart    string                 `protobuf:"bytes,13,opt,name=contract_start,json=contractStart,proto3" json:"contract_start,omitempty"`
-	LastReadingValue float64                `protobuf:"fixed64,14,opt,name=last_reading_value,json=lastReadingValue,proto3" json:"last_reading_value,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"open.v1"`
+	Id                     string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Code                   string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"` // e.g., ACH001
+	Name                   string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	CommunityId            string                 `protobuf:"bytes,4,opt,name=community_id,json=communityId,proto3" json:"community_id,omitempty"`
+	SectorId               string                 `protobuf:"bytes,5,opt,name=sector_id,json=sectorId,proto3" json:"sector_id,omitempty"`
+	ConnectionType         ConnectionType         `protobuf:"varint,6,opt,name=connection_type,json=connectionType,proto3,enum=involt.v1.ConnectionType" json:"connection_type,omitempty"`
+	Tariff                 float64                `protobuf:"fixed64,7,opt,name=tariff,proto3" json:"tariff,omitempty"`
+	MeterNumber            string                 `protobuf:"bytes,8,opt,name=meter_number,json=meterNumber,proto3" json:"meter_number,omitempty"`
+	Latitude               float64                `protobuf:"fixed64,9,opt,name=latitude,proto3" json:"latitude,omitempty"`
+	Longitude              float64                `protobuf:"fixed64,10,opt,name=longitude,proto3" json:"longitude,omitempty"`
+	InitialReading         float64                `protobuf:"fixed64,11,opt,name=initial_reading,json=initialReading,proto3" json:"initial_reading,omitempty"`
+	Address                string                 `protobuf:"bytes,12,opt,name=address,proto3" json:"address,omitempty"`
+	ContractStart          string                 `protobuf:"bytes,13,opt,name=contract_start,json=contractStart,proto3" json:"contract_start,omitempty"`
+	LastReadingValue       float64                `protobuf:"fixed64,14,opt,name=last_reading_value,json=lastReadingValue,proto3" json:"last_reading_value,omitempty"`
+	ServiceStatus          ServiceStatus          `protobuf:"varint,15,opt,name=service_status,json=serviceStatus,proto3,enum=involt.v1.ServiceStatus" json:"service_status,omitempty"`
+	ServiceStatusChangedAt string                 `protobuf:"bytes,16,opt,name=service_status_changed_at,json=serviceStatusChangedAt,proto3" json:"service_status_changed_at,omitempty"` // ISO 8601, empty if never changed
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *Customer) Reset() {
@@ -389,6 +444,20 @@ func (x *Customer) GetLastReadingValue() float64 {
 		return x.LastReadingValue
 	}
 	return 0
+}
+
+func (x *Customer) GetServiceStatus() ServiceStatus {
+	if x != nil {
+		return x.ServiceStatus
+	}
+	return ServiceStatus_SERVICE_STATUS_UNSPECIFIED
+}
+
+func (x *Customer) GetServiceStatusChangedAt() string {
+	if x != nil {
+		return x.ServiceStatusChangedAt
+	}
+	return ""
 }
 
 // Reading represents a captured meter value at a point in time.
@@ -982,7 +1051,7 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\x06Sector\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\fcommunity_id\x18\x02 \x01(\tR\vcommunityId\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\"\xd3\x03\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\"\xcf\x04\n" +
 	"\bCustomer\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
@@ -998,7 +1067,9 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\x0finitial_reading\x18\v \x01(\x01R\x0einitialReading\x12\x18\n" +
 	"\aaddress\x18\f \x01(\tR\aaddress\x12%\n" +
 	"\x0econtract_start\x18\r \x01(\tR\rcontractStart\x12,\n" +
-	"\x12last_reading_value\x18\x0e \x01(\x01R\x10lastReadingValue\"\xf2\x06\n" +
+	"\x12last_reading_value\x18\x0e \x01(\x01R\x10lastReadingValue\x12?\n" +
+	"\x0eservice_status\x18\x0f \x01(\x0e2\x18.involt.v1.ServiceStatusR\rserviceStatus\x129\n" +
+	"\x19service_status_changed_at\x18\x10 \x01(\tR\x16serviceStatusChangedAt\"\xf2\x06\n" +
 	"\aReading\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcustomer_id\x18\x02 \x01(\tR\n" +
@@ -1067,7 +1138,12 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\x0eConnectionType\x12\x1f\n" +
 	"\x1bCONNECTION_TYPE_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aCONNECTION_TYPE_MONOFASICA\x10\x01\x12\x1d\n" +
-	"\x19CONNECTION_TYPE_TRIFASICA\x10\x02*_\n" +
+	"\x19CONNECTION_TYPE_TRIFASICA\x10\x02*\x89\x01\n" +
+	"\rServiceStatus\x12\x1e\n" +
+	"\x1aSERVICE_STATUS_UNSPECIFIED\x10\x00\x12\x19\n" +
+	"\x15SERVICE_STATUS_ACTIVE\x10\x01\x12 \n" +
+	"\x1cSERVICE_STATUS_TEMPORARY_CUT\x10\x02\x12\x1b\n" +
+	"\x17SERVICE_STATUS_NO_POWER\x10\x03*_\n" +
 	"\fPeriodStatus\x12\x1d\n" +
 	"\x19PERIOD_STATUS_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12PERIOD_STATUS_OPEN\x10\x01\x12\x18\n" +
@@ -1085,28 +1161,30 @@ func file_involt_v1_models_proto_rawDescGZIP() []byte {
 	return file_involt_v1_models_proto_rawDescData
 }
 
-var file_involt_v1_models_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_involt_v1_models_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_involt_v1_models_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_involt_v1_models_proto_goTypes = []any{
 	(ConnectionType)(0), // 0: involt.v1.ConnectionType
-	(PeriodStatus)(0),   // 1: involt.v1.PeriodStatus
-	(*Community)(nil),   // 2: involt.v1.Community
-	(*Sector)(nil),      // 3: involt.v1.Sector
-	(*Customer)(nil),    // 4: involt.v1.Customer
-	(*Reading)(nil),     // 5: involt.v1.Reading
-	(*AppConfig)(nil),   // 6: involt.v1.AppConfig
-	(*Settings)(nil),    // 7: involt.v1.Settings
-	(*Period)(nil),      // 8: involt.v1.Period
-	(*Operator)(nil),    // 9: involt.v1.Operator
+	(ServiceStatus)(0),  // 1: involt.v1.ServiceStatus
+	(PeriodStatus)(0),   // 2: involt.v1.PeriodStatus
+	(*Community)(nil),   // 3: involt.v1.Community
+	(*Sector)(nil),      // 4: involt.v1.Sector
+	(*Customer)(nil),    // 5: involt.v1.Customer
+	(*Reading)(nil),     // 6: involt.v1.Reading
+	(*AppConfig)(nil),   // 7: involt.v1.AppConfig
+	(*Settings)(nil),    // 8: involt.v1.Settings
+	(*Period)(nil),      // 9: involt.v1.Period
+	(*Operator)(nil),    // 10: involt.v1.Operator
 }
 var file_involt_v1_models_proto_depIdxs = []int32{
 	0, // 0: involt.v1.Customer.connection_type:type_name -> involt.v1.ConnectionType
-	1, // 1: involt.v1.Period.status:type_name -> involt.v1.PeriodStatus
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	1, // 1: involt.v1.Customer.service_status:type_name -> involt.v1.ServiceStatus
+	2, // 2: involt.v1.Period.status:type_name -> involt.v1.PeriodStatus
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_involt_v1_models_proto_init() }
@@ -1119,7 +1197,7 @@ func file_involt_v1_models_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_involt_v1_models_proto_rawDesc), len(file_involt_v1_models_proto_rawDesc)),
-			NumEnums:      2,
+			NumEnums:      3,
 			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,

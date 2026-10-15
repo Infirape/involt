@@ -25,6 +25,14 @@ enum ConnectionType {
   CONNECTION_TYPE_TRIFASICA = 2;
 }
 
+// ServiceStatus is whether a supply currently has electricity (set by admins).
+enum ServiceStatus {
+  SERVICE_STATUS_UNSPECIFIED = 0;
+  SERVICE_STATUS_ACTIVE = 1; // con servicio
+  SERVICE_STATUS_TEMPORARY_CUT = 2; // corte temporal
+  SERVICE_STATUS_NO_POWER = 3; // sin energía
+}
+
 // Customer contains the master data for a water/electricity user.
 message Customer {
   string id = 1;
@@ -41,6 +49,8 @@ message Customer {
   string address = 12;
   string contract_start = 13;
   double last_reading_value = 14;
+  ServiceStatus service_status = 15;
+  string service_status_changed_at = 16; // ISO 8601, empty if never changed
 }
 
 // Reading represents a captured meter value at a point in time.

@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ClosePeriodRequest, ClosePeriodResponse, DeleteCommunityRequest, DeleteCommunityResponse, DeleteCustomerRequest, DeleteCustomerResponse, DeleteSectorRequest, DeleteSectorResponse, GetCollectionsRequest, GetCollectionsResponse, GetCommunitiesRequest, GetCommunitiesResponse, GetCustomersRequest, GetCustomersResponse, GetDashboardStatsRequest, GetDashboardStatsResponse, GetPeriodStatsRequest, GetPeriodStatsResponse, GetReadingsRequest, GetReadingsResponse, GetSectorsRequest, GetSectorsResponse, GetSettingsRequest, GetSettingsResponse, GetUsersRequest, GetUsersResponse, ListPeriodsRequest, ListPeriodsResponse, LoginRequest, LoginResponse, OpenPeriodRequest, OpenPeriodResponse, TogglePaymentStatusRequest, TogglePaymentStatusResponse, UpdateSettingsRequest, UpdateSettingsResponse, UpsertCommunityRequest, UpsertCommunityResponse, UpsertCustomerRequest, UpsertCustomerResponse, UpsertSectorRequest, UpsertSectorResponse, UpsertUserRequest, UpsertUserResponse } from "./admin_pb";
+import { ClosePeriodRequest, ClosePeriodResponse, DeleteCommunityRequest, DeleteCommunityResponse, DeleteCustomerRequest, DeleteCustomerResponse, DeleteSectorRequest, DeleteSectorResponse, GetCollectionsRequest, GetCollectionsResponse, GetCommunitiesRequest, GetCommunitiesResponse, GetCustomersRequest, GetCustomersResponse, GetCustomerStatusHistoryRequest, GetCustomerStatusHistoryResponse, GetDashboardStatsRequest, GetDashboardStatsResponse, GetPeriodStatsRequest, GetPeriodStatsResponse, GetReadingsRequest, GetReadingsResponse, GetSectorsRequest, GetSectorsResponse, GetSettingsRequest, GetSettingsResponse, GetUsersRequest, GetUsersResponse, ListPeriodsRequest, ListPeriodsResponse, LoginRequest, LoginResponse, OpenPeriodRequest, OpenPeriodResponse, SetCustomerServiceStatusRequest, SetCustomerServiceStatusResponse, TogglePaymentStatusRequest, TogglePaymentStatusResponse, UpdateSettingsRequest, UpdateSettingsResponse, UpsertCommunityRequest, UpsertCommunityResponse, UpsertCustomerRequest, UpsertCustomerResponse, UpsertSectorRequest, UpsertSectorResponse, UpsertUserRequest, UpsertUserResponse } from "./admin_pb";
 import { MethodKind } from "@bufbuild/protobuf";
 import { CreateFlatChargeRequest, CreateFlatChargeResponse, GetCashClosingRequest, GetCashClosingResponse, GetCustomerAccountRequest, GetCustomerAccountResponse, RegisterPaymentRequest, RegisterPaymentResponse, VoidPaymentRequest, VoidPaymentResponse } from "./payments_pb";
 import { GetCollectionsDashboardRequest, GetCollectionsDashboardResponse, GetDebtorsRequest, GetDebtorsResponse } from "./reports_pb";
@@ -402,6 +402,28 @@ export const AdminService = {
       name: "CancelAgreement",
       I: CancelAgreementRequest,
       O: CancelAgreementResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * SetCustomerServiceStatus changes a supply's service status (admin only, reason required).
+     *
+     * @generated from rpc involt.v1.AdminService.SetCustomerServiceStatus
+     */
+    setCustomerServiceStatus: {
+      name: "SetCustomerServiceStatus",
+      I: SetCustomerServiceStatusRequest,
+      O: SetCustomerServiceStatusResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * GetCustomerStatusHistory lists a supply's service status changes, newest first.
+     *
+     * @generated from rpc involt.v1.AdminService.GetCustomerStatusHistory
+     */
+    getCustomerStatusHistory: {
+      name: "GetCustomerStatusHistory",
+      I: GetCustomerStatusHistoryRequest,
+      O: GetCustomerStatusHistoryResponse,
       kind: MethodKind.Unary,
     },
   }

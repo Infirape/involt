@@ -324,15 +324,17 @@ func (x *PeriodCollectionSummary) GetCashIn() float64 {
 }
 
 type CollectionsDashboardTotals struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Billed        float64                `protobuf:"fixed64,1,opt,name=billed,proto3" json:"billed,omitempty"`
-	Collected     float64                `protobuf:"fixed64,2,opt,name=collected,proto3" json:"collected,omitempty"`
-	TotalDebt     float64                `protobuf:"fixed64,3,opt,name=total_debt,json=totalDebt,proto3" json:"total_debt,omitempty"` // outstanding across ALL periods
-	OverdueDebt   float64                `protobuf:"fixed64,4,opt,name=overdue_debt,json=overdueDebt,proto3" json:"overdue_debt,omitempty"`
-	DebtorCount   int32                  `protobuf:"varint,5,opt,name=debtor_count,json=debtorCount,proto3" json:"debtor_count,omitempty"`
-	CutCandidates int32                  `protobuf:"varint,6,opt,name=cut_candidates,json=cutCandidates,proto3" json:"cut_candidates,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Billed            float64                `protobuf:"fixed64,1,opt,name=billed,proto3" json:"billed,omitempty"`
+	Collected         float64                `protobuf:"fixed64,2,opt,name=collected,proto3" json:"collected,omitempty"`
+	TotalDebt         float64                `protobuf:"fixed64,3,opt,name=total_debt,json=totalDebt,proto3" json:"total_debt,omitempty"` // outstanding across ALL periods
+	OverdueDebt       float64                `protobuf:"fixed64,4,opt,name=overdue_debt,json=overdueDebt,proto3" json:"overdue_debt,omitempty"`
+	DebtorCount       int32                  `protobuf:"varint,5,opt,name=debtor_count,json=debtorCount,proto3" json:"debtor_count,omitempty"`
+	CutCandidates     int32                  `protobuf:"varint,6,opt,name=cut_candidates,json=cutCandidates,proto3" json:"cut_candidates,omitempty"`
+	TemporaryCutCount int32                  `protobuf:"varint,7,opt,name=temporary_cut_count,json=temporaryCutCount,proto3" json:"temporary_cut_count,omitempty"` // supplies in corte temporal (current, in scope)
+	NoPowerCount      int32                  `protobuf:"varint,8,opt,name=no_power_count,json=noPowerCount,proto3" json:"no_power_count,omitempty"`                // supplies sin energía (current, in scope)
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *CollectionsDashboardTotals) Reset() {
@@ -403,6 +405,20 @@ func (x *CollectionsDashboardTotals) GetDebtorCount() int32 {
 func (x *CollectionsDashboardTotals) GetCutCandidates() int32 {
 	if x != nil {
 		return x.CutCandidates
+	}
+	return 0
+}
+
+func (x *CollectionsDashboardTotals) GetTemporaryCutCount() int32 {
+	if x != nil {
+		return x.TemporaryCutCount
+	}
+	return 0
+}
+
+func (x *CollectionsDashboardTotals) GetNoPowerCount() int32 {
+	if x != nil {
+		return x.NoPowerCount
 	}
 	return 0
 }
@@ -585,6 +601,7 @@ type DebtorRow struct {
 	CutCandidate        bool                   `protobuf:"varint,14,opt,name=cut_candidate,json=cutCandidate,proto3" json:"cut_candidate,omitempty"`
 	InAgreement         bool                   `protobuf:"varint,15,opt,name=in_agreement,json=inAgreement,proto3" json:"in_agreement,omitempty"` // has an on-schedule agreement
 	AgreementInDefault  bool                   `protobuf:"varint,16,opt,name=agreement_in_default,json=agreementInDefault,proto3" json:"agreement_in_default,omitempty"`
+	ServiceStatus       ServiceStatus          `protobuf:"varint,17,opt,name=service_status,json=serviceStatus,proto3,enum=involt.v1.ServiceStatus" json:"service_status,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -731,6 +748,13 @@ func (x *DebtorRow) GetAgreementInDefault() bool {
 	return false
 }
 
+func (x *DebtorRow) GetServiceStatus() ServiceStatus {
+	if x != nil {
+		return x.ServiceStatus
+	}
+	return ServiceStatus_SERVICE_STATUS_UNSPECIFIED
+}
+
 type GetDebtorsRequest struct {
 	state              protoimpl.MessageState `protogen:"open.v1"`
 	CommunityId        string                 `protobuf:"bytes,1,opt,name=community_id,json=communityId,proto3" json:"community_id,omitempty"`
@@ -740,6 +764,7 @@ type GetDebtorsRequest struct {
 	MinDebt            float64                `protobuf:"fixed64,5,opt,name=min_debt,json=minDebt,proto3" json:"min_debt,omitempty"`
 	CutThreshold       int32                  `protobuf:"varint,6,opt,name=cut_threshold,json=cutThreshold,proto3" json:"cut_threshold,omitempty"` // default 2
 	OnlyCutCandidates  bool                   `protobuf:"varint,7,opt,name=only_cut_candidates,json=onlyCutCandidates,proto3" json:"only_cut_candidates,omitempty"`
+	ServiceStatus      ServiceStatus          `protobuf:"varint,8,opt,name=service_status,json=serviceStatus,proto3,enum=involt.v1.ServiceStatus" json:"service_status,omitempty"` // optional filter
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -823,6 +848,13 @@ func (x *GetDebtorsRequest) GetOnlyCutCandidates() bool {
 	return false
 }
 
+func (x *GetDebtorsRequest) GetServiceStatus() ServiceStatus {
+	if x != nil {
+		return x.ServiceStatus
+	}
+	return ServiceStatus_SERVICE_STATUS_UNSPECIFIED
+}
+
 type GetDebtorsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Debtors       []*DebtorRow           `protobuf:"bytes,1,rep,name=debtors,proto3" json:"debtors,omitempty"`                        // highest debt first
@@ -895,7 +927,7 @@ var File_involt_v1_reports_proto protoreflect.FileDescriptor
 
 const file_involt_v1_reports_proto_rawDesc = "" +
 	"\n" +
-	"\x17involt/v1/reports.proto\x12\tinvolt.v1\"\x8e\x01\n" +
+	"\x17involt/v1/reports.proto\x12\tinvolt.v1\x1a\x16involt/v1/models.proto\"\x8e\x01\n" +
 	"\n" +
 	"AgingTotal\x12.\n" +
 	"\x06bucket\x18\x01 \x01(\x0e2\x16.involt.v1.AgingBucketR\x06bucket\x12\x16\n" +
@@ -917,7 +949,7 @@ const file_involt_v1_reports_proto_rawDesc = "" +
 	"\x06period\x18\x01 \x01(\tR\x06period\x12\x16\n" +
 	"\x06billed\x18\x02 \x01(\x01R\x06billed\x12\x1c\n" +
 	"\tcollected\x18\x03 \x01(\x01R\tcollected\x12\x17\n" +
-	"\acash_in\x18\x04 \x01(\x01R\x06cashIn\"\xde\x01\n" +
+	"\acash_in\x18\x04 \x01(\x01R\x06cashIn\"\xb4\x02\n" +
 	"\x1aCollectionsDashboardTotals\x12\x16\n" +
 	"\x06billed\x18\x01 \x01(\x01R\x06billed\x12\x1c\n" +
 	"\tcollected\x18\x02 \x01(\x01R\tcollected\x12\x1d\n" +
@@ -925,7 +957,9 @@ const file_involt_v1_reports_proto_rawDesc = "" +
 	"total_debt\x18\x03 \x01(\x01R\ttotalDebt\x12!\n" +
 	"\foverdue_debt\x18\x04 \x01(\x01R\voverdueDebt\x12!\n" +
 	"\fdebtor_count\x18\x05 \x01(\x05R\vdebtorCount\x12%\n" +
-	"\x0ecut_candidates\x18\x06 \x01(\x05R\rcutCandidates\"\xc3\x01\n" +
+	"\x0ecut_candidates\x18\x06 \x01(\x05R\rcutCandidates\x12.\n" +
+	"\x13temporary_cut_count\x18\a \x01(\x05R\x11temporaryCutCount\x12$\n" +
+	"\x0eno_power_count\x18\b \x01(\x05R\fnoPowerCount\"\xc3\x01\n" +
 	"\x1eGetCollectionsDashboardRequest\x12\x1f\n" +
 	"\vfrom_period\x18\x01 \x01(\tR\n" +
 	"fromPeriod\x12\x1b\n" +
@@ -940,7 +974,7 @@ const file_involt_v1_reports_proto_rawDesc = "" +
 	"\x05aging\x18\x04 \x03(\v2\x15.involt.v1.AgingTotalR\x05aging\x12\x1f\n" +
 	"\vfrom_period\x18\x05 \x01(\tR\n" +
 	"fromPeriod\x12\x1b\n" +
-	"\tto_period\x18\x06 \x01(\tR\btoPeriod\"\xec\x04\n" +
+	"\tto_period\x18\x06 \x01(\tR\btoPeriod\"\xad\x05\n" +
 	"\tDebtorRow\x12\x1f\n" +
 	"\vcustomer_id\x18\x01 \x01(\tR\n" +
 	"customerId\x12#\n" +
@@ -961,7 +995,8 @@ const file_involt_v1_reports_proto_rawDesc = "" +
 	"\x0flast_payment_at\x18\r \x01(\tR\rlastPaymentAt\x12#\n" +
 	"\rcut_candidate\x18\x0e \x01(\bR\fcutCandidate\x12!\n" +
 	"\fin_agreement\x18\x0f \x01(\bR\vinAgreement\x120\n" +
-	"\x14agreement_in_default\x18\x10 \x01(\bR\x12agreementInDefault\"\x8d\x02\n" +
+	"\x14agreement_in_default\x18\x10 \x01(\bR\x12agreementInDefault\x12?\n" +
+	"\x0eservice_status\x18\x11 \x01(\x0e2\x18.involt.v1.ServiceStatusR\rserviceStatus\"\xce\x02\n" +
 	"\x11GetDebtorsRequest\x12!\n" +
 	"\fcommunity_id\x18\x01 \x01(\tR\vcommunityId\x12\x1b\n" +
 	"\tsector_id\x18\x02 \x01(\tR\bsectorId\x12\x16\n" +
@@ -969,7 +1004,8 @@ const file_involt_v1_reports_proto_rawDesc = "" +
 	"\x14min_overdue_receipts\x18\x04 \x01(\x05R\x12minOverdueReceipts\x12\x19\n" +
 	"\bmin_debt\x18\x05 \x01(\x01R\aminDebt\x12#\n" +
 	"\rcut_threshold\x18\x06 \x01(\x05R\fcutThreshold\x12.\n" +
-	"\x13only_cut_candidates\x18\a \x01(\bR\x11onlyCutCandidates\"\xad\x01\n" +
+	"\x13only_cut_candidates\x18\a \x01(\bR\x11onlyCutCandidates\x12?\n" +
+	"\x0eservice_status\x18\b \x01(\x0e2\x18.involt.v1.ServiceStatusR\rserviceStatus\"\xad\x01\n" +
 	"\x12GetDebtorsResponse\x12.\n" +
 	"\adebtors\x18\x01 \x03(\v2\x14.involt.v1.DebtorRowR\adebtors\x12\x1d\n" +
 	"\n" +
@@ -1009,19 +1045,22 @@ var file_involt_v1_reports_proto_goTypes = []any{
 	(*DebtorRow)(nil),                       // 7: involt.v1.DebtorRow
 	(*GetDebtorsRequest)(nil),               // 8: involt.v1.GetDebtorsRequest
 	(*GetDebtorsResponse)(nil),              // 9: involt.v1.GetDebtorsResponse
+	(ServiceStatus)(0),                      // 10: involt.v1.ServiceStatus
 }
 var file_involt_v1_reports_proto_depIdxs = []int32{
-	0, // 0: involt.v1.AgingTotal.bucket:type_name -> involt.v1.AgingBucket
-	4, // 1: involt.v1.GetCollectionsDashboardResponse.totals:type_name -> involt.v1.CollectionsDashboardTotals
-	2, // 2: involt.v1.GetCollectionsDashboardResponse.by_sector:type_name -> involt.v1.SectorCollectionSummary
-	3, // 3: involt.v1.GetCollectionsDashboardResponse.by_period:type_name -> involt.v1.PeriodCollectionSummary
-	1, // 4: involt.v1.GetCollectionsDashboardResponse.aging:type_name -> involt.v1.AgingTotal
-	7, // 5: involt.v1.GetDebtorsResponse.debtors:type_name -> involt.v1.DebtorRow
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	0,  // 0: involt.v1.AgingTotal.bucket:type_name -> involt.v1.AgingBucket
+	4,  // 1: involt.v1.GetCollectionsDashboardResponse.totals:type_name -> involt.v1.CollectionsDashboardTotals
+	2,  // 2: involt.v1.GetCollectionsDashboardResponse.by_sector:type_name -> involt.v1.SectorCollectionSummary
+	3,  // 3: involt.v1.GetCollectionsDashboardResponse.by_period:type_name -> involt.v1.PeriodCollectionSummary
+	1,  // 4: involt.v1.GetCollectionsDashboardResponse.aging:type_name -> involt.v1.AgingTotal
+	10, // 5: involt.v1.DebtorRow.service_status:type_name -> involt.v1.ServiceStatus
+	10, // 6: involt.v1.GetDebtorsRequest.service_status:type_name -> involt.v1.ServiceStatus
+	7,  // 7: involt.v1.GetDebtorsResponse.debtors:type_name -> involt.v1.DebtorRow
+	8,  // [8:8] is the sub-list for method output_type
+	8,  // [8:8] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_involt_v1_reports_proto_init() }
@@ -1029,6 +1068,7 @@ func file_involt_v1_reports_proto_init() {
 	if File_involt_v1_reports_proto != nil {
 		return
 	}
+	file_involt_v1_models_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

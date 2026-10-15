@@ -192,6 +192,8 @@ class Customer extends $pb.GeneratedMessage {
     $core.String? address,
     $core.String? contractStart,
     $core.double? lastReadingValue,
+    ServiceStatus? serviceStatus,
+    $core.String? serviceStatusChangedAt,
   }) {
     final $result = create();
     if (id != null) {
@@ -236,6 +238,12 @@ class Customer extends $pb.GeneratedMessage {
     if (lastReadingValue != null) {
       $result.lastReadingValue = lastReadingValue;
     }
+    if (serviceStatus != null) {
+      $result.serviceStatus = serviceStatus;
+    }
+    if (serviceStatusChangedAt != null) {
+      $result.serviceStatusChangedAt = serviceStatusChangedAt;
+    }
     return $result;
   }
   Customer._() : super();
@@ -257,6 +265,8 @@ class Customer extends $pb.GeneratedMessage {
     ..aOS(12, _omitFieldNames ? '' : 'address')
     ..aOS(13, _omitFieldNames ? '' : 'contractStart')
     ..a<$core.double>(14, _omitFieldNames ? '' : 'lastReadingValue', $pb.PbFieldType.OD)
+    ..e<ServiceStatus>(15, _omitFieldNames ? '' : 'serviceStatus', $pb.PbFieldType.OE, defaultOrMaker: ServiceStatus.SERVICE_STATUS_UNSPECIFIED, valueOf: ServiceStatus.valueOf, enumValues: ServiceStatus.values)
+    ..aOS(16, _omitFieldNames ? '' : 'serviceStatusChangedAt')
     ..hasRequiredFields = false
   ;
 
@@ -406,6 +416,24 @@ class Customer extends $pb.GeneratedMessage {
   $core.bool hasLastReadingValue() => $_has(13);
   @$pb.TagNumber(14)
   void clearLastReadingValue() => clearField(14);
+
+  @$pb.TagNumber(15)
+  ServiceStatus get serviceStatus => $_getN(14);
+  @$pb.TagNumber(15)
+  set serviceStatus(ServiceStatus v) { setField(15, v); }
+  @$pb.TagNumber(15)
+  $core.bool hasServiceStatus() => $_has(14);
+  @$pb.TagNumber(15)
+  void clearServiceStatus() => clearField(15);
+
+  @$pb.TagNumber(16)
+  $core.String get serviceStatusChangedAt => $_getSZ(15);
+  @$pb.TagNumber(16)
+  set serviceStatusChangedAt($core.String v) { $_setString(15, v); }
+  @$pb.TagNumber(16)
+  $core.bool hasServiceStatusChangedAt() => $_has(15);
+  @$pb.TagNumber(16)
+  void clearServiceStatusChangedAt() => clearField(16);
 }
 
 /// Reading represents a captured meter value at a point in time.

@@ -29,6 +29,23 @@ final $typed_data.Uint8List connectionTypeDescriptor = $convert.base64Decode(
     '5ORUNUSU9OX1RZUEVfTU9OT0ZBU0lDQRABEh0KGUNPTk5FQ1RJT05fVFlQRV9UUklGQVNJQ0EQ'
     'Ag==');
 
+@$core.Deprecated('Use serviceStatusDescriptor instead')
+const ServiceStatus$json = {
+  '1': 'ServiceStatus',
+  '2': [
+    {'1': 'SERVICE_STATUS_UNSPECIFIED', '2': 0},
+    {'1': 'SERVICE_STATUS_ACTIVE', '2': 1},
+    {'1': 'SERVICE_STATUS_TEMPORARY_CUT', '2': 2},
+    {'1': 'SERVICE_STATUS_NO_POWER', '2': 3},
+  ],
+};
+
+/// Descriptor for `ServiceStatus`. Decode as a `google.protobuf.EnumDescriptorProto`.
+final $typed_data.Uint8List serviceStatusDescriptor = $convert.base64Decode(
+    'Cg1TZXJ2aWNlU3RhdHVzEh4KGlNFUlZJQ0VfU1RBVFVTX1VOU1BFQ0lGSUVEEAASGQoVU0VSVk'
+    'lDRV9TVEFUVVNfQUNUSVZFEAESIAocU0VSVklDRV9TVEFUVVNfVEVNUE9SQVJZX0NVVBACEhsK'
+    'F1NFUlZJQ0VfU1RBVFVTX05PX1BPV0VSEAM=');
+
 @$core.Deprecated('Use periodStatusDescriptor instead')
 const PeriodStatus$json = {
   '1': 'PeriodStatus',
@@ -92,6 +109,8 @@ const Customer$json = {
     {'1': 'address', '3': 12, '4': 1, '5': 9, '10': 'address'},
     {'1': 'contract_start', '3': 13, '4': 1, '5': 9, '10': 'contractStart'},
     {'1': 'last_reading_value', '3': 14, '4': 1, '5': 1, '10': 'lastReadingValue'},
+    {'1': 'service_status', '3': 15, '4': 1, '5': 14, '6': '.involt.v1.ServiceStatus', '10': 'serviceStatus'},
+    {'1': 'service_status_changed_at', '3': 16, '4': 1, '5': 9, '10': 'serviceStatusChangedAt'},
   ],
 };
 
@@ -105,7 +124,9 @@ final $typed_data.Uint8List customerDescriptor = $convert.base64Decode(
     'xhdGl0dWRlEhwKCWxvbmdpdHVkZRgKIAEoAVIJbG9uZ2l0dWRlEicKD2luaXRpYWxfcmVhZGlu'
     'ZxgLIAEoAVIOaW5pdGlhbFJlYWRpbmcSGAoHYWRkcmVzcxgMIAEoCVIHYWRkcmVzcxIlCg5jb2'
     '50cmFjdF9zdGFydBgNIAEoCVINY29udHJhY3RTdGFydBIsChJsYXN0X3JlYWRpbmdfdmFsdWUY'
-    'DiABKAFSEGxhc3RSZWFkaW5nVmFsdWU=');
+    'DiABKAFSEGxhc3RSZWFkaW5nVmFsdWUSPwoOc2VydmljZV9zdGF0dXMYDyABKA4yGC5pbnZvbH'
+    'QudjEuU2VydmljZVN0YXR1c1INc2VydmljZVN0YXR1cxI5ChlzZXJ2aWNlX3N0YXR1c19jaGFu'
+    'Z2VkX2F0GBAgASgJUhZzZXJ2aWNlU3RhdHVzQ2hhbmdlZEF0');
 
 @$core.Deprecated('Use readingDescriptor instead')
 const Reading$json = {

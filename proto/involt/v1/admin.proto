@@ -117,6 +117,38 @@ service AdminService {
 
   // CancelAgreement cancels an active agreement (admin/supervisor).
   rpc CancelAgreement(CancelAgreementRequest) returns (CancelAgreementResponse);
+
+  // SetCustomerServiceStatus changes a supply's service status (admin only, reason required).
+  rpc SetCustomerServiceStatus(SetCustomerServiceStatusRequest) returns (SetCustomerServiceStatusResponse);
+
+  // GetCustomerStatusHistory lists a supply's service status changes, newest first.
+  rpc GetCustomerStatusHistory(GetCustomerStatusHistoryRequest) returns (GetCustomerStatusHistoryResponse);
+}
+
+message SetCustomerServiceStatusRequest {
+  string customer_id = 1;
+  ServiceStatus status = 2;
+  string reason = 3;
+}
+
+message SetCustomerServiceStatusResponse {
+  Customer customer = 1;
+}
+
+message ServiceStatusChange {
+  ServiceStatus previous_status = 1;
+  ServiceStatus status = 2;
+  string reason = 3;
+  string changed_by_email = 4;
+  string changed_at = 5; // ISO 8601
+}
+
+message GetCustomerStatusHistoryRequest {
+  string customer_id = 1;
+}
+
+message GetCustomerStatusHistoryResponse {
+  repeated ServiceStatusChange changes = 1;
 }
 
 message UpsertSectorRequest {
@@ -187,6 +219,7 @@ message GetCustomersRequest {
   int32 page_size = 4;
   string exclude_period_id = 5;
   string community_id = 6;
+  ServiceStatus service_status = 7; // optional filter
 }
 
 message GetCustomersResponse {
