@@ -7,8 +7,7 @@ import {
 } from "@/app/gen/involt/v1/payments_pb";
 import { adminClient } from "@/lib/rpc";
 import { rpcErrorMessage } from "../lib/api";
-import { paymentMethodLabel } from "../lib/labels";
-import { buildCsv, formatLimaDateTime, limaToday } from "../lib/money";
+import { limaToday } from "../lib/money";
 
 /** Cash closing (cierre de caja) for a Lima date range, optionally per collector. */
 export function useCashClosing() {
@@ -41,42 +40,6 @@ export function useCashClosing() {
 
   const reload = useCallback(() => setReloadToken((t) => t + 1), []);
 
-  const exportCsv = useCallback(() => {
-    if (!data) return;
-    const header = [
-      "N° comprobante",
-      "Fecha",
-      "Código",
-      "Cliente",
-      "Periodos",
-      "Medio",
-      "Referencia",
-      "Cobrado por",
-      "Monto",
-      "Estado",
-    ];
-    const rows = data.payments.map((p) => [
-      String(p.receiptNumber),
-      formatLimaDateTime(p.paidAt),
-      p.customerCode,
-      p.customerName,
-      p.allocations.map((a) => a.period).join(" "),
-      paymentMethodLabel(p.method),
-      p.reference,
-      p.collectedByEmail,
-      p.amount.toFixed(2),
-      p.voided ? `ANULADO: ${p.voidReason}` : "Válido",
-    ]);
-    // BOM so Excel opens accents correctly.
-    const blob = new Blob([`﻿${buildCsv(header, rows)}`], { type: "text/csv;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `cierre_caja_${dateFrom}${dateTo !== dateFrom ? `_${dateTo}` : ""}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
-  }, [data, dateFrom, dateTo]);
-
   return {
     dateFrom,
     setDateFrom,
@@ -87,6 +50,5 @@ export function useCashClosing() {
     data,
     loading,
     reload,
-    exportCsv,
   };
 }

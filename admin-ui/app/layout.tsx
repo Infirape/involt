@@ -17,8 +17,15 @@ export const metadata: Metadata = {
     template: "%s | InVolt - Gestión de Suministros",
     default: "InVolt | Sistema de Gestión de Lecturas y Facturación",
   },
-  description: "Plataforma integral para la administración de lecturas, control de consumo y facturación de servicios eléctricos y agua.",
-  keywords: ["gestión de suministros", "lecturas eléctricas", "facturación de agua", "involt", "administración de servicios"],
+  description:
+    "Plataforma integral para la administración de lecturas, control de consumo y facturación de servicios eléctricos y agua.",
+  keywords: [
+    "gestión de suministros",
+    "lecturas eléctricas",
+    "facturación de agua",
+    "involt",
+    "administración de servicios",
+  ],
 };
 
 import { Toaster } from "sonner";
@@ -30,11 +37,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    <html lang="es" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <TooltipProvider>
-          {children}
-        </TooltipProvider>
+        <TooltipProvider>{children}</TooltipProvider>
         <Toaster theme="dark" position="bottom-right" richColors />
       </body>
     </html>

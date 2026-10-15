@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import type { CreateAgreementResponse } from "@/app/gen/involt/v1/agreements_pb";
 import { PaymentMethod } from "@/app/gen/involt/v1/payments_pb";
+import { DatePicker } from "@/components/ui/date-picker";
 import { type AgreementDraft, useAgreementPlanner } from "../../hooks/useAgreementPlanner";
 import {
   formatDay,
@@ -103,15 +104,16 @@ export function AgreementDialog({
                   ))}
                 </select>
               </label>
-              <label className={modalLabelClass}>
+              <div className={modalLabelClass}>
                 Primera cuota
-                <input
-                  type="date"
+                <DatePicker
+                  aria-label="Primera cuota"
                   value={firstDueDate}
-                  onChange={(e) => setFirstDueDate(e.target.value)}
-                  className={`${modalFieldClass} mt-1 [color-scheme:dark]`}
+                  min={limaToday()}
+                  onChange={setFirstDueDate}
+                  className="mt-1 text-sm normal-case tracking-normal font-normal"
                 />
-              </label>
+              </div>
             </div>
             <label className={modalLabelClass}>
               Cuota inicial (S/)

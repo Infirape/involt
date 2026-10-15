@@ -1,13 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import {
-  buildCsv,
-  collectionRate,
-  formatSoles,
-  limaToday,
-  parseAmount,
-  sumAmounts,
-} from "./money.ts";
+import { collectionRate, formatSoles, limaToday, parseAmount, sumAmounts } from "./money.ts";
 
 describe("sumAmounts", () => {
   it("adds in cents to avoid float drift", () => {
@@ -49,18 +42,5 @@ describe("limaToday", () => {
   it("uses Lima's calendar day (UTC-5)", () => {
     assert.equal(limaToday(new Date("2026-10-14T03:00:00Z")), "2026-10-13");
     assert.equal(limaToday(new Date("2026-10-14T06:00:00Z")), "2026-10-14");
-  });
-});
-
-describe("buildCsv", () => {
-  it("quotes fields with separators, quotes or newlines", () => {
-    const csv = buildCsv(
-      ["N°", "Cliente", "Monto"],
-      [
-        ["1", "Pérez, Ana", "10.00"],
-        ["2", 'Luis "Lucho"', "5.50"],
-      ],
-    );
-    assert.equal(csv, 'N°,Cliente,Monto\r\n1,"Pérez, Ana",10.00\r\n2,"Luis ""Lucho""",5.50');
   });
 });

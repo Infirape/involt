@@ -1,6 +1,8 @@
 import { Download, Loader2, RefreshCw } from "lucide-react";
+import { DatePicker } from "@/components/ui/date-picker";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useCashClosing } from "../../hooks/useCashClosing";
+import { downloadReport } from "../../lib/api";
 import { limaToday } from "../../lib/money";
 import { ClosingSummary } from "./ClosingSummary";
 import { ClosingTable } from "./ClosingTable";
@@ -18,30 +20,30 @@ export function CashClosing() {
   return (
     <div className="flex flex-col gap-4 flex-1 min-h-0">
       <div className="flex flex-wrap items-end gap-3">
-        <label className="text-[11px] text-zinc-500 flex flex-col gap-1">
+        <div className="text-[11px] text-zinc-500 flex flex-col gap-1">
           Desde
-          <input
-            type="date"
+          <DatePicker
+            aria-label="Desde"
             value={closing.dateFrom}
             max={today}
-            onChange={(e) => {
-              closing.setDateFrom(e.target.value);
-              if (e.target.value > closing.dateTo) closing.setDateTo(e.target.value);
+            onChange={(v) => {
+              closing.setDateFrom(v);
+              if (v > closing.dateTo) closing.setDateTo(v);
             }}
-            className={inputClass}
+            className="w-36 text-xs"
           />
-        </label>
-        <label className="text-[11px] text-zinc-500 flex flex-col gap-1">
+        </div>
+        <div className="text-[11px] text-zinc-500 flex flex-col gap-1">
           Hasta
-          <input
-            type="date"
+          <DatePicker
+            aria-label="Hasta"
             value={closing.dateTo}
             min={closing.dateFrom}
             max={today}
-            onChange={(e) => closing.setDateTo(e.target.value)}
-            className={inputClass}
+            onChange={closing.setDateTo}
+            className="w-36 text-xs"
           />
-        </label>
+        </div>
         {(isAdmin || isSupervisor) && (
           <label className="text-[11px] text-zinc-500 flex flex-col gap-1">
             Cobrador
@@ -74,11 +76,17 @@ export function CashClosing() {
           </button>
           <button
             type="button"
-            onClick={closing.exportCsv}
+            onClick={() =>
+              downloadReport("/admin/reports/cash-closing.xlsx", {
+                date_from: closing.dateFrom,
+                date_to: closing.dateTo,
+                collected_by: closing.collectedBy,
+              })
+            }
             disabled={!data || data.payments.length === 0}
             className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-400 text-black hover:bg-cyan-300 flex items-center gap-1.5 disabled:opacity-40"
           >
-            <Download className="w-3.5 h-3.5" /> Exportar CSV
+            <Download className="w-3.5 h-3.5" /> Exportar Excel
           </button>
         </div>
       </div>

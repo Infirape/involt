@@ -52,11 +52,3 @@ export function formatLimaDateTime(iso: string): string {
     hour12: false,
   }).format(new Date(iso));
 }
-
-function csvField(value: string): string {
-  return /[",\r\n]/.test(value) ? `"${value.replaceAll('"', '""')}"` : value;
-}
-
-export function buildCsv(header: string[], rows: string[][]): string {
-  return [header, ...rows].map((row) => row.map(csvField).join(",")).join("\r\n");
-}

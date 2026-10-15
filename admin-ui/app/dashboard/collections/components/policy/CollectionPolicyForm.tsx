@@ -2,6 +2,7 @@ import { create } from "@bufbuild/protobuf";
 import { Loader2, Save } from "lucide-react";
 import { type FormEvent, useEffect, useState } from "react";
 import { CollectionPolicySchema, LateFeeMode } from "@/app/gen/involt/v1/agreements_pb";
+import { DatePicker } from "@/components/ui/date-picker";
 import { useCollectionPolicy } from "../../hooks/useCollectionPolicy";
 import { formatLimaDateTime } from "../../lib/money";
 
@@ -120,15 +121,17 @@ export function CollectionPolicyForm() {
                 className={`${field} mt-1`}
               />
             </label>
-            <label className={label}>
+            <div className={label}>
               Aplicar desde
-              <input
-                type="date"
+              <DatePicker
+                aria-label="Aplicar desde"
                 value={form.startDate}
-                onChange={(e) => set({ startDate: e.target.value })}
-                className={`${field} mt-1`}
+                onChange={(v) => set({ startDate: v })}
+                clearable
+                placeholder="Sin límite"
+                className="mt-1 text-sm normal-case tracking-normal font-normal"
               />
-            </label>
+            </div>
           </div>
         )}
         {form.mode !== LateFeeMode.NONE && (

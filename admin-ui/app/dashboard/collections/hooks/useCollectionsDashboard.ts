@@ -13,6 +13,8 @@ export interface DashboardFilters {
   fromPeriod: string;
   toPeriod: string;
   communityId: string;
+  /** Caserío (sector); empty = all. */
+  sectorId: string;
 }
 
 /** Collections dashboard (billed vs collected, by sector and month, debt aging). */

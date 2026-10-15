@@ -7,6 +7,18 @@ export function openBackendPdf(path: string): void {
   window.open(`${API_BASE_URL}${path}?token=${encodeURIComponent(token)}`, "_blank");
 }
 
+/** Downloads a token-authenticated Excel report; empty params are omitted. */
+export function downloadReport(
+  path: string,
+  params: Record<string, string | number | boolean>,
+): void {
+  const query = new URLSearchParams({ token: getAdminToken() ?? "" });
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== "" && value !== 0 && value !== false) query.set(key, String(value));
+  }
+  window.location.href = `${API_BASE_URL}${path}?${query.toString()}`;
+}
+
 export const openReceiptPdf = (readingId: string) =>
   openBackendPdf(`/admin/readings/pdf/${readingId}`);
 

@@ -1,6 +1,7 @@
 import { Download, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { type DebtorFilters, useDebtors } from "../../hooks/useDebtors";
+import { downloadReport } from "../../lib/api";
 import { formatSoles } from "../../lib/money";
 import type { SectorTab } from "../../types";
 import { AccountDrawer } from "../account/AccountDrawer";
@@ -13,9 +14,19 @@ interface DebtorsViewProps {
   communities: { id: string; name: string; sectors: SectorTab[] }[];
 }
 
+const toQuery = (f: DebtorFilters) => ({
+  community_id: f.communityId,
+  sector_id: f.sectorId,
+  search: f.search.trim(),
+  min_overdue_receipts: f.minOverdueReceipts,
+  min_debt: f.minDebt,
+  cut_threshold: f.cutThreshold,
+  only_cut_candidates: f.onlyCutCandidates,
+});
+
 /** Morosos: who owes, how much and for how long; export and jump to the cash desk. */
 export function DebtorsView({ filters, onFiltersChange, communities }: DebtorsViewProps) {
-  const { data, loading, reload, exportCsv } = useDebtors(filters);
+  const { data, loading, reload } = useDebtors(filters);
   const [openCustomerId, setOpenCustomerId] = useState<string | null>(null);
   const patch = useCallback(
     (p: Partial<DebtorFilters>) => onFiltersChange({ ...filters, ...p }),
@@ -28,11 +39,11 @@ export function DebtorsView({ filters, onFiltersChange, communities }: DebtorsVi
         <DebtorsFilters filters={filters} onChange={patch} communities={communities} />
         <button
           type="button"
-          onClick={exportCsv}
+          onClick={() => downloadReport("/admin/reports/debtors.xlsx", toQuery(filters))}
           disabled={!data || data.debtors.length === 0}
           className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-400 text-black hover:bg-cyan-300 flex items-center gap-1.5 disabled:opacity-40"
         >
-          <Download className="w-3.5 h-3.5" /> Exportar a Excel (CSV)
+          <Download className="w-3.5 h-3.5" /> Exportar Excel
         </button>
       </div>
 
