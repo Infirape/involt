@@ -51,6 +51,24 @@ class ServiceStatus extends $pb.ProtobufEnum {
   const ServiceStatus._($core.int v, $core.String n) : super(v, n);
 }
 
+/// ReceiptCopies controls how many copies the consumption receipt PDF prints.
+class ReceiptCopies extends $pb.ProtobufEnum {
+  static const ReceiptCopies RECEIPT_COPIES_UNSPECIFIED = ReceiptCopies._(0, _omitEnumNames ? '' : 'RECEIPT_COPIES_UNSPECIFIED');
+  static const ReceiptCopies RECEIPT_COPIES_DUPLICATE = ReceiptCopies._(1, _omitEnumNames ? '' : 'RECEIPT_COPIES_DUPLICATE');
+  static const ReceiptCopies RECEIPT_COPIES_SINGLE = ReceiptCopies._(2, _omitEnumNames ? '' : 'RECEIPT_COPIES_SINGLE');
+
+  static const $core.List<ReceiptCopies> values = <ReceiptCopies> [
+    RECEIPT_COPIES_UNSPECIFIED,
+    RECEIPT_COPIES_DUPLICATE,
+    RECEIPT_COPIES_SINGLE,
+  ];
+
+  static final $core.Map<$core.int, ReceiptCopies> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static ReceiptCopies? valueOf($core.int value) => _byValue[value];
+
+  const ReceiptCopies._($core.int v, $core.String n) : super(v, n);
+}
+
 class PeriodStatus extends $pb.ProtobufEnum {
   static const PeriodStatus PERIOD_STATUS_UNSPECIFIED = PeriodStatus._(0, _omitEnumNames ? '' : 'PERIOD_STATUS_UNSPECIFIED');
   static const PeriodStatus PERIOD_STATUS_OPEN = PeriodStatus._(1, _omitEnumNames ? '' : 'PERIOD_STATUS_OPEN');

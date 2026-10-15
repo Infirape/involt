@@ -46,6 +46,21 @@ final $typed_data.Uint8List serviceStatusDescriptor = $convert.base64Decode(
     'lDRV9TVEFUVVNfQUNUSVZFEAESIAocU0VSVklDRV9TVEFUVVNfVEVNUE9SQVJZX0NVVBACEhsK'
     'F1NFUlZJQ0VfU1RBVFVTX05PX1BPV0VSEAM=');
 
+@$core.Deprecated('Use receiptCopiesDescriptor instead')
+const ReceiptCopies$json = {
+  '1': 'ReceiptCopies',
+  '2': [
+    {'1': 'RECEIPT_COPIES_UNSPECIFIED', '2': 0},
+    {'1': 'RECEIPT_COPIES_DUPLICATE', '2': 1},
+    {'1': 'RECEIPT_COPIES_SINGLE', '2': 2},
+  ],
+};
+
+/// Descriptor for `ReceiptCopies`. Decode as a `google.protobuf.EnumDescriptorProto`.
+final $typed_data.Uint8List receiptCopiesDescriptor = $convert.base64Decode(
+    'Cg1SZWNlaXB0Q29waWVzEh4KGlJFQ0VJUFRfQ09QSUVTX1VOU1BFQ0lGSUVEEAASHAoYUkVDRU'
+    'lQVF9DT1BJRVNfRFVQTElDQVRFEAESGQoVUkVDRUlQVF9DT1BJRVNfU0lOR0xFEAI=');
+
 @$core.Deprecated('Use periodStatusDescriptor instead')
 const PeriodStatus$json = {
   '1': 'PeriodStatus',
@@ -210,6 +225,7 @@ const Settings$json = {
     {'1': 'alumbrado', '3': 10, '4': 1, '5': 1, '10': 'alumbrado'},
     {'1': 'mantenimiento', '3': 11, '4': 1, '5': 1, '10': 'mantenimiento'},
     {'1': 'igv', '3': 12, '4': 1, '5': 8, '10': 'igv'},
+    {'1': 'receipt_copies', '3': 13, '4': 1, '5': 14, '6': '.involt.v1.ReceiptCopies', '10': 'receiptCopies'},
   ],
 };
 
@@ -221,7 +237,8 @@ final $typed_data.Uint8List settingsDescriptor = $convert.base64Decode(
     'VlbWFpbBIpChBkaWFzX3ZlbmNpbWllbnRvGAcgASgFUg9kaWFzVmVuY2ltaWVudG8SHQoKdGFy'
     'aWZhX2t3aBgIIAEoAVIJdGFyaWZhS3doEh0KCmNhcmdvX2Zpam8YCSABKAFSCWNhcmdvRmlqbx'
     'IcCglhbHVtYnJhZG8YCiABKAFSCWFsdW1icmFkbxIkCg1tYW50ZW5pbWllbnRvGAsgASgBUg1t'
-    'YW50ZW5pbWllbnRvEhAKA2lndhgMIAEoCFIDaWd2');
+    'YW50ZW5pbWllbnRvEhAKA2lndhgMIAEoCFIDaWd2Ej8KDnJlY2VpcHRfY29waWVzGA0gASgOMh'
+    'guaW52b2x0LnYxLlJlY2VpcHRDb3BpZXNSDXJlY2VpcHRDb3BpZXM=');
 
 @$core.Deprecated('Use periodDescriptor instead')
 const Period$json = {

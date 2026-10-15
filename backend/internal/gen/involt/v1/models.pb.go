@@ -124,6 +124,56 @@ func (ServiceStatus) EnumDescriptor() ([]byte, []int) {
 	return file_involt_v1_models_proto_rawDescGZIP(), []int{1}
 }
 
+// ReceiptCopies controls how many copies the consumption receipt PDF prints.
+type ReceiptCopies int32
+
+const (
+	ReceiptCopies_RECEIPT_COPIES_UNSPECIFIED ReceiptCopies = 0 // treated as DUPLICATE
+	ReceiptCopies_RECEIPT_COPIES_DUPLICATE   ReceiptCopies = 1 // copia usuario + copia administrativa
+	ReceiptCopies_RECEIPT_COPIES_SINGLE      ReceiptCopies = 2 // solo copia del suministro (usuario)
+)
+
+// Enum value maps for ReceiptCopies.
+var (
+	ReceiptCopies_name = map[int32]string{
+		0: "RECEIPT_COPIES_UNSPECIFIED",
+		1: "RECEIPT_COPIES_DUPLICATE",
+		2: "RECEIPT_COPIES_SINGLE",
+	}
+	ReceiptCopies_value = map[string]int32{
+		"RECEIPT_COPIES_UNSPECIFIED": 0,
+		"RECEIPT_COPIES_DUPLICATE":   1,
+		"RECEIPT_COPIES_SINGLE":      2,
+	}
+)
+
+func (x ReceiptCopies) Enum() *ReceiptCopies {
+	p := new(ReceiptCopies)
+	*p = x
+	return p
+}
+
+func (x ReceiptCopies) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ReceiptCopies) Descriptor() protoreflect.EnumDescriptor {
+	return file_involt_v1_models_proto_enumTypes[2].Descriptor()
+}
+
+func (ReceiptCopies) Type() protoreflect.EnumType {
+	return &file_involt_v1_models_proto_enumTypes[2]
+}
+
+func (x ReceiptCopies) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ReceiptCopies.Descriptor instead.
+func (ReceiptCopies) EnumDescriptor() ([]byte, []int) {
+	return file_involt_v1_models_proto_rawDescGZIP(), []int{2}
+}
+
 type PeriodStatus int32
 
 const (
@@ -157,11 +207,11 @@ func (x PeriodStatus) String() string {
 }
 
 func (PeriodStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_involt_v1_models_proto_enumTypes[2].Descriptor()
+	return file_involt_v1_models_proto_enumTypes[3].Descriptor()
 }
 
 func (PeriodStatus) Type() protoreflect.EnumType {
-	return &file_involt_v1_models_proto_enumTypes[2]
+	return &file_involt_v1_models_proto_enumTypes[3]
 }
 
 func (x PeriodStatus) Number() protoreflect.EnumNumber {
@@ -170,7 +220,7 @@ func (x PeriodStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use PeriodStatus.Descriptor instead.
 func (PeriodStatus) EnumDescriptor() ([]byte, []int) {
-	return file_involt_v1_models_proto_rawDescGZIP(), []int{2}
+	return file_involt_v1_models_proto_rawDescGZIP(), []int{3}
 }
 
 // Community represents a village or Caserio (e.g., Alto Chetilla, Cadena).
@@ -775,6 +825,7 @@ type Settings struct {
 	Alumbrado       float64                `protobuf:"fixed64,10,opt,name=alumbrado,proto3" json:"alumbrado,omitempty"`
 	Mantenimiento   float64                `protobuf:"fixed64,11,opt,name=mantenimiento,proto3" json:"mantenimiento,omitempty"`
 	Igv             bool                   `protobuf:"varint,12,opt,name=igv,proto3" json:"igv,omitempty"`
+	ReceiptCopies   ReceiptCopies          `protobuf:"varint,13,opt,name=receipt_copies,json=receiptCopies,proto3,enum=involt.v1.ReceiptCopies" json:"receipt_copies,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -891,6 +942,13 @@ func (x *Settings) GetIgv() bool {
 		return x.Igv
 	}
 	return false
+}
+
+func (x *Settings) GetReceiptCopies() ReceiptCopies {
+	if x != nil {
+		return x.ReceiptCopies
+	}
+	return ReceiptCopies_RECEIPT_COPIES_UNSPECIFIED
 }
 
 type Period struct {
@@ -1106,7 +1164,7 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\ais_paid\x18\x1a \x01(\bR\x06isPaid\"[\n" +
 	"\tAppConfig\x12(\n" +
 	"\x10map_url_template\x18\x01 \x01(\tR\x0emapUrlTemplate\x12$\n" +
-	"\x0emap_user_agent\x18\x02 \x01(\tR\fmapUserAgent\"\xeb\x02\n" +
+	"\x0emap_user_agent\x18\x02 \x01(\tR\fmapUserAgent\"\xac\x03\n" +
 	"\bSettings\x12$\n" +
 	"\rmunicipalidad\x18\x01 \x01(\tR\rmunicipalidad\x12\x18\n" +
 	"\aempresa\x18\x02 \x01(\tR\aempresa\x12\x10\n" +
@@ -1122,7 +1180,8 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\talumbrado\x18\n" +
 	" \x01(\x01R\talumbrado\x12$\n" +
 	"\rmantenimiento\x18\v \x01(\x01R\rmantenimiento\x12\x10\n" +
-	"\x03igv\x18\f \x01(\bR\x03igv\"\xaf\x01\n" +
+	"\x03igv\x18\f \x01(\bR\x03igv\x12?\n" +
+	"\x0ereceipt_copies\x18\r \x01(\x0e2\x18.involt.v1.ReceiptCopiesR\rreceiptCopies\"\xaf\x01\n" +
 	"\x06Period\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -1143,7 +1202,11 @@ const file_involt_v1_models_proto_rawDesc = "" +
 	"\x1aSERVICE_STATUS_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15SERVICE_STATUS_ACTIVE\x10\x01\x12 \n" +
 	"\x1cSERVICE_STATUS_TEMPORARY_CUT\x10\x02\x12\x1b\n" +
-	"\x17SERVICE_STATUS_NO_POWER\x10\x03*_\n" +
+	"\x17SERVICE_STATUS_NO_POWER\x10\x03*h\n" +
+	"\rReceiptCopies\x12\x1e\n" +
+	"\x1aRECEIPT_COPIES_UNSPECIFIED\x10\x00\x12\x1c\n" +
+	"\x18RECEIPT_COPIES_DUPLICATE\x10\x01\x12\x19\n" +
+	"\x15RECEIPT_COPIES_SINGLE\x10\x02*_\n" +
 	"\fPeriodStatus\x12\x1d\n" +
 	"\x19PERIOD_STATUS_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12PERIOD_STATUS_OPEN\x10\x01\x12\x18\n" +
@@ -1161,30 +1224,32 @@ func file_involt_v1_models_proto_rawDescGZIP() []byte {
 	return file_involt_v1_models_proto_rawDescData
 }
 
-var file_involt_v1_models_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_involt_v1_models_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
 var file_involt_v1_models_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_involt_v1_models_proto_goTypes = []any{
 	(ConnectionType)(0), // 0: involt.v1.ConnectionType
 	(ServiceStatus)(0),  // 1: involt.v1.ServiceStatus
-	(PeriodStatus)(0),   // 2: involt.v1.PeriodStatus
-	(*Community)(nil),   // 3: involt.v1.Community
-	(*Sector)(nil),      // 4: involt.v1.Sector
-	(*Customer)(nil),    // 5: involt.v1.Customer
-	(*Reading)(nil),     // 6: involt.v1.Reading
-	(*AppConfig)(nil),   // 7: involt.v1.AppConfig
-	(*Settings)(nil),    // 8: involt.v1.Settings
-	(*Period)(nil),      // 9: involt.v1.Period
-	(*Operator)(nil),    // 10: involt.v1.Operator
+	(ReceiptCopies)(0),  // 2: involt.v1.ReceiptCopies
+	(PeriodStatus)(0),   // 3: involt.v1.PeriodStatus
+	(*Community)(nil),   // 4: involt.v1.Community
+	(*Sector)(nil),      // 5: involt.v1.Sector
+	(*Customer)(nil),    // 6: involt.v1.Customer
+	(*Reading)(nil),     // 7: involt.v1.Reading
+	(*AppConfig)(nil),   // 8: involt.v1.AppConfig
+	(*Settings)(nil),    // 9: involt.v1.Settings
+	(*Period)(nil),      // 10: involt.v1.Period
+	(*Operator)(nil),    // 11: involt.v1.Operator
 }
 var file_involt_v1_models_proto_depIdxs = []int32{
 	0, // 0: involt.v1.Customer.connection_type:type_name -> involt.v1.ConnectionType
 	1, // 1: involt.v1.Customer.service_status:type_name -> involt.v1.ServiceStatus
-	2, // 2: involt.v1.Period.status:type_name -> involt.v1.PeriodStatus
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	2, // 2: involt.v1.Settings.receipt_copies:type_name -> involt.v1.ReceiptCopies
+	3, // 3: involt.v1.Period.status:type_name -> involt.v1.PeriodStatus
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_involt_v1_models_proto_init() }
@@ -1197,7 +1262,7 @@ func file_involt_v1_models_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_involt_v1_models_proto_rawDesc), len(file_involt_v1_models_proto_rawDesc)),
-			NumEnums:      3,
+			NumEnums:      4,
 			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,

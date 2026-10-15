@@ -919,6 +919,7 @@ class Settings extends $pb.GeneratedMessage {
     $core.double? alumbrado,
     $core.double? mantenimiento,
     $core.bool? igv,
+    ReceiptCopies? receiptCopies,
   }) {
     final $result = create();
     if (municipalidad != null) {
@@ -957,6 +958,9 @@ class Settings extends $pb.GeneratedMessage {
     if (igv != null) {
       $result.igv = igv;
     }
+    if (receiptCopies != null) {
+      $result.receiptCopies = receiptCopies;
+    }
     return $result;
   }
   Settings._() : super();
@@ -976,6 +980,7 @@ class Settings extends $pb.GeneratedMessage {
     ..a<$core.double>(10, _omitFieldNames ? '' : 'alumbrado', $pb.PbFieldType.OD)
     ..a<$core.double>(11, _omitFieldNames ? '' : 'mantenimiento', $pb.PbFieldType.OD)
     ..aOB(12, _omitFieldNames ? '' : 'igv')
+    ..e<ReceiptCopies>(13, _omitFieldNames ? '' : 'receiptCopies', $pb.PbFieldType.OE, defaultOrMaker: ReceiptCopies.RECEIPT_COPIES_UNSPECIFIED, valueOf: ReceiptCopies.valueOf, enumValues: ReceiptCopies.values)
     ..hasRequiredFields = false
   ;
 
@@ -1107,6 +1112,15 @@ class Settings extends $pb.GeneratedMessage {
   $core.bool hasIgv() => $_has(11);
   @$pb.TagNumber(12)
   void clearIgv() => clearField(12);
+
+  @$pb.TagNumber(13)
+  ReceiptCopies get receiptCopies => $_getN(12);
+  @$pb.TagNumber(13)
+  set receiptCopies(ReceiptCopies v) { setField(13, v); }
+  @$pb.TagNumber(13)
+  $core.bool hasReceiptCopies() => $_has(12);
+  @$pb.TagNumber(13)
+  void clearReceiptCopies() => clearField(13);
 }
 
 class Period extends $pb.GeneratedMessage {
