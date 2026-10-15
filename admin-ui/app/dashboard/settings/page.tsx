@@ -1,7 +1,7 @@
 "use client";
 
 import { Save } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,6 +16,8 @@ import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useSettings } from "./hooks/useSettings";
+import { ReceiptCopies } from "@/app/gen/involt/v1/models_pb";
+import { ReceiptCopiesField } from "./components/ReceiptCopiesField";
 
 export default function SettingsPage() {
   const { isAdmin, loading: authLoading } = useAuth();
@@ -28,13 +30,18 @@ export default function SettingsPage() {
     handleSave,
   } = useSettings();
 
+  // The role comes from localStorage, which the server doesn't have: only trust it after mount
+  // so the server and first client render match (no hydration mismatch).
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
+
   useEffect(() => {
-    if (!authLoading && !isAdmin) {
+    if (isMounted && !authLoading && !isAdmin) {
       router.push("/dashboard");
     }
-  }, [authLoading, isAdmin, router]);
+  }, [isMounted, authLoading, isAdmin, router]);
 
-  if (authLoading || !isAdmin) return null;
+  if (!isMounted || authLoading || !isAdmin) return null;
 
   if (loading) {
     return (
@@ -245,6 +252,12 @@ export default function SettingsPage() {
                   }
                 />
               </div>
+              <ReceiptCopiesField
+                value={settings?.receiptCopies ?? ReceiptCopies.DUPLICATE}
+                onChange={(receiptCopies) =>
+                  setSettings((prev) => (prev ? { ...prev, receiptCopies } : null))
+                }
+              />
             </CardContent>
           </Card>
         </div>
