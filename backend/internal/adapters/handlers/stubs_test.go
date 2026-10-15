@@ -20,6 +20,7 @@ func authenticatedTestContext() context.Context {
 type collectionsCustomerRepoStub struct {
 	listBySectorFunc func(context.Context, string) ([]domain.Customer, error)
 	getByIDFunc      func(context.Context, string) (*domain.Customer, error)
+	listFunc         func() ([]domain.Customer, int, error)
 }
 
 func (s *collectionsCustomerRepoStub) GetByID(ctx context.Context, id string) (*domain.Customer, error) {
@@ -28,8 +29,8 @@ func (s *collectionsCustomerRepoStub) GetByID(ctx context.Context, id string) (*
 func (s *collectionsCustomerRepoStub) GetByCode(context.Context, string) (*domain.Customer, error) {
 	panic("not implemented")
 }
-func (s *collectionsCustomerRepoStub) List(context.Context, []string, string, int, int, string, string) ([]domain.Customer, int, error) {
-	panic("not implemented")
+func (s *collectionsCustomerRepoStub) List(context.Context, []string, string, int, int, string, string, string) ([]domain.Customer, int, error) {
+	return s.listFunc()
 }
 func (s *collectionsCustomerRepoStub) ListAll(context.Context) ([]domain.Customer, error) {
 	panic("not implemented")

@@ -61,6 +61,7 @@ func main() {
 	reportRepo := repositories.NewPostgresCollectionsReportRepository(db)
 	policyRepo := repositories.NewPostgresCollectionPolicyRepository(db)
 	agreementRepo := repositories.NewPostgresAgreementRepository(db)
+	statusRepo := repositories.NewPostgresCustomerStatusRepository(db)
 	pdfGen := pdf.NewMarotoGenerator()
 
 	// 3. Initialize Handlers
@@ -71,7 +72,7 @@ func main() {
 
 	syncHandler := handlers.NewSyncHandler(metaRepo, customerRepo, readingRepo, periodRepo, adminRepo, pdfGen)
 	settingsHandler := handlers.NewSettingsHandler(settingsRepo)
-	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, periodRepo, jwtSecret, pdfGen, paymentRepo, pdfGen, reportRepo, policyRepo, agreementRepo, pdfGen, excel.NewGenerator())
+	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, periodRepo, jwtSecret, pdfGen, paymentRepo, pdfGen, reportRepo, policyRepo, agreementRepo, pdfGen, excel.NewGenerator(), statusRepo)
 
 	// 4. Setup Mux
 	mux := http.NewServeMux()

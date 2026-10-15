@@ -66,3 +66,13 @@ type CollectionsWorkbookData struct {
 	Customers []domain.CustomerLine // every supply in scope, even without receipts
 	Payments  []domain.PaymentLine  // allocations paid within the period range
 }
+
+// CustomerStatusRepository changes a supply's service status and keeps its history.
+type CustomerStatusRepository interface {
+	// SetStatus atomically validates the change against the current status, updates the
+	// customer and appends a history entry.
+	SetStatus(ctx context.Context, customerID string, to domain.ServiceStatus, reason, changedBy, changedByEmail string) (*domain.ServiceStatusChange, error)
+	History(ctx context.Context, customerID string) ([]domain.ServiceStatusChange, error)
+	// CountByStatus counts active supplies per status within the report scope.
+	CountByStatus(ctx context.Context, filter ReceiptLineFilter) (map[domain.ServiceStatus]int, error)
+}

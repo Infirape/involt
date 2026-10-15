@@ -61,7 +61,7 @@ func (r *PostgresCollectionsReportRepository) ListReceiptLines(ctx context.Conte
 		COALESCE(c.sector_id, '') AS sector_id, COALESCE(s.name, '') AS sector_name,
 		COALESCE(c.community_id, '') AS community_id, COALESCE(cm.name, '') AS community_name,
 		COALESCE(` + readingPeriodExpr + `, '') AS period,
-		r.total_to_pay AS total, COALESCE(pd.paid, 0) AS paid, r.expiration_date
+		r.total_to_pay AS total, COALESCE(pd.paid, 0) AS paid, r.expiration_date, c.service_status
 		FROM readings r
 		JOIN customers c ON c.id = r.customer_id
 		LEFT JOIN sectors s ON s.id = c.sector_id
@@ -135,7 +135,8 @@ func (r *PostgresCollectionsReportRepository) ListCustomers(ctx context.Context,
 	var args []any
 	conds := customerScope(filter, &args)
 	query := `SELECT c.id AS customer_id, c.code AS customer_code, c.name AS customer_name,
-		COALESCE(cm.name, '') AS community_name, COALESCE(s.name, '') AS sector_name
+		COALESCE(cm.name, '') AS community_name, COALESCE(s.name, '') AS sector_name,
+		c.service_status, c.service_status_changed_at
 		FROM customers c
 		LEFT JOIN sectors s ON s.id = c.sector_id
 		LEFT JOIN communities cm ON cm.id = c.community_id
@@ -163,7 +164,7 @@ func (r *PostgresCollectionsReportRepository) ListPaymentLines(ctx context.Conte
 	query := `SELECT p.receipt_number, p.paid_at, p.method, p.collected_by_email,
 		c.code AS customer_code, c.name AS customer_name,
 		COALESCE(cm.name, '') AS community_name, COALESCE(s.name, '') AS sector_name,
-		COALESCE(` + readingPeriodExpr + `, '') AS period, pa.amount, pa.late_fee
+		COALESCE(` + readingPeriodExpr + `, '') AS period, pa.amount, pa.late_fee, c.service_status
 		FROM payment_allocations pa
 		JOIN payments p ON p.id = pa.payment_id
 		JOIN readings r ON r.id = pa.reading_id

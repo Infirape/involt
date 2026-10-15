@@ -28,6 +28,7 @@ func (h *AdminHandler) ExportDebtorsXLSX(w http.ResponseWriter, r *http.Request)
 		CommunityId: q.Get("community_id"), SectorId: q.Get("sector_id"), Search: q.Get("search"),
 		MinOverdueReceipts: int32(queryInt(q.Get("min_overdue_receipts"))), MinDebt: queryFloat(q.Get("min_debt")),
 		CutThreshold: int32(queryInt(q.Get("cut_threshold"))), OnlyCutCandidates: q.Get("only_cut_candidates") == "true",
+		ServiceStatus: involtv1.ServiceStatus(queryInt(q.Get("service_status"))),
 	}
 	resp, err := h.GetDebtors(ctx, connect.NewRequest(req))
 	if err != nil {

@@ -64,6 +64,12 @@ func TestExportDebtorsXLSX(t *testing.T) {
 	if len(gen.debtors.GetDebtors()) != 1 || gen.debtors.GetDebtors()[0].GetCustomerId() != "caro" {
 		t.Fatalf("filters not applied: %+v", gen.debtors)
 	}
+
+	rec = httptest.NewRecorder()
+	h.ExportDebtorsXLSX(rec, httptest.NewRequest(http.MethodGet, "/admin/reports/debtors.xlsx?service_status=3&token="+token, nil))
+	if rec.Code != http.StatusOK || len(gen.debtors.GetDebtors()) != 0 {
+		t.Fatalf("service status filter (sin energía) not applied: %d %+v", rec.Code, gen.debtors.GetDebtors())
+	}
 	if gen.meta.Entity != "MD Chetilla" || gen.meta.GeneratedBy != "admin@infira.pe" {
 		t.Fatalf("meta = %+v", gen.meta)
 	}

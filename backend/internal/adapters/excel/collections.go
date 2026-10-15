@@ -50,13 +50,13 @@ func (g *Generator) CollectionsWorkbook(_ context.Context, data ports.Collection
 	}
 	f := b.f
 	_ = f.SetSheetName("Sheet1", "Resumen")
-	for _, s := range []string{"PorCaserio", "Suministros", "Pagos", "Recibos"} {
+	for _, s := range []string{"PorCaserio", "Suministros", "Servicio", "Pagos", "Recibos"} {
 		_, _ = f.NewSheet(s)
 	}
 	if err := writeCollectionsSummary(b, data.Report, meta); err != nil {
 		return nil, err
 	}
-	if err := writeSectorSheet(b, data.Report.BySector); err != nil {
+	if err := writeSectorSheet(b, data.Report.BySector, data.Customers); err != nil {
 		return nil, err
 	}
 	if err := writeCollectionsDetail(b, data, meta); err != nil {
@@ -75,6 +75,8 @@ func writeCollectionsSummary(b *book, r *involtv1.GetCollectionsDashboardRespons
 		{"% de cobranza", ratio(t.GetCollected(), t.GetBilled()), false},
 		{"Deuda total (todos los periodos)", t.GetTotalDebt(), true}, {"Deuda vencida", t.GetOverdueDebt(), true},
 		{"Clientes con deuda", t.GetDebtorCount(), false}, {"Candidatos a corte", t.GetCutCandidates(), false},
+		{"Suministros en corte temporal", t.GetTemporaryCutCount(), false},
+		{"Suministros sin energía", t.GetNoPowerCount(), false},
 	})
 	_ = b.f.SetCellStyle(sheet, cell(2, kpiStart+2), cell(2, kpiStart+2), b.pct)
 	_ = b.f.SetColWidth(sheet, "A", "A", 30)
@@ -105,18 +107,29 @@ func writeCollectionsSummary(b *book, r *involtv1.GetCollectionsDashboardRespons
 	return b.barChart(sheet, "G22", "Antigüedad de la deuda", excelize.Col, next, next+1, next+len(agingRows), 1, []int{2})
 }
 
-func writeSectorSheet(b *book, sectors []*involtv1.SectorCollectionSummary) error {
+func writeSectorSheet(b *book, sectors []*involtv1.SectorCollectionSummary, customers []domain.CustomerLine) error {
+	cut, noPower := map[string]int{}, map[string]int{}
+	for _, c := range customers {
+		switch domain.ServiceStatus(c.ServiceStatus) {
+		case domain.ServiceTemporaryCut:
+			cut[c.SectorName]++
+		case domain.ServiceNoPower:
+			noPower[c.SectorName]++
+		}
+	}
 	const sheet = "PorCaserio"
 	cols := []column{
 		{"Comunidad", 16, 0}, {"Caserío", 22, 0}, {"Facturado", 13, b.money}, {"Cobrado", 13, b.money},
 		{"% cobranza", 11, b.pct}, {"Deuda", 13, b.money}, {"Clientes", 10, b.int}, {"Morosos", 10, b.int},
+		{"En corte", 10, b.int}, {"Sin energía", 11, b.int},
 	}
 	rows := make([][]any, len(sectors))
 	for i, s := range sectors {
-		rows[i] = []any{s.CommunityName, s.SectorName, s.Billed, s.Collected, ratio(s.Collected, s.Billed), s.Debt, s.Customers, s.Debtors}
+		rows[i] = []any{s.CommunityName, s.SectorName, s.Billed, s.Collected, ratio(s.Collected, s.Billed), s.Debt, s.Customers, s.Debtors,
+			cut[s.SectorName], noPower[s.SectorName]}
 	}
 	if _, _, err := b.writeTable(sheet, "TablaCaserios", 1, cols, rows); err != nil {
 		return err
 	}
-	return b.barChart(sheet, "J2", "Cobrado vs facturado por caserío", excelize.Col, 1, 2, 1+len(rows), 2, []int{3, 4})
+	return b.barChart(sheet, "L2", "Cobrado vs facturado por caserío", excelize.Col, 1, 2, 1+len(rows), 2, []int{3, 4})
 }

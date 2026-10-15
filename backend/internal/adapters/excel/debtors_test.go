@@ -61,7 +61,7 @@ func TestDebtorsWorkbook(t *testing.T) {
 				DaysOverdue: 90, LastPaymentAt: "2026-09-01T15:00:00Z", CutCandidate: true},
 			{CustomerCode: "ALT001", CustomerName: "Caro", CommunityName: "Chetilla", SectorName: "Alto",
 				TotalDebt: 12, OverdueDebt: 12, PendingReceipts: 1, OverdueReceipts: 1, OldestOverduePeriod: "2026-08",
-				DaysOverdue: 23, InAgreement: true},
+				DaysOverdue: 23, InAgreement: true, ServiceStatus: involtv1.ServiceStatus_SERVICE_STATUS_TEMPORARY_CUT},
 		},
 		TotalDebt: 38, OverdueDebt: 28, CutCandidates: 1,
 	}
@@ -78,6 +78,19 @@ func TestDebtorsWorkbook(t *testing.T) {
 	rows, _ := f.GetRows("Morosos")
 	if len(rows) != 3 || rows[1][1] != "Ana Luz" {
 		t.Fatalf("detail rows = %v", rows)
+	}
+	summary, _ := f.GetRows("Resumen")
+	kpis := map[string]string{}
+	for _, r := range summary {
+		if len(r) >= 2 {
+			kpis[r[0]] = r[1]
+		}
+	}
+	if kpis["Morosos en corte temporal"] != "1" || kpis["Morosos sin energía"] != "0" {
+		t.Fatalf("debtor summary must count service statuses, got %v", kpis)
+	}
+	if rows[1][14] != "Con servicio" || rows[2][14] != "Corte temporal" {
+		t.Fatalf("service status column = %q / %q", rows[1][14], rows[2][14])
 	}
 	if rows[1][10] != "61-90 días" || rows[2][12] != "Al día" {
 		t.Fatalf("derived columns = %v / %v", rows[1], rows[2])

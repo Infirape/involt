@@ -35,7 +35,7 @@ func openPaymentsTestDB(t *testing.T) *sqlx.DB {
 		}
 	}
 
-	db.MustExec(`TRUNCATE agreement_installments, agreement_receipts, payment_agreements, late_fee_waivers, payment_allocations, payments, readings, customers, sectors, communities CASCADE`)
+	db.MustExec(`TRUNCATE customer_status_changes, agreement_installments, agreement_receipts, payment_agreements, late_fee_waivers, payment_allocations, payments, readings, customers, sectors, communities CASCADE`)
 	db.MustExec(`DELETE FROM collection_policy`)
 	db.MustExec(`INSERT INTO collection_policy (id) VALUES ('main')`)
 	db.MustExec(`INSERT INTO communities (id, name) VALUES ('com-1', 'Chetilla')`)

@@ -101,13 +101,14 @@ func writeDebtorDetail(b *book, debtors []*involtv1.DebtorRow) (string, error) {
 		{"Deuda total", 13, b.money}, {"Deuda vencida", 13, b.money}, {"Recibos pendientes", 10, b.int},
 		{"Recibos vencidos", 10, b.int}, {"Vencido desde", 13, 0}, {"Días de atraso", 10, b.int},
 		{"Rango de atraso", 15, 0}, {"Último pago", 13, b.day}, {"Convenio", 13, 0}, {"Candidato a corte", 12, 0},
+		{"Estado de servicio", 15, 0},
 	}
 	rows := make([][]any, 0, len(debtors))
 	for _, d := range debtors {
 		rows = append(rows, []any{
 			d.CustomerCode, d.CustomerName, d.CommunityName, d.SectorName, d.TotalDebt, d.OverdueDebt,
 			d.PendingReceipts, d.OverdueReceipts, d.OldestOverduePeriod, d.DaysOverdue, agingRange(d.DaysOverdue),
-			isoToTime(d.LastPaymentAt), agreementLabel(d), yesNo(d.CutCandidate),
+			isoToTime(d.LastPaymentAt), agreementLabel(d), yesNo(d.CutCandidate), protoServiceLabel(d.ServiceStatus),
 		})
 	}
 	ref, _, err := b.writeTable("Morosos", "TablaMorosos", 1, cols, rows)
@@ -127,11 +128,22 @@ type bucketTotal struct {
 func writeDebtorSummary(b *book, report *involtv1.GetDebtorsResponse, meta ports.WorkbookMeta) error {
 	const sheet = "Resumen"
 	row := b.writeHeader(sheet, meta)
+	var cut, noPower int
+	for _, d := range report.Debtors {
+		switch d.ServiceStatus {
+		case involtv1.ServiceStatus_SERVICE_STATUS_TEMPORARY_CUT:
+			cut++
+		case involtv1.ServiceStatus_SERVICE_STATUS_NO_POWER:
+			noPower++
+		}
+	}
 	row = b.writeKPIs(sheet, row, []kpi{
 		{"Clientes con deuda", len(report.Debtors), false},
 		{"Deuda total", report.TotalDebt, true},
 		{"Deuda vencida", report.OverdueDebt, true},
 		{"Candidatos a corte", report.CutCandidates, false},
+		{"Morosos en corte temporal", cut, false},
+		{"Morosos sin energía", noPower, false},
 	})
 	_ = b.f.SetColWidth(sheet, "A", "A", 24)
 	_ = b.f.SetColWidth(sheet, "B", "D", 16)
@@ -186,4 +198,24 @@ func writeDebtorSummary(b *book, report *involtv1.GetDebtorsResponse, meta ports
 		return err
 	}
 	return b.barChart(sheet, "F22", "Deuda por antigüedad", excelize.Col, agingStart, agingStart+1, agingStart+len(aging), 1, []int{2})
+}
+
+var serviceLabels = map[string]string{"ACTIVE": "Con servicio", "TEMPORARY_CUT": "Corte temporal", "NO_POWER": "Sin energía"}
+
+// serviceLabel names a stored service status; empty (older rows) means active.
+func serviceLabel(raw string) string {
+	if l, ok := serviceLabels[raw]; ok {
+		return l
+	}
+	return serviceLabels["ACTIVE"]
+}
+
+func protoServiceLabel(s involtv1.ServiceStatus) string {
+	switch s {
+	case involtv1.ServiceStatus_SERVICE_STATUS_TEMPORARY_CUT:
+		return serviceLabels["TEMPORARY_CUT"]
+	case involtv1.ServiceStatus_SERVICE_STATUS_NO_POWER:
+		return serviceLabels["NO_POWER"]
+	}
+	return serviceLabels["ACTIVE"]
 }

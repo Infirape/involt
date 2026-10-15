@@ -33,7 +33,7 @@ type ReadingRepository interface {
 type CustomerRepository interface {
 	GetByID(ctx context.Context, id string) (*domain.Customer, error)
 	GetByCode(ctx context.Context, code string) (*domain.Customer, error)
-	List(ctx context.Context, allowedSectorIDs []string, searchQuery string, limit, offset int, excludePeriodID string, communityID string) ([]domain.Customer, int, error)
+	List(ctx context.Context, allowedSectorIDs []string, searchQuery string, limit, offset int, excludePeriodID string, communityID string, serviceStatus string) ([]domain.Customer, int, error)
 	ListAll(ctx context.Context) ([]domain.Customer, error)
 	SaveBatch(ctx context.Context, customers []domain.Customer) error
 	Save(ctx context.Context, customer *domain.Customer) error

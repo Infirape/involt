@@ -36,6 +36,7 @@ type AdminHandler struct {
 	agreementRepo ports.AgreementRepository
 	agreementDoc ports.AgreementDocumentGenerator
 	workbookGen  ports.ReportWorkbookGenerator
+	statusRepo   ports.CustomerStatusRepository
 	clock        func() time.Time
 }
 
@@ -54,6 +55,7 @@ func NewAdminHandler(
 	agreementRepo ports.AgreementRepository,
 	agreementDoc ports.AgreementDocumentGenerator,
 	workbookGen ports.ReportWorkbookGenerator,
+	statusRepo ports.CustomerStatusRepository,
 ) *AdminHandler {
 	return &AdminHandler{
 		adminRepo:    adminRepo,
@@ -70,6 +72,7 @@ func NewAdminHandler(
 		agreementRepo: agreementRepo,
 		agreementDoc: agreementDoc,
 		workbookGen:  workbookGen,
+		statusRepo:   statusRepo,
 	}
 }
 
@@ -399,7 +402,7 @@ func (h *AdminHandler) GetCustomers(
 	}
 
 	log.Printf("🔍 Admin: GetCustomers (Sector: %s, Community: %s, Search: %s, ExcludePeriod: %s)", req.Msg.SectorId, req.Msg.CommunityId, req.Msg.SearchQuery, req.Msg.ExcludePeriodId)
-	customers, total, err := h.customerRepo.List(ctx, allowedSectors, req.Msg.SearchQuery, int(pageSize), int(offset), req.Msg.ExcludePeriodId, req.Msg.CommunityId)
+	customers, total, err := h.customerRepo.List(ctx, allowedSectors, req.Msg.SearchQuery, int(pageSize), int(offset), req.Msg.ExcludePeriodId, req.Msg.CommunityId, serviceStatusFilter(req.Msg.ServiceStatus))
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
@@ -424,6 +427,10 @@ func (h *AdminHandler) GetCustomers(
 			InitialReading:   0, // Always 0, calculated from reading history
 			LastReadingValue: c.LastReadingValue,
 		}
+		// Service status comes from the shared mapper so every RPC reports it the same way.
+		mapped := domain.MapCustomerToProto(&c)
+		resp.Customers[i].ServiceStatus = mapped.ServiceStatus
+		resp.Customers[i].ServiceStatusChangedAt = mapped.ServiceStatusChangedAt
 	}
 
 	return connect.NewResponse(resp), nil

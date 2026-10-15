@@ -61,6 +61,9 @@ type Customer struct {
 	InitialReading float64      `db:"initial_reading"`
 	LastReadingValue float64     `db:"last_reading_value"`
 	ContractStart  time.Time    `db:"contract_start"`
+	// ServiceStatus is ACTIVE, TEMPORARY_CUT or NO_POWER (see EffectiveServiceStatus).
+	ServiceStatus          string     `db:"service_status"`
+	ServiceStatusChangedAt *time.Time `db:"service_status_changed_at"`
 }
 
 // Reading represents a captured meter value.

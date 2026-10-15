@@ -67,3 +67,19 @@ CREATE TABLE IF NOT EXISTS agreement_installments (
     amount double precision NOT NULL CHECK (amount > 0),
     PRIMARY KEY (agreement_id, number)
 );
+
+-- Service status (con servicio / corte temporal / sin energía), set by admins with history.
+ALTER TABLE customers ADD COLUMN IF NOT EXISTS service_status text NOT NULL DEFAULT 'ACTIVE';
+ALTER TABLE customers ADD COLUMN IF NOT EXISTS service_status_changed_at timestamp with time zone;
+
+CREATE TABLE IF NOT EXISTS customer_status_changes (
+    id text PRIMARY KEY,
+    customer_id text NOT NULL REFERENCES customers(id),
+    previous_status text NOT NULL,
+    status text NOT NULL,
+    reason text NOT NULL,
+    changed_by text NOT NULL DEFAULT '',
+    changed_by_email text NOT NULL DEFAULT '',
+    changed_at timestamp with time zone NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_customer_status_changes_customer ON customer_status_changes(customer_id, changed_at DESC);

@@ -12,9 +12,9 @@ import (
 )
 
 type reportRepoStub struct {
-	lines    []domain.ReceiptLine
-	cash     map[string]float64
-	last     map[string]time.Time
+	lines       []domain.ReceiptLine
+	cash        map[string]float64
+	last        map[string]time.Time
 	filters     []ports.ReceiptLineFilter
 	cashSeen    ports.ReceiptLineFilter
 	paymentSeen ports.ReceiptLineFilter

@@ -91,6 +91,15 @@ func (h *AdminHandler) GetCollectionsDashboard(
 		})
 	}
 
+	if h.statusRepo != nil {
+		counts, err := h.statusRepo.CountByStatus(ctx, scope)
+		if err != nil {
+			return nil, connect.NewError(connect.CodeInternal, err)
+		}
+		resp.Totals.TemporaryCutCount = int32(counts[domain.ServiceTemporaryCut])
+		resp.Totals.NoPowerCount = int32(counts[domain.ServiceNoPower])
+	}
+
 	threshold := cutThresholdOrDefault(req.Msg.CutThreshold)
 	for _, d := range domain.BuildDebtors(debtLines, nil, today, threshold) {
 		resp.Totals.TotalDebt = roundCents(resp.Totals.TotalDebt + d.TotalDebt)
@@ -136,6 +145,8 @@ func (h *AdminHandler) GetDebtors(
 		case d.OverdueReceipts < int(req.Msg.MinOverdueReceipts):
 		case d.TotalDebt < req.Msg.MinDebt:
 		case req.Msg.OnlyCutCandidates && !d.CutCandidate:
+		case req.Msg.ServiceStatus != involtv1.ServiceStatus_SERVICE_STATUS_UNSPECIFIED &&
+			serviceStatusToProto(d.ServiceStatus) != req.Msg.ServiceStatus:
 		default:
 			kept = append(kept, d)
 		}
@@ -161,6 +172,7 @@ func (h *AdminHandler) GetDebtors(
 			CutCandidate:       d.CutCandidate,
 			InAgreement:        agreementFlags[d.CustomerID] == agreementOnTrack,
 			AgreementInDefault: agreementFlags[d.CustomerID] == agreementLate,
+			ServiceStatus:      serviceStatusToProto(d.ServiceStatus),
 		}
 		if last, ok := lastPayments[d.CustomerID]; ok && !last.IsZero() {
 			row.LastPaymentAt = last.Format(time.RFC3339)

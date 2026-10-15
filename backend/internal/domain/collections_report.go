@@ -20,6 +20,7 @@ type ReceiptLine struct {
 	Total          float64   `db:"total"`
 	Paid           float64   `db:"paid"`
 	ExpirationDate time.Time `db:"expiration_date"`
+	ServiceStatus  string    `db:"service_status"`
 }
 
 func (l ReceiptLine) balanceCents() int64 {
@@ -203,6 +204,7 @@ type Debtor struct {
 	DaysOverdue         int
 	LastPaymentAt       time.Time
 	CutCandidate        bool
+	ServiceStatus       string
 }
 
 // BuildDebtors lists customers with outstanding balance, highest debt first. A customer is a
@@ -224,6 +226,7 @@ func BuildDebtors(lines []ReceiptLine, lastPayments map[string]time.Time, today 
 			a = &acc{debtor: Debtor{
 				CustomerID: l.CustomerID, CustomerCode: l.CustomerCode, CustomerName: l.CustomerName,
 				SectorID: l.SectorID, SectorName: l.SectorName, CommunityName: l.CommunityName,
+				ServiceStatus: l.ServiceStatus,
 			}}
 			byCustomer[l.CustomerID] = a
 		}
@@ -264,6 +267,9 @@ type CustomerLine struct {
 	CustomerName  string `db:"customer_name"`
 	CommunityName string `db:"community_name"`
 	SectorName    string `db:"sector_name"`
+	ServiceStatus string `db:"service_status"`
+	// ServiceStatusChangedAt is when the current status was set (nil = never changed).
+	ServiceStatusChangedAt *time.Time `db:"service_status_changed_at"`
 }
 
 // PaymentLine is one non-voided payment allocation with its payment and customer context.
@@ -279,4 +285,5 @@ type PaymentLine struct {
 	Period           string    `db:"period"`
 	Amount           float64   `db:"amount"`
 	LateFee          float64   `db:"late_fee"`
+	ServiceStatus    string    `db:"service_status"`
 }

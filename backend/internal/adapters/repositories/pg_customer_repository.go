@@ -20,7 +20,7 @@ func (r *PostgresCustomerRepository) GetByCode(ctx context.Context, code string)
 	var customer domain.Customer
 	query := `SELECT id, code, name, community_id, sector_id, address, 
 	          connection_type, tariff, meter_number,
-	          latitude, longitude, initial_reading
+	          latitude, longitude, initial_reading, service_status, service_status_changed_at
 	          FROM customers WHERE code = $1 AND deleted_at IS NULL`
 	err := r.db.GetContext(ctx, &customer, query, code)
 	if err != nil {
@@ -33,7 +33,7 @@ func (r *PostgresCustomerRepository) GetByID(ctx context.Context, id string) (*d
 	var customer domain.Customer
 	query := `SELECT id, code, name, community_id, sector_id, address, 
 	          connection_type, tariff, meter_number,
-	          latitude, longitude, initial_reading
+	          latitude, longitude, initial_reading, service_status, service_status_changed_at
 	          FROM customers WHERE id = $1 AND deleted_at IS NULL`
 	err := r.db.GetContext(ctx, &customer, query, id)
 	if err != nil {
@@ -42,7 +42,7 @@ func (r *PostgresCustomerRepository) GetByID(ctx context.Context, id string) (*d
 	return &customer, nil
 }
 
-func (r *PostgresCustomerRepository) List(ctx context.Context, allowedSectorIDs []string, searchQuery string, limit, offset int, excludePeriodID string, communityID string) ([]domain.Customer, int, error) {
+func (r *PostgresCustomerRepository) List(ctx context.Context, allowedSectorIDs []string, searchQuery string, limit, offset int, excludePeriodID string, communityID string, serviceStatus string) ([]domain.Customer, int, error) {
 	var customers []domain.Customer
 	var total int
 
@@ -61,6 +61,11 @@ func (r *PostgresCustomerRepository) List(ctx context.Context, allowedSectorIDs 
 
 	if communityID != "" {
 		where += " AND community_id = :community_id"
+	}
+
+	if serviceStatus != "" {
+		where += " AND service_status = :service_status"
+		args["service_status"] = serviceStatus
 	}
 
 	if searchQuery != "" {
@@ -87,7 +92,7 @@ func (r *PostgresCustomerRepository) List(ctx context.Context, allowedSectorIDs 
 	selectQuery, selectArgs, err := sqlx.Named(fmt.Sprintf(`
 		SELECT id, code, name, community_id, sector_id, address, 
 		       connection_type, tariff, meter_number,
-		       latitude, longitude, initial_reading,
+		       latitude, longitude, initial_reading, service_status, service_status_changed_at,
 		       COALESCE((
 		           SELECT r.current_value 
 		           FROM readings r 
@@ -117,7 +122,7 @@ func (r *PostgresCustomerRepository) ListAll(ctx context.Context) ([]domain.Cust
 	var customers []domain.Customer
 	query := `SELECT id, code, name, community_id, sector_id, address, 
 	          connection_type, tariff, meter_number,
-	          latitude, longitude, initial_reading
+	          latitude, longitude, initial_reading, service_status, service_status_changed_at
 	          FROM customers WHERE deleted_at IS NULL ORDER BY code ASC`
 	err := r.db.SelectContext(ctx, &customers, query)
 	if err != nil {
@@ -183,7 +188,7 @@ func (r *PostgresCustomerRepository) ListBySector(ctx context.Context, sectorID 
 	var customers []domain.Customer
 	query := `SELECT id, code, name, community_id, sector_id, address,
 	          connection_type, tariff, meter_number,
-	          latitude, longitude, initial_reading
+	          latitude, longitude, initial_reading, service_status, service_status_changed_at
 	          FROM customers
 	          WHERE sector_id = $1 AND deleted_at IS NULL
 	          ORDER BY name ASC, code ASC`
