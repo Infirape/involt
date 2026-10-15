@@ -489,6 +489,7 @@ class GetCollectionsDashboardRequest extends $pb.GeneratedMessage {
     $core.String? toPeriod,
     $core.String? communityId,
     $core.int? cutThreshold,
+    $core.String? sectorId,
   }) {
     final $result = create();
     if (fromPeriod != null) {
@@ -503,6 +504,9 @@ class GetCollectionsDashboardRequest extends $pb.GeneratedMessage {
     if (cutThreshold != null) {
       $result.cutThreshold = cutThreshold;
     }
+    if (sectorId != null) {
+      $result.sectorId = sectorId;
+    }
     return $result;
   }
   GetCollectionsDashboardRequest._() : super();
@@ -514,6 +518,7 @@ class GetCollectionsDashboardRequest extends $pb.GeneratedMessage {
     ..aOS(2, _omitFieldNames ? '' : 'toPeriod')
     ..aOS(3, _omitFieldNames ? '' : 'communityId')
     ..a<$core.int>(4, _omitFieldNames ? '' : 'cutThreshold', $pb.PbFieldType.O3)
+    ..aOS(5, _omitFieldNames ? '' : 'sectorId')
     ..hasRequiredFields = false
   ;
 
@@ -573,6 +578,15 @@ class GetCollectionsDashboardRequest extends $pb.GeneratedMessage {
   $core.bool hasCutThreshold() => $_has(3);
   @$pb.TagNumber(4)
   void clearCutThreshold() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.String get sectorId => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set sectorId($core.String v) { $_setString(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasSectorId() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearSectorId() => clearField(5);
 }
 
 class GetCollectionsDashboardResponse extends $pb.GeneratedMessage {

@@ -53,6 +53,7 @@ message GetCollectionsDashboardRequest {
   string to_period = 2; // YYYY-MM, default: current month
   string community_id = 3; // optional
   int32 cut_threshold = 4; // overdue receipts to flag a cut candidate, default 2
+  string sector_id = 5; // optional caserío
 }
 
 message GetCollectionsDashboardResponse {

@@ -413,6 +413,7 @@ type GetCollectionsDashboardRequest struct {
 	ToPeriod      string                 `protobuf:"bytes,2,opt,name=to_period,json=toPeriod,proto3" json:"to_period,omitempty"`              // YYYY-MM, default: current month
 	CommunityId   string                 `protobuf:"bytes,3,opt,name=community_id,json=communityId,proto3" json:"community_id,omitempty"`     // optional
 	CutThreshold  int32                  `protobuf:"varint,4,opt,name=cut_threshold,json=cutThreshold,proto3" json:"cut_threshold,omitempty"` // overdue receipts to flag a cut candidate, default 2
+	SectorId      string                 `protobuf:"bytes,5,opt,name=sector_id,json=sectorId,proto3" json:"sector_id,omitempty"`              // optional caserío
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -473,6 +474,13 @@ func (x *GetCollectionsDashboardRequest) GetCutThreshold() int32 {
 		return x.CutThreshold
 	}
 	return 0
+}
+
+func (x *GetCollectionsDashboardRequest) GetSectorId() string {
+	if x != nil {
+		return x.SectorId
+	}
+	return ""
 }
 
 type GetCollectionsDashboardResponse struct {
@@ -917,13 +925,14 @@ const file_involt_v1_reports_proto_rawDesc = "" +
 	"total_debt\x18\x03 \x01(\x01R\ttotalDebt\x12!\n" +
 	"\foverdue_debt\x18\x04 \x01(\x01R\voverdueDebt\x12!\n" +
 	"\fdebtor_count\x18\x05 \x01(\x05R\vdebtorCount\x12%\n" +
-	"\x0ecut_candidates\x18\x06 \x01(\x05R\rcutCandidates\"\xa6\x01\n" +
+	"\x0ecut_candidates\x18\x06 \x01(\x05R\rcutCandidates\"\xc3\x01\n" +
 	"\x1eGetCollectionsDashboardRequest\x12\x1f\n" +
 	"\vfrom_period\x18\x01 \x01(\tR\n" +
 	"fromPeriod\x12\x1b\n" +
 	"\tto_period\x18\x02 \x01(\tR\btoPeriod\x12!\n" +
 	"\fcommunity_id\x18\x03 \x01(\tR\vcommunityId\x12#\n" +
-	"\rcut_threshold\x18\x04 \x01(\x05R\fcutThreshold\"\xcd\x02\n" +
+	"\rcut_threshold\x18\x04 \x01(\x05R\fcutThreshold\x12\x1b\n" +
+	"\tsector_id\x18\x05 \x01(\tR\bsectorId\"\xcd\x02\n" +
 	"\x1fGetCollectionsDashboardResponse\x12=\n" +
 	"\x06totals\x18\x01 \x01(\v2%.involt.v1.CollectionsDashboardTotalsR\x06totals\x12?\n" +
 	"\tby_sector\x18\x02 \x03(\v2\".involt.v1.SectorCollectionSummaryR\bbySector\x12?\n" +

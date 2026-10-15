@@ -120,6 +120,7 @@ const GetCollectionsDashboardRequest$json = {
     {'1': 'to_period', '3': 2, '4': 1, '5': 9, '10': 'toPeriod'},
     {'1': 'community_id', '3': 3, '4': 1, '5': 9, '10': 'communityId'},
     {'1': 'cut_threshold', '3': 4, '4': 1, '5': 5, '10': 'cutThreshold'},
+    {'1': 'sector_id', '3': 5, '4': 1, '5': 9, '10': 'sectorId'},
   ],
 };
 
@@ -127,8 +128,8 @@ const GetCollectionsDashboardRequest$json = {
 final $typed_data.Uint8List getCollectionsDashboardRequestDescriptor = $convert.base64Decode(
     'Ch5HZXRDb2xsZWN0aW9uc0Rhc2hib2FyZFJlcXVlc3QSHwoLZnJvbV9wZXJpb2QYASABKAlSCm'
     'Zyb21QZXJpb2QSGwoJdG9fcGVyaW9kGAIgASgJUgh0b1BlcmlvZBIhCgxjb21tdW5pdHlfaWQY'
-    'AyABKAlSC2NvbW11bml0eUlkEiMKDWN1dF90aHJlc2hvbGQYBCABKAVSDGN1dFRocmVzaG9sZA'
-    '==');
+    'AyABKAlSC2NvbW11bml0eUlkEiMKDWN1dF90aHJlc2hvbGQYBCABKAVSDGN1dFRocmVzaG9sZB'
+    'IbCglzZWN0b3JfaWQYBSABKAlSCHNlY3Rvcklk');
 
 @$core.Deprecated('Use getCollectionsDashboardResponseDescriptor instead')
 const GetCollectionsDashboardResponse$json = {
