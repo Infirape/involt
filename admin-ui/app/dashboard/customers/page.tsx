@@ -10,14 +10,18 @@ import { useState, useEffect } from "react";
 export default function CustomersPage() {
   const { isAdmin } = useAuth();
   const [totalCount, setTotalCount] = useState(0);
+  // The role is read from localStorage, which the server doesn't have: only trust it after
+  // mount so the server and first client render match (no hydration mismatch).
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     adminClient.getCustomers({ pageSize: 1, pageNumber: 1 }).then(resp => {
       setTotalCount(resp.totalCount);
     });
   }, []);
 
-  if (!isAdmin) return null;
+  if (!isMounted || !isAdmin) return null;
 
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-700">
