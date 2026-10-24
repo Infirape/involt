@@ -147,3 +147,23 @@ func TestListPaymentLines(t *testing.T) {
 		t.Fatalf("period filter ignored: %+v", past)
 	}
 }
+
+func TestListPaymentLinesByPaymentDateAndCollector(t *testing.T) {
+	repo := seedReportData(t)
+	ctx := context.Background()
+	now := time.Now()
+
+	in, err := repo.ListPaymentLines(ctx, ports.ReceiptLineFilter{PaidFrom: now.Add(-time.Hour), PaidTo: now.Add(time.Hour)})
+	if err != nil || len(in) != 1 {
+		t.Fatalf("payment inside the date range = %+v (%v), want 1", in, err)
+	}
+	if out, _ := repo.ListPaymentLines(ctx, ports.ReceiptLineFilter{PaidTo: now.Add(-time.Hour)}); len(out) != 0 {
+		t.Fatalf("PaidTo is exclusive and must drop later payments: %+v", out)
+	}
+	if out, _ := repo.ListPaymentLines(ctx, ports.ReceiptLineFilter{PaidFrom: now.Add(time.Hour)}); len(out) != 0 {
+		t.Fatalf("PaidFrom must drop earlier payments: %+v", out)
+	}
+	if other, _ := repo.ListPaymentLines(ctx, ports.ReceiptLineFilter{CollectedBy: "someone-else"}); len(other) != 0 {
+		t.Fatalf("collector filter ignored: %+v", other)
+	}
+}

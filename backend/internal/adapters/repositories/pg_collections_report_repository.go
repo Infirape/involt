@@ -161,6 +161,18 @@ func (r *PostgresCollectionsReportRepository) ListPaymentLines(ctx context.Conte
 		args = append(args, filter.ToPeriod)
 		conds = append(conds, fmt.Sprintf("%s <= $%d", monthExpr, len(args)))
 	}
+	if !filter.PaidFrom.IsZero() {
+		args = append(args, filter.PaidFrom)
+		conds = append(conds, fmt.Sprintf("p.paid_at >= $%d", len(args)))
+	}
+	if !filter.PaidTo.IsZero() {
+		args = append(args, filter.PaidTo)
+		conds = append(conds, fmt.Sprintf("p.paid_at < $%d", len(args)))
+	}
+	if filter.CollectedBy != "" {
+		args = append(args, filter.CollectedBy)
+		conds = append(conds, fmt.Sprintf("p.collected_by = $%d", len(args)))
+	}
 	query := `SELECT p.receipt_number, p.paid_at, p.method, p.collected_by_email,
 		c.code AS customer_code, c.name AS customer_name,
 		COALESCE(cm.name, '') AS community_name, COALESCE(s.name, '') AS sector_name,

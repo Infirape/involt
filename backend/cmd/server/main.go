@@ -113,6 +113,7 @@ func main() {
 	// REST endpoints for Excel reports
 	mux.HandleFunc("/admin/reports/debtors.xlsx", adminSvcHandler.ExportDebtorsXLSX)
 	mux.HandleFunc("/admin/reports/cash-closing.xlsx", adminSvcHandler.ExportCashClosingXLSX)
+	mux.HandleFunc("/admin/reports/remittance.xlsx", adminSvcHandler.ExportRemittanceXLSX)
 	mux.HandleFunc("/admin/reports/collections.xlsx", adminSvcHandler.ExportCollectionsXLSX)
 
 	// API Health check

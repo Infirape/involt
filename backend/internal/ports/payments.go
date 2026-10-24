@@ -47,6 +47,9 @@ type ReceiptLineFilter struct {
 	FromPeriod       string // YYYY-MM inclusive
 	ToPeriod         string // YYYY-MM inclusive
 	OnlyOutstanding  bool
+	// Payment lines only: payment-date window [PaidFrom, PaidTo) and collector user ID.
+	PaidFrom, PaidTo time.Time
+	CollectedBy      string
 }
 
 // CollectionsReportRepository provides read models for dashboards and debtor lists.

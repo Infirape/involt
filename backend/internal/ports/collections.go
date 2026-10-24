@@ -57,6 +57,14 @@ type ReportWorkbookGenerator interface {
 	DebtorsWorkbook(ctx context.Context, report *involtv1.GetDebtorsResponse, meta WorkbookMeta) ([]byte, error)
 	CashClosingWorkbook(ctx context.Context, report *involtv1.GetCashClosingResponse, meta WorkbookMeta) ([]byte, error)
 	CollectionsWorkbook(ctx context.Context, data CollectionsWorkbookData, meta WorkbookMeta) ([]byte, error)
+	RemittanceWorkbook(ctx context.Context, data RemittanceData, meta WorkbookMeta) ([]byte, error)
+}
+
+// RemittanceData feeds the weekly treasury report: the payment lines of a payment-date range.
+// From/To are the inclusive Lima dates of the range (zero = not clipped).
+type RemittanceData struct {
+	Lines    []domain.PaymentLine
+	From, To time.Time
 }
 
 // CollectionsWorkbookData is everything the collections workbook needs, already filtered.

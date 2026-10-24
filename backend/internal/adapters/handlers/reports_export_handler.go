@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"connectrpc.com/connect"
 
@@ -62,6 +63,50 @@ func (h *AdminHandler) ExportCashClosingXLSX(w http.ResponseWriter, r *http.Requ
 	})
 	data, err := h.workbookGen.CashClosingWorkbook(ctx, resp.Msg, meta)
 	writeWorkbook(w, "cierre_caja_"+from.Format("2006-01-02"), data, err)
+}
+
+// ExportRemittanceXLSX serves /admin/reports/remittance.xlsx: the weekly treasury report for a
+// payment-date range (same dates and collector rules as the cash closing).
+func (h *AdminHandler) ExportRemittanceXLSX(w http.ResponseWriter, r *http.Request) {
+	_, user, ok := h.exportContext(w, r)
+	if !ok {
+		return
+	}
+	ctx := r.Context()
+	q := r.URL.Query()
+	from, to, err := h.parseClosingRange(q.Get("date_from"), q.Get("date_to"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	collector := q.Get("collected_by")
+	if !canManagePayments(user) {
+		collector = user.ID
+	}
+	lines, err := h.reportRepo.ListPaymentLines(ctx, ports.ReceiptLineFilter{PaidFrom: from, PaidTo: to, CollectedBy: collector})
+	if err != nil {
+		log.Printf("⚠️ Error loading remittance payments: %v", err)
+		http.Error(w, "Error loading report data", http.StatusInternalServerError)
+		return
+	}
+	lastDay := to.AddDate(0, 0, -1)
+	collectorLabel := "Todos"
+	if collector != "" {
+		collectorLabel = collector
+		if len(lines) > 0 && lines[0].CollectedByEmail != "" {
+			collectorLabel = lines[0].CollectedByEmail
+		}
+	}
+	meta := h.workbookMeta(ctx, user, "Rendición semanal de cobranza", [][2]string{
+		{"Desde", from.Format("02/01/2006")}, {"Hasta", lastDay.Format("02/01/2006")}, {"Cobrador", collectorLabel},
+	})
+	data := ports.RemittanceData{
+		Lines: lines,
+		From:  time.Date(from.Year(), from.Month(), from.Day(), 0, 0, 0, 0, time.UTC),
+		To:    time.Date(lastDay.Year(), lastDay.Month(), lastDay.Day(), 0, 0, 0, 0, time.UTC),
+	}
+	workbook, err := h.workbookGen.RemittanceWorkbook(ctx, data, meta)
+	writeWorkbook(w, "rendicion_semanal_"+from.Format("2006-01-02"), workbook, err)
 }
 
 // ExportCollectionsXLSX serves /admin/reports/collections.xlsx (resumen de cobranza).

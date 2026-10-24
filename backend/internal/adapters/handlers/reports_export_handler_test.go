@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/infira/involt/backend/internal/adapters/auth"
 	"github.com/infira/involt/backend/internal/domain"
@@ -13,9 +14,10 @@ import (
 )
 
 type workbookStub struct {
-	meta    ports.WorkbookMeta
-	debtors *involtv1.GetDebtorsResponse
-	data    ports.CollectionsWorkbookData
+	meta       ports.WorkbookMeta
+	debtors    *involtv1.GetDebtorsResponse
+	data       ports.CollectionsWorkbookData
+	remittance ports.RemittanceData
 }
 
 func (s *workbookStub) DebtorsWorkbook(_ context.Context, r *involtv1.GetDebtorsResponse, m ports.WorkbookMeta) ([]byte, error) {
@@ -30,6 +32,11 @@ func (s *workbookStub) CashClosingWorkbook(_ context.Context, _ *involtv1.GetCas
 
 func (s *workbookStub) CollectionsWorkbook(_ context.Context, data ports.CollectionsWorkbookData, m ports.WorkbookMeta) ([]byte, error) {
 	s.data, s.meta = data, m
+	return []byte("xlsx"), nil
+}
+
+func (s *workbookStub) RemittanceWorkbook(_ context.Context, data ports.RemittanceData, m ports.WorkbookMeta) ([]byte, error) {
+	s.remittance, s.meta = data, m
 	return []byte("xlsx"), nil
 }
 
@@ -114,5 +121,51 @@ func TestExportCashClosingXLSXValidatesAndAuthenticates(t *testing.T) {
 	h.ExportCashClosingXLSX(rec, httptest.NewRequest(http.MethodGet, "/admin/reports/cash-closing.xlsx?date_from=2026-10-13&token="+token, nil))
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %d", rec.Code)
+	}
+}
+
+func TestExportRemittanceXLSXUsesPaymentDates(t *testing.T) {
+	h, gen, token, repo := newExportHandlerWithRepo(t)
+	rec := httptest.NewRecorder()
+	h.ExportRemittanceXLSX(rec, httptest.NewRequest(http.MethodGet,
+		"/admin/reports/remittance.xlsx?date_from=2026-09-01&date_to=2026-09-07&collected_by=caja1&token="+token, nil))
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d: %s", rec.Code, rec.Body.String())
+	}
+	seen := repo.paymentSeen
+	if got := seen.PaidFrom.In(limaZone).Format(time.DateTime); got != "2026-09-01 00:00:00" {
+		t.Fatalf("PaidFrom = %s, want the start of Sep 1 in Lima", got)
+	}
+	if got := seen.PaidTo.In(limaZone).Format(time.DateTime); got != "2026-09-08 00:00:00" {
+		t.Fatalf("PaidTo = %s, want the end of Sep 7 (exclusive) in Lima", got)
+	}
+	if seen.CollectedBy != "caja1" || seen.FromPeriod != "" || seen.ToPeriod != "" {
+		t.Fatalf("filter = %+v, want collector and no billing periods", seen)
+	}
+	if gen.remittance.From.Format(time.DateOnly) != "2026-09-01" || gen.remittance.To.Format(time.DateOnly) != "2026-09-07" {
+		t.Fatalf("workbook range = %v..%v, want inclusive Sep 1..7", gen.remittance.From, gen.remittance.To)
+	}
+	if gen.meta.Title != "Rendición semanal de cobranza" || gen.meta.Filters[0][1] != "01/09/2026" || gen.meta.Filters[1][1] != "07/09/2026" {
+		t.Fatalf("meta = %+v", gen.meta)
+	}
+}
+
+func TestExportRemittanceXLSXScopesCollectorsToThemselves(t *testing.T) {
+	h, _, _, repo := newExportHandlerWithRepo(t)
+	token, _ := h.jwtService.GenerateToken(&domain.User{ID: "cobrador-1", Email: "c1@chetilla.gob.pe", Role: domain.RoleReader})
+	rec := httptest.NewRecorder()
+	h.ExportRemittanceXLSX(rec, httptest.NewRequest(http.MethodGet,
+		"/admin/reports/remittance.xlsx?date_from=2026-09-01&collected_by=otro&token="+token, nil))
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d: %s", rec.Code, rec.Body.String())
+	}
+	if repo.paymentSeen.CollectedBy != "cobrador-1" {
+		t.Fatalf("a collector may only export their own payments, got %q", repo.paymentSeen.CollectedBy)
+	}
+
+	rec = httptest.NewRecorder()
+	h.ExportRemittanceXLSX(rec, httptest.NewRequest(http.MethodGet, "/admin/reports/remittance.xlsx?date_from=01/09/2026&token="+token, nil))
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("bad date status = %d, want 400", rec.Code)
 	}
 }

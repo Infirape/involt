@@ -50,17 +50,24 @@ func TestCollectionsWorkbook(t *testing.T) {
 		t.Fatalf("CollectionsWorkbook: %v", err)
 	}
 	f, charts := openWorkbook(t, data)
-	want := "Resumen,PorCaserio,Suministros,Servicio,Pagos,Recibos,TD_PagosMes,TD_Suministros,TD_Saldos,TD_Estados,TD_Servicio"
+	// The weekly treasury report is its own workbook (RemittanceWorkbook), not a sheet here.
+	want := "Resumen,PorCaserio,Suministros,Pagos,TD_Pagos,TD_Suministros"
 	if got := strings.Join(f.GetSheetList(), ","); got != want {
 		t.Fatalf("sheets = %s", got)
+	}
+	if f.GetActiveSheetIndex() != 0 {
+		t.Fatal("the workbook must open on Resumen")
 	}
 	if len(charts) != 3 {
 		t.Fatalf("charts = %v, want 3", charts)
 	}
-	for _, sheet := range []string{"TD_PagosMes", "TD_Suministros", "TD_Saldos", "TD_Estados", "TD_Servicio"} {
+	for _, sheet := range []string{"TD_Pagos", "TD_Suministros"} {
 		if pivots, err := f.GetPivotTables(sheet); err != nil || len(pivots) != 1 {
 			t.Fatalf("%s pivots = %d (%v), want 1", sheet, len(pivots), err)
 		}
+	}
+	if pivots, _ := f.GetPivotTables("TD_Suministros"); len(pivots[0].Data) != 2 {
+		t.Fatalf("TD_Suministros must sum paid and balance, got %v", pivots[0].Data)
 	}
 	if panes, _ := f.GetPanes("PorCaserio"); panes.Freeze {
 		t.Fatal("sheets with charts must not freeze panes")
@@ -74,13 +81,17 @@ func TestSuministrosSheetHasEverySupplyForEveryMonth(t *testing.T) {
 	if len(rows) != 1+3*2 {
 		t.Fatalf("rows = %d, want header + 3 supplies × 2 months", len(rows)-1)
 	}
-	// Columns: Caserío, Comunidad, Código, Cliente, Suministro, Periodo, Mes, Facturado, Pagado, Saldo, Estado
+	// Columns: Caserío, Comunidad, Código, Cliente, Suministro, Periodo, Mes, Facturado, Pagado, Saldo,
+	// Estado, Servicio, Vencimiento, Días de atraso, Servicio desde
 	byKey := map[string][]string{}
 	for _, r := range rows[1:] {
 		byKey[r[2]+"|"+r[5]] = r
 	}
 	if r := byKey["CHE001|2026-08"]; r[10] != "Vencido" || r[9] != "S/ 12.00" || r[4] != "CHE001 - Ana" {
 		t.Fatalf("Ana Aug = %v", r)
+	}
+	if r := byKey["CHE001|2026-08"]; r[12] != "15/09/2026" || r[13] != "28" {
+		t.Fatalf("due date and days overdue (merged from the old Recibos sheet) = %v", r)
 	}
 	if r := byKey["CHE003|2026-09"]; r[11] != "Sin energía" {
 		t.Fatalf("service status column = %v", r)
@@ -90,56 +101,20 @@ func TestSuministrosSheetHasEverySupplyForEveryMonth(t *testing.T) {
 	}
 }
 
-func TestPagosSheetUsesLimaPaymentMonth(t *testing.T) {
+func TestPagosSheetUsesLimaPaymentMonthAndWeek(t *testing.T) {
 	data, _ := NewGenerator().CollectionsWorkbook(context.Background(), collectionsFixture(), testMeta("x"))
 	f, _ := openWorkbook(t, data)
 	rows, _ := f.GetRows("Pagos")
 	if len(rows) != 3 {
 		t.Fatalf("payment rows = %v", rows)
 	}
-	// Columns: Caserío, Comunidad, Código, Cliente, Suministro, N°, Fecha, Mes de pago, Periodo, Medio, Cobrado por, Monto, Mora, Total
-	if rows[1][7] != "2026-09" || rows[1][13] != "S/ 8.00" || rows[1][9] != "Efectivo" {
+	// Columns: Fecha, Semana, Mes de pago, N°, Código, Cliente, Caserío, Comunidad, Periodo, Medio,
+	// Cobrado por, Monto, Mora, Total, Servicio, Suministro
+	if rows[1][0] != "02/09/2026" || rows[1][1] != "SEM 1 · 1 al 6 de septiembre de 2026" || rows[1][2] != "2026-09" ||
+		rows[1][3] != "000007" || rows[1][13] != "S/ 8.00" || rows[1][9] != "Efectivo" {
 		t.Fatalf("first payment = %v", rows[1])
 	}
-	if rows[2][7] != "2026-09" {
-		t.Fatalf("04:00 UTC on Oct 1 is still September in Lima, got %v", rows[2][7])
-	}
-}
-
-func TestServiceStatusAppearsAcrossCollectionsWorkbook(t *testing.T) {
-	data, err := NewGenerator().CollectionsWorkbook(context.Background(), collectionsFixture(), testMeta("x"))
-	if err != nil {
-		t.Fatalf("CollectionsWorkbook: %v", err)
-	}
-	f, _ := openWorkbook(t, data)
-
-	summary, _ := f.GetRows("Resumen")
-	kpis := map[string]string{}
-	for _, r := range summary {
-		if len(r) >= 2 {
-			kpis[r[0]] = r[1]
-		}
-	}
-	if kpis["Suministros en corte temporal"] != "2" || kpis["Suministros sin energía"] != "1" {
-		t.Fatalf("summary must count service statuses, got %v", kpis)
-	}
-
-	sectors, _ := f.GetRows("PorCaserio")
-	if sectors[0][8] != "En corte" || sectors[0][9] != "Sin energía" || sectors[1][8] != "1" || sectors[1][9] != "1" {
-		t.Fatalf("per-caserío status counts = %v / %v", sectors[0], sectors[1])
-	}
-
-	padron, _ := f.GetRows("Servicio")
-	if len(padron) != 4 || padron[1][4] != "Corte temporal" || padron[3][4] != "Sin energía" || padron[2][4] != "Con servicio" {
-		t.Fatalf("Servicio sheet = %v", padron)
-	}
-
-	receipts, _ := f.GetRows("Recibos")
-	if receipts[0][11] != "Servicio" || receipts[1][11] != "Corte temporal" {
-		t.Fatalf("Recibos service column = %v", receipts[1])
-	}
-	payments, _ := f.GetRows("Pagos")
-	if payments[0][14] != "Servicio" || payments[1][14] != "Corte temporal" {
-		t.Fatalf("Pagos service column = %v", payments[1])
+	if rows[2][2] != "2026-09" || rows[2][1] != "SEM 5 · 28 al 30 de septiembre de 2026" {
+		t.Fatalf("04:00 UTC on Oct 1 is still Sep 30 in Lima, got %v", rows[2])
 	}
 }

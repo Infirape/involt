@@ -41,8 +41,9 @@ func ratio(part, whole float64) float64 {
 	return part / whole
 }
 
-// CollectionsWorkbook: Resumen (KPIs, monthly and aging tables + charts), PorCaserio, the
-// detail sheets (Suministros, Pagos, Recibos) and one pivot table per TD_* sheet.
+// CollectionsWorkbook: Resumen (KPIs, monthly and aging tables + charts), PorCaserio,
+// Suministros (every supply × month), Pagos and one pivot table per TD_* sheet. The weekly
+// treasury report is RemittanceWorkbook.
 func (g *Generator) CollectionsWorkbook(_ context.Context, data ports.CollectionsWorkbookData, meta ports.WorkbookMeta) ([]byte, error) {
 	b, err := newBook()
 	if err != nil {
@@ -50,7 +51,7 @@ func (g *Generator) CollectionsWorkbook(_ context.Context, data ports.Collection
 	}
 	f := b.f
 	_ = f.SetSheetName("Sheet1", "Resumen")
-	for _, s := range []string{"PorCaserio", "Suministros", "Servicio", "Pagos", "Recibos"} {
+	for _, s := range []string{"PorCaserio", "Suministros", "Pagos"} {
 		_, _ = f.NewSheet(s)
 	}
 	if err := writeCollectionsSummary(b, data.Report, meta); err != nil {

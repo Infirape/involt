@@ -29,6 +29,8 @@ type book struct {
 	f                                          *excelize.File
 	title, header, label, money, int, pct, day int
 	moneyBold, kpiValue, kpiMoney, note        int
+	section                                    int
+	ledgerStyles                               map[cellStyle]int
 }
 
 func newBook() (*book, error) {
@@ -53,6 +55,8 @@ func newBook() (*book, error) {
 		{&b.kpiValue, &excelize.Style{Font: &excelize.Font{Bold: true, Size: 14}}},
 		{&b.kpiMoney, &excelize.Style{Font: &excelize.Font{Bold: true, Size: 14}, CustomNumFmt: &moneyFmt}},
 		{&b.note, &excelize.Style{Font: &excelize.Font{Italic: true, Color: "898781", Size: 9}}},
+		{&b.section, &excelize.Style{Font: &excelize.Font{Bold: true, Size: 12, Color: colorHeader},
+			Fill: excelize.Fill{Type: "pattern", Pattern: 1, Color: []string{"E5E7EB"}}}},
 	}
 	for _, st := range styles {
 		id, err := f.NewStyle(st.s)
