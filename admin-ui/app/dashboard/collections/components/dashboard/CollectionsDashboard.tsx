@@ -1,11 +1,13 @@
 import { Download, Loader2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { MonthPicker } from "@/components/ui/date-picker";
 import {
   type DashboardFilters,
   useCollectionsDashboard,
 } from "../../hooks/useCollectionsDashboard";
+import { useDashboardSelection } from "../../hooks/useDashboardSelection";
 import { downloadReport } from "../../lib/api";
+import { defaultFromPeriod, earliestPeriod } from "../../lib/periods";
 import { AgingChart } from "./AgingChart";
 import { KpiTiles } from "./KpiTiles";
 import { MonthlyChart } from "./MonthlyChart";
@@ -24,18 +26,19 @@ export function CollectionsDashboard({
   communities,
   onShowCutCandidates,
 }: CollectionsDashboardProps) {
-  const [fromPeriod, setFromPeriod] = useState("");
-  const [toPeriod, setToPeriod] = useState("");
-  const [communityId, setCommunityId] = useState("");
-  const [sectorId, setSectorId] = useState("");
+  // Remembered across visits (localStorage).
+  const { selection, update, hydrated } = useDashboardSelection();
+  const { fromPeriod, toPeriod, communityId, sectorId } = selection;
+  // Months before September 2026 are blocked; the default range starts there at the earliest.
+  const effectiveFrom = fromPeriod || defaultFromPeriod();
   const filters = useMemo<DashboardFilters>(
-    () => ({ fromPeriod, toPeriod, communityId, sectorId }),
-    [fromPeriod, toPeriod, communityId, sectorId],
+    () => ({ fromPeriod: effectiveFrom, toPeriod, communityId, sectorId }),
+    [effectiveFrom, toPeriod, communityId, sectorId],
   );
   const sectors = communityId
     ? (communities.find((c) => c.id === communityId)?.sectors ?? [])
     : communities.flatMap((c) => c.sectors);
-  const { data, loading } = useCollectionsDashboard(filters);
+  const { data, loading } = useCollectionsDashboard(filters, hydrated);
 
   return (
     <div className="flex flex-col gap-4">
@@ -45,9 +48,10 @@ export function CollectionsDashboard({
           Desde
           <MonthPicker
             aria-label="Desde"
-            value={fromPeriod || data?.fromPeriod || ""}
+            value={effectiveFrom}
+            min={earliestPeriod()}
             max={toPeriod || data?.toPeriod}
-            onChange={setFromPeriod}
+            onChange={(v) => update({ fromPeriod: v })}
             className="w-40 text-xs"
           />
         </div>
@@ -56,8 +60,8 @@ export function CollectionsDashboard({
           <MonthPicker
             aria-label="Hasta"
             value={toPeriod || data?.toPeriod || ""}
-            min={fromPeriod || data?.fromPeriod}
-            onChange={setToPeriod}
+            min={earliestPeriod(effectiveFrom)}
+            onChange={(v) => update({ toPeriod: v })}
             className="w-40 text-xs"
           />
         </div>
@@ -65,10 +69,7 @@ export function CollectionsDashboard({
           Comunidad
           <select
             value={communityId}
-            onChange={(e) => {
-              setCommunityId(e.target.value);
-              setSectorId("");
-            }}
+            onChange={(e) => update({ communityId: e.target.value, sectorId: "" })}
             className={inputClass}
           >
             <option value="">Todas</option>
@@ -83,7 +84,7 @@ export function CollectionsDashboard({
           Caserío
           <select
             value={sectorId}
-            onChange={(e) => setSectorId(e.target.value)}
+            onChange={(e) => update({ sectorId: e.target.value })}
             className={inputClass}
           >
             <option value="">Todos</option>
@@ -97,13 +98,10 @@ export function CollectionsDashboard({
         {(fromPeriod || toPeriod) && (
           <button
             type="button"
-            onClick={() => {
-              setFromPeriod("");
-              setToPeriod("");
-            }}
+            onClick={() => update({ fromPeriod: "", toPeriod: "" })}
             className="text-[11px] text-cyan-400 hover:text-cyan-300 pb-2"
           >
-            Últimos 12 meses
+            Restablecer
           </button>
         )}
         {loading && <Loader2 className="w-4 h-4 text-zinc-500 animate-spin mb-2" />}
@@ -112,7 +110,7 @@ export function CollectionsDashboard({
           disabled={!data}
           onClick={() =>
             downloadReport("/admin/reports/collections.xlsx", {
-              from_period: fromPeriod,
+              from_period: effectiveFrom,
               to_period: toPeriod,
               community_id: communityId,
               sector_id: sectorId,

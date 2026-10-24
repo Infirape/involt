@@ -17,12 +17,14 @@ export interface DashboardFilters {
   sectorId: string;
 }
 
-/** Collections dashboard (billed vs collected, by sector and month, debt aging). */
-export function useCollectionsDashboard(filters: DashboardFilters) {
+/** Collections dashboard (billed vs collected, by sector and month, debt aging). Nothing is
+ * fetched while `enabled` is false (e.g. the remembered filters are still loading). */
+export function useCollectionsDashboard(filters: DashboardFilters, enabled = true) {
   const [data, setData] = useState<GetCollectionsDashboardResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (!enabled) return;
     let cancelled = false;
     setLoading(true);
     adminClient
@@ -39,7 +41,7 @@ export function useCollectionsDashboard(filters: DashboardFilters) {
     return () => {
       cancelled = true;
     };
-  }, [filters]);
+  }, [filters, enabled]);
 
   return { data, loading };
 }
