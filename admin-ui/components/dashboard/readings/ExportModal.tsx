@@ -4,6 +4,7 @@ import { X, Download, FileText } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import type { Sector } from "@/app/gen/involt/v1/models_pb";
 import { useConfigStore } from "@/lib/store/useConfigStore";
+import { SectorOptions } from "@/components/ui/sector-options";
 
 interface ExportModalProps {
   isOpen: boolean;
@@ -84,11 +85,7 @@ export function ExportModal({
                 <option value="" className="bg-zinc-900 text-white">
                   Todos los sectores
                 </option>
-                {sectors.map((s) => (
-                  <option key={s.id} value={s.id} className="bg-zinc-900 text-white">
-                    {s.name}
-                  </option>
-                ))}
+                <SectorOptions sectors={sectors} optionClassName="bg-zinc-900 text-white" />
               </select>
             </div>
           </div>

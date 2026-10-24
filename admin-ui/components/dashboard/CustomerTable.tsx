@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { SERVICE_STATUS_OPTIONS } from "@/lib/serviceStatus";
+import { SectorOptions } from "@/components/ui/sector-options";
 
 export interface CustomerTableHandle {
   openNewModal: () => void;
@@ -115,11 +116,7 @@ export const CustomerTable = forwardRef<CustomerTableHandle, CustomerTableProps>
                   className="h-10 px-4 bg-white/5 border border-white/5 rounded-xl text-[10px] font-bold uppercase tracking-widest focus:border-primary/30 outline-none transition-all cursor-pointer"
                 >
                   <option value="">Todos los Sectores</option>
-                  {data.sectors.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
+                  <SectorOptions sectors={data.sectors} />
                 </select>
                 <select
                   aria-label="Estado de servicio"

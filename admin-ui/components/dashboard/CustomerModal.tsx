@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SectorOptions } from "@/components/ui/sector-options";
 
 const LocationPicker = dynamic(() => import("@/components/dashboard/LocationPicker"), {
   ssr: false,
@@ -84,11 +85,7 @@ export function CustomerModal({
                     onChange={(e) => onChange({ ...customer, sectorId: e.target.value })}
                     className="w-full h-11 px-4 bg-white/5 border border-white/5 rounded-xl text-sm font-bold focus:border-primary/30 outline-none transition-all cursor-pointer"
                   >
-                    {filteredSectors.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.name}
-                      </option>
-                    ))}
+                    <SectorOptions sectors={filteredSectors} />
                   </select>
                 </div>
               </div>

@@ -1,6 +1,7 @@
 import { Download, Loader2 } from "lucide-react";
 import { useMemo } from "react";
 import { MonthPicker } from "@/components/ui/date-picker";
+import { SectorOptions } from "@/components/ui/sector-options";
 import {
   type DashboardFilters,
   useCollectionsDashboard,
@@ -8,6 +9,7 @@ import {
 import { useDashboardSelection } from "../../hooks/useDashboardSelection";
 import { downloadReport } from "../../lib/api";
 import { defaultFromPeriod, earliestPeriod } from "../../lib/periods";
+import type { SectorTab } from "../../types";
 import { AgingChart } from "./AgingChart";
 import { KpiTiles } from "./KpiTiles";
 import { MonthlyChart } from "./MonthlyChart";
@@ -17,7 +19,7 @@ const inputClass =
   "bg-zinc-950 border border-zinc-800 text-zinc-200 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-cyan-500/50 [color-scheme:dark]";
 
 interface CollectionsDashboardProps {
-  communities: { id: string; name: string; sectors: { id: string; name: string }[] }[];
+  communities: { id: string; name: string; sectors: SectorTab[] }[];
   onShowCutCandidates: () => void;
 }
 
@@ -38,6 +40,10 @@ export function CollectionsDashboard({
   const sectors = communityId
     ? (communities.find((c) => c.id === communityId)?.sectors ?? [])
     : communities.flatMap((c) => c.sectors);
+  const communityNames = useMemo(
+    () => new Map(communities.map((c) => [c.id, c.name])),
+    [communities],
+  );
   const { data, loading } = useCollectionsDashboard(filters, hydrated);
 
   return (
@@ -88,11 +94,7 @@ export function CollectionsDashboard({
             className={inputClass}
           >
             <option value="">Todos</option>
-            {sectors.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
+            <SectorOptions sectors={sectors} communityNames={communityNames} />
           </select>
         </label>
         {(fromPeriod || toPeriod) && (

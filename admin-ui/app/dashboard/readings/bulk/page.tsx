@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { useBulkReadings } from "../hooks/useBulkReadings";
 import { type Customer } from "@/app/gen/involt/v1/models_pb";
 import { useConfigStore } from "@/lib/store/useConfigStore";
+import { SectorOptions } from "@/components/ui/sector-options";
 
 export default function BulkReadingsPage() {
   const router = useRouter();
@@ -105,11 +106,7 @@ export default function BulkReadingsPage() {
             className="w-full bg-black/40 border-2 border-white/5 rounded-2xl px-4 py-2 text-xs font-bold text-white outline-none focus:border-primary/40 transition-all appearance-none"
           >
             <option value="">TODOS LOS SECTORES</option>
-            {data.sectors.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
+            <SectorOptions sectors={data.sectors} optionClassName="bg-zinc-900 text-white" />
           </select>
         </div>
 

@@ -18,6 +18,7 @@ import { getAdminToken, API_BASE_URL, downloadFile } from "@/lib/utils";
 import { useReadings } from "./hooks/useReadings";
 import { useRouter } from "next/navigation";
 import { useConfigStore } from "@/lib/store/useConfigStore";
+import { SectorOptions } from "@/components/ui/sector-options";
 
 export default function ReadingsPage() {
   const router = useRouter();
@@ -158,15 +159,7 @@ export default function ReadingsPage() {
             <option value="" className="bg-zinc-900 text-white">
               Todos los Sectores
             </option>
-            {data.sectors.map((s) => (
-              <option
-                key={s.id}
-                value={s.id}
-                className="bg-zinc-900 text-white"
-              >
-                {s.name}
-              </option>
-            ))}
+            <SectorOptions sectors={data.sectors} optionClassName="bg-zinc-900 text-white" />
           </select>
         </div>
       </div>

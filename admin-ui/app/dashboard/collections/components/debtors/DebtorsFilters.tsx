@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import { ServiceStatus } from "@/app/gen/involt/v1/models_pb";
+import { SectorOptions } from "@/components/ui/sector-options";
 import { SERVICE_STATUS_OPTIONS } from "@/lib/serviceStatus";
 import type { DebtorFilters } from "../../hooks/useDebtors";
 import type { SectorTab } from "../../types";
@@ -17,6 +18,7 @@ export function DebtorsFilters({ filters, onChange, communities }: DebtorsFilter
   const sectors = filters.communityId
     ? (communities.find((c) => c.id === filters.communityId)?.sectors ?? [])
     : communities.flatMap((c) => c.sectors);
+  const communityNames = new Map(communities.map((c) => [c.id, c.name]));
 
   return (
     <div className="flex flex-wrap items-end gap-3">
@@ -55,11 +57,7 @@ export function DebtorsFilters({ filters, onChange, communities }: DebtorsFilter
           className={inputClass}
         >
           <option value="">Todos</option>
-          {sectors.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
+          <SectorOptions sectors={sectors} communityNames={communityNames} />
         </select>
       </label>
       <label className="text-[11px] text-zinc-500 flex flex-col gap-1">
