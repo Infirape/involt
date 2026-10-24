@@ -49,6 +49,9 @@ type MetadataRepository interface {
 	SaveCommunities(ctx context.Context, communities []domain.Community) error
 	SaveSectors(ctx context.Context, sectors []domain.Sector) error
 	DeleteSector(ctx context.Context, id string) error
+	// MoveSector reassigns a sector, and every supply in it, to another community; returns how
+	// many supplies moved.
+	MoveSector(ctx context.Context, sectorID, communityID string) (int, error)
 	DeleteCommunity(ctx context.Context, id string) error
 	GetAppConfig(ctx context.Context) (*domain.AppConfig, error)
 	GetSettings(ctx context.Context) (*domain.Settings, error)

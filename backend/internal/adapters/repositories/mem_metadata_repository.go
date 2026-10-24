@@ -99,3 +99,19 @@ func (r *MemMetadataRepository) GetSettings(ctx context.Context) (*domain.Settin
 func (r *MemMetadataRepository) SaveSettings(ctx context.Context, settings *domain.Settings) error {
 	return nil
 }
+
+// MoveSector reassigns the sector; the in-memory store keeps no supplies, so none move.
+func (r *MemMetadataRepository) MoveSector(ctx context.Context, sectorID, communityID string) (int, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	s, ok := r.sectors[sectorID]
+	if !ok {
+		return 0, domain.ErrSectorNotFound
+	}
+	if _, ok := r.communities[communityID]; !ok {
+		return 0, domain.ErrCommunityNotFound
+	}
+	s.CommunityID = communityID
+	r.sectors[sectorID] = s
+	return 0, nil
+}

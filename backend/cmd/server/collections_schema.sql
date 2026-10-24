@@ -83,3 +83,9 @@ CREATE TABLE IF NOT EXISTS customer_status_changes (
     changed_at timestamp with time zone NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS idx_customer_status_changes_customer ON customer_status_changes(customer_id, changed_at DESC);
+
+-- Supplies carry their own community_id, which reports filter and group by; it must match their
+-- sector's. Realign any drift (idempotent; supplies without a sector keep theirs).
+UPDATE customers c SET community_id = s.community_id
+FROM sectors s
+WHERE s.id = c.sector_id AND s.community_id IS NOT NULL AND c.community_id IS DISTINCT FROM s.community_id;

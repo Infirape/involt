@@ -637,6 +637,16 @@ func (h *AdminHandler) UpsertCustomer(
 		ContractStart:    contractStart,
 	}
 
+	// Reports group supplies by their own community: it always follows the sector's.
+	if domainCustomer.SectorID != "" {
+		communityID, err := h.sectorCommunity(ctx, domainCustomer.SectorID)
+		if err != nil {
+			return nil, err
+		}
+		domainCustomer.CommunityID = communityID
+		c.CommunityId = communityID
+	}
+
 	err := h.customerRepo.Save(ctx, domainCustomer)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
