@@ -33,6 +33,7 @@ type book struct {
 	moneyBold, kpiValue, kpiMoney, note        int
 	section                                    int
 	ledgerStyles                               map[cellStyle]int
+	letterheads                                []string // sheets that get the logo beside the title
 }
 
 func newBook() (*book, error) {
@@ -80,17 +81,19 @@ func colName(col int) string {
 	return name
 }
 
-// writeHeader prints the letterhead (report title, entity, municipal logo at F1, right of the
-// text and above the charts) and the filters; returns the next free row.
+// writeHeader prints the letterhead (municipal logo, then title, entity and generation date
+// beside it from column B) and the filters; returns the next free row.
 func (b *book) writeHeader(sheet string, meta ports.WorkbookMeta) int {
 	f := b.f
-	b.addLogo(sheet, "F1", 62, 8, 2)
-	_ = f.SetCellValue(sheet, "A1", meta.Title)
-	_ = f.SetCellStyle(sheet, "A1", "A1", b.title)
-	_ = f.SetCellValue(sheet, "A2", fmt.Sprintf("%s · %s", meta.Entity, meta.Company))
-	_ = f.SetCellValue(sheet, "A3", fmt.Sprintf("Generado el %s por %s",
+	// No gridlines: they would cross the floating logo; tables keep their own borders.
+	_ = f.SetSheetView(sheet, 0, &excelize.ViewOptions{ShowGridLines: boolPtr(false)})
+	b.letterheads = append(b.letterheads, sheet) // logo placed in bytes(), once column A is sized
+	_ = f.SetCellValue(sheet, "B1", meta.Title)
+	_ = f.SetCellStyle(sheet, "B1", "B1", b.title)
+	_ = f.SetCellValue(sheet, "B2", fmt.Sprintf("%s · %s", meta.Entity, meta.Company))
+	_ = f.SetCellValue(sheet, "B3", fmt.Sprintf("Generado el %s por %s",
 		meta.GeneratedAt.In(lima).Format("02/01/2006 15:04"), meta.GeneratedBy))
-	_ = f.SetCellStyle(sheet, "A2", "A3", b.note)
+	_ = f.SetCellStyle(sheet, "B2", "B3", b.note)
 	row := 5
 	for _, kv := range meta.Filters {
 		_ = f.SetCellValue(sheet, cell(1, row), kv[0])
@@ -252,10 +255,28 @@ func (b *book) addLogo(sheet, at string, heightPx float64, offsetX, offsetY int)
 	})
 }
 
-// logoHeightPx is the pixel height of logoFile.
-const logoHeightPx = 160
+// Pixel size of logoFile.
+const (
+	logoWidthPx  = 146
+	logoHeightPx = 160
+)
+
+// letterheadLogoPx is the logo height beside the title (rows 1-3).
+const letterheadLogoPx = 62
+
+// placeLetterheadLogos puts the logo flush right in column A, right next to the title in B.
+// Column widths are in characters; ~7 px each plus padding (Calibri 11).
+func (b *book) placeLetterheadLogos() {
+	logoWidth := letterheadLogoPx * logoWidthPx / logoHeightPx
+	for _, sheet := range b.letterheads {
+		chars, _ := b.f.GetColWidth(sheet, "A")
+		colPx := int(chars*7 + 5)
+		b.addLogo(sheet, "A1", letterheadLogoPx, max(2, colPx-logoWidth-8), 2)
+	}
+}
 
 func (b *book) bytes() ([]byte, error) {
+	b.placeLetterheadLogos()
 	b.f.SetActiveSheet(0)
 	buf, err := b.f.WriteToBuffer()
 	if err != nil {

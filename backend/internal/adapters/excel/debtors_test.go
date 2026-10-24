@@ -142,12 +142,23 @@ func TestWorkbooksCarryTheMunicipalLogo(t *testing.T) {
 		data        []byte
 		sheet, cell string
 	}{
-		"morosos": {debtors, "Resumen", "F1"}, "cierre": {closing, "Resumen", "F1"},
-		"cobranzas": {collections, "Resumen", "F1"}, "rendición": {remit, "Rendición", "J2"},
+		"morosos": {debtors, "Resumen", "A1"}, "cierre": {closing, "Resumen", "A1"},
+		"cobranzas": {collections, "Resumen", "A1"}, "rendición": {remit, "Rendición", "J2"},
 	} {
 		f, _ := openWorkbook(t, c.data)
 		if !hasLogo(t, f, c.sheet, c.cell) {
 			t.Fatalf("%s: no logo at %s!%s", name, c.sheet, c.cell)
+		}
+		if c.sheet == "Resumen" {
+			// Letterhead: logo flush right in column A, title right beside it in B1.
+			pics, _ := f.GetPictures(c.sheet, "A1")
+			if title, _ := f.GetCellValue(c.sheet, "B1"); title != "x" || pics[0].Format.OffsetX < 40 {
+				t.Fatalf("%s: title %q at B1, logo offset %d", name, title, pics[0].Format.OffsetX)
+			}
+		}
+		// The logo floats over the sheet: gridlines behind it look broken, so they are hidden.
+		if view, _ := f.GetSheetView(c.sheet, 0); view.ShowGridLines == nil || *view.ShowGridLines {
+			t.Fatalf("%s: %s must hide gridlines under the logo", name, c.sheet)
 		}
 	}
 }
