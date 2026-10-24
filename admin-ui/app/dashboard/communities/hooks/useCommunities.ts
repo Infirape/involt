@@ -191,6 +191,23 @@ export function useCommunities(options?: {
     }
   };
 
+  /** Moves a sector (and its supplies) to another community; true when it worked. */
+  const moveSector = async (sectorId: string, communityId: string): Promise<boolean> => {
+    try {
+      const resp = await adminClient.moveSector({ sectorId, communityId });
+      const moved = resp.movedCustomers;
+      toast.success(
+        `Caserío movido${moved > 0 ? ` con ${moved} ${moved === 1 ? "suministro" : "suministros"}` : ""}`,
+      );
+      await loadData();
+      return true;
+    } catch (error) {
+      console.error("Error moving sector:", error);
+      toast.error("No se pudo mover el caserío");
+      return false;
+    }
+  };
+
   const downloadSectorCSV = async (sectorId: string, sectorName: string) => {
     const toastId = toast.loading("Generando archivo CSV...");
     try {
@@ -253,6 +270,7 @@ export function useCommunities(options?: {
 
   return {
     data: { ...data, communities: filteredCommunities },
+    allCommunities: data.communities,
     isModalOpen,
     setIsModalOpen,
     editingCommunity,
@@ -267,6 +285,7 @@ export function useCommunities(options?: {
     handleOpenModal,
     handleSave,
     deleteSector,
+    moveSector,
     downloadSectorCSV,
     refresh: loadData,
   };
