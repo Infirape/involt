@@ -65,6 +65,9 @@ service AdminService {
   // DeleteSector removes a sector.
   rpc DeleteSector(DeleteSectorRequest) returns (DeleteSectorResponse);
 
+  // MoveSector moves a sector, with all its supplies, to another community (admins only).
+  rpc MoveSector(MoveSectorRequest) returns (MoveSectorResponse);
+
   // UpsertCommunity creates or updates a community.
   rpc UpsertCommunity(UpsertCommunityRequest) returns (UpsertCommunityResponse);
 
@@ -394,3 +397,12 @@ message DeleteCommunityResponse {
   bool success = 1;
 }
 
+message MoveSectorRequest {
+  string sector_id = 1;
+  string community_id = 2;
+}
+
+message MoveSectorResponse {
+  // Number of supplies that moved with the sector.
+  int32 moved_customers = 1;
+}

@@ -42,6 +42,7 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
   $async.Future<$4.ClosePeriodResponse> closePeriod($pb.ServerContext ctx, $4.ClosePeriodRequest request);
   $async.Future<$4.UpsertSectorResponse> upsertSector($pb.ServerContext ctx, $4.UpsertSectorRequest request);
   $async.Future<$4.DeleteSectorResponse> deleteSector($pb.ServerContext ctx, $4.DeleteSectorRequest request);
+  $async.Future<$4.MoveSectorResponse> moveSector($pb.ServerContext ctx, $4.MoveSectorRequest request);
   $async.Future<$4.UpsertCommunityResponse> upsertCommunity($pb.ServerContext ctx, $4.UpsertCommunityRequest request);
   $async.Future<$4.DeleteCommunityResponse> deleteCommunity($pb.ServerContext ctx, $4.DeleteCommunityRequest request);
   $async.Future<$4.TogglePaymentStatusResponse> togglePaymentStatus($pb.ServerContext ctx, $4.TogglePaymentStatusRequest request);
@@ -82,6 +83,7 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'ClosePeriod': return $4.ClosePeriodRequest();
       case 'UpsertSector': return $4.UpsertSectorRequest();
       case 'DeleteSector': return $4.DeleteSectorRequest();
+      case 'MoveSector': return $4.MoveSectorRequest();
       case 'UpsertCommunity': return $4.UpsertCommunityRequest();
       case 'DeleteCommunity': return $4.DeleteCommunityRequest();
       case 'TogglePaymentStatus': return $4.TogglePaymentStatusRequest();
@@ -125,6 +127,7 @@ abstract class AdminServiceBase extends $pb.GeneratedService {
       case 'ClosePeriod': return this.closePeriod(ctx, request as $4.ClosePeriodRequest);
       case 'UpsertSector': return this.upsertSector(ctx, request as $4.UpsertSectorRequest);
       case 'DeleteSector': return this.deleteSector(ctx, request as $4.DeleteSectorRequest);
+      case 'MoveSector': return this.moveSector(ctx, request as $4.MoveSectorRequest);
       case 'UpsertCommunity': return this.upsertCommunity(ctx, request as $4.UpsertCommunityRequest);
       case 'DeleteCommunity': return this.deleteCommunity(ctx, request as $4.DeleteCommunityRequest);
       case 'TogglePaymentStatus': return this.togglePaymentStatus(ctx, request as $4.TogglePaymentStatusRequest);

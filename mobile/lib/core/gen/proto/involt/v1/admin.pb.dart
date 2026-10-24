@@ -3367,6 +3367,121 @@ class DeleteCommunityResponse extends $pb.GeneratedMessage {
   void clearSuccess() => clearField(1);
 }
 
+class MoveSectorRequest extends $pb.GeneratedMessage {
+  factory MoveSectorRequest({
+    $core.String? sectorId,
+    $core.String? communityId,
+  }) {
+    final $result = create();
+    if (sectorId != null) {
+      $result.sectorId = sectorId;
+    }
+    if (communityId != null) {
+      $result.communityId = communityId;
+    }
+    return $result;
+  }
+  MoveSectorRequest._() : super();
+  factory MoveSectorRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory MoveSectorRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'MoveSectorRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'sectorId')
+    ..aOS(2, _omitFieldNames ? '' : 'communityId')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  MoveSectorRequest clone() => MoveSectorRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  MoveSectorRequest copyWith(void Function(MoveSectorRequest) updates) => super.copyWith((message) => updates(message as MoveSectorRequest)) as MoveSectorRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static MoveSectorRequest create() => MoveSectorRequest._();
+  MoveSectorRequest createEmptyInstance() => create();
+  static $pb.PbList<MoveSectorRequest> createRepeated() => $pb.PbList<MoveSectorRequest>();
+  @$core.pragma('dart2js:noInline')
+  static MoveSectorRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MoveSectorRequest>(create);
+  static MoveSectorRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get sectorId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set sectorId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSectorId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSectorId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get communityId => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set communityId($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasCommunityId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearCommunityId() => clearField(2);
+}
+
+class MoveSectorResponse extends $pb.GeneratedMessage {
+  factory MoveSectorResponse({
+    $core.int? movedCustomers,
+  }) {
+    final $result = create();
+    if (movedCustomers != null) {
+      $result.movedCustomers = movedCustomers;
+    }
+    return $result;
+  }
+  MoveSectorResponse._() : super();
+  factory MoveSectorResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory MoveSectorResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'MoveSectorResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..a<$core.int>(1, _omitFieldNames ? '' : 'movedCustomers', $pb.PbFieldType.O3)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  MoveSectorResponse clone() => MoveSectorResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  MoveSectorResponse copyWith(void Function(MoveSectorResponse) updates) => super.copyWith((message) => updates(message as MoveSectorResponse)) as MoveSectorResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static MoveSectorResponse create() => MoveSectorResponse._();
+  MoveSectorResponse createEmptyInstance() => create();
+  static $pb.PbList<MoveSectorResponse> createRepeated() => $pb.PbList<MoveSectorResponse>();
+  @$core.pragma('dart2js:noInline')
+  static MoveSectorResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MoveSectorResponse>(create);
+  static MoveSectorResponse? _defaultInstance;
+
+  /// Number of supplies that moved with the sector.
+  @$pb.TagNumber(1)
+  $core.int get movedCustomers => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set movedCustomers($core.int v) { $_setSignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasMovedCustomers() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMovedCustomers() => clearField(1);
+}
+
 class AdminServiceApi {
   $pb.RpcClient _client;
   AdminServiceApi(this._client);
@@ -3424,6 +3539,9 @@ class AdminServiceApi {
   ;
   $async.Future<DeleteSectorResponse> deleteSector($pb.ClientContext? ctx, DeleteSectorRequest request) =>
     _client.invoke<DeleteSectorResponse>(ctx, 'AdminService', 'DeleteSector', request, DeleteSectorResponse())
+  ;
+  $async.Future<MoveSectorResponse> moveSector($pb.ClientContext? ctx, MoveSectorRequest request) =>
+    _client.invoke<MoveSectorResponse>(ctx, 'AdminService', 'MoveSector', request, MoveSectorResponse())
   ;
   $async.Future<UpsertCommunityResponse> upsertCommunity($pb.ClientContext? ctx, UpsertCommunityRequest request) =>
     _client.invoke<UpsertCommunityResponse>(ctx, 'AdminService', 'UpsertCommunity', request, UpsertCommunityResponse())

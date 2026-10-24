@@ -82,6 +82,8 @@ const (
 	// AdminServiceDeleteSectorProcedure is the fully-qualified name of the AdminService's DeleteSector
 	// RPC.
 	AdminServiceDeleteSectorProcedure = "/involt.v1.AdminService/DeleteSector"
+	// AdminServiceMoveSectorProcedure is the fully-qualified name of the AdminService's MoveSector RPC.
+	AdminServiceMoveSectorProcedure = "/involt.v1.AdminService/MoveSector"
 	// AdminServiceUpsertCommunityProcedure is the fully-qualified name of the AdminService's
 	// UpsertCommunity RPC.
 	AdminServiceUpsertCommunityProcedure = "/involt.v1.AdminService/UpsertCommunity"
@@ -178,6 +180,8 @@ type AdminServiceClient interface {
 	UpsertSector(context.Context, *connect.Request[v1.UpsertSectorRequest]) (*connect.Response[v1.UpsertSectorResponse], error)
 	// DeleteSector removes a sector.
 	DeleteSector(context.Context, *connect.Request[v1.DeleteSectorRequest]) (*connect.Response[v1.DeleteSectorResponse], error)
+	// MoveSector moves a sector, with all its supplies, to another community (admins only).
+	MoveSector(context.Context, *connect.Request[v1.MoveSectorRequest]) (*connect.Response[v1.MoveSectorResponse], error)
 	// UpsertCommunity creates or updates a community.
 	UpsertCommunity(context.Context, *connect.Request[v1.UpsertCommunityRequest]) (*connect.Response[v1.UpsertCommunityResponse], error)
 	// DeleteCommunity removes a community.
@@ -339,6 +343,12 @@ func NewAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(adminServiceMethods.ByName("DeleteSector")),
 			connect.WithClientOptions(opts...),
 		),
+		moveSector: connect.NewClient[v1.MoveSectorRequest, v1.MoveSectorResponse](
+			httpClient,
+			baseURL+AdminServiceMoveSectorProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("MoveSector")),
+			connect.WithClientOptions(opts...),
+		),
 		upsertCommunity: connect.NewClient[v1.UpsertCommunityRequest, v1.UpsertCommunityResponse](
 			httpClient,
 			baseURL+AdminServiceUpsertCommunityProcedure,
@@ -476,6 +486,7 @@ type adminServiceClient struct {
 	closePeriod              *connect.Client[v1.ClosePeriodRequest, v1.ClosePeriodResponse]
 	upsertSector             *connect.Client[v1.UpsertSectorRequest, v1.UpsertSectorResponse]
 	deleteSector             *connect.Client[v1.DeleteSectorRequest, v1.DeleteSectorResponse]
+	moveSector               *connect.Client[v1.MoveSectorRequest, v1.MoveSectorResponse]
 	upsertCommunity          *connect.Client[v1.UpsertCommunityRequest, v1.UpsertCommunityResponse]
 	deleteCommunity          *connect.Client[v1.DeleteCommunityRequest, v1.DeleteCommunityResponse]
 	togglePaymentStatus      *connect.Client[v1.TogglePaymentStatusRequest, v1.TogglePaymentStatusResponse]
@@ -585,6 +596,11 @@ func (c *adminServiceClient) UpsertSector(ctx context.Context, req *connect.Requ
 // DeleteSector calls involt.v1.AdminService.DeleteSector.
 func (c *adminServiceClient) DeleteSector(ctx context.Context, req *connect.Request[v1.DeleteSectorRequest]) (*connect.Response[v1.DeleteSectorResponse], error) {
 	return c.deleteSector.CallUnary(ctx, req)
+}
+
+// MoveSector calls involt.v1.AdminService.MoveSector.
+func (c *adminServiceClient) MoveSector(ctx context.Context, req *connect.Request[v1.MoveSectorRequest]) (*connect.Response[v1.MoveSectorResponse], error) {
+	return c.moveSector.CallUnary(ctx, req)
 }
 
 // UpsertCommunity calls involt.v1.AdminService.UpsertCommunity.
@@ -720,6 +736,8 @@ type AdminServiceHandler interface {
 	UpsertSector(context.Context, *connect.Request[v1.UpsertSectorRequest]) (*connect.Response[v1.UpsertSectorResponse], error)
 	// DeleteSector removes a sector.
 	DeleteSector(context.Context, *connect.Request[v1.DeleteSectorRequest]) (*connect.Response[v1.DeleteSectorResponse], error)
+	// MoveSector moves a sector, with all its supplies, to another community (admins only).
+	MoveSector(context.Context, *connect.Request[v1.MoveSectorRequest]) (*connect.Response[v1.MoveSectorResponse], error)
 	// UpsertCommunity creates or updates a community.
 	UpsertCommunity(context.Context, *connect.Request[v1.UpsertCommunityRequest]) (*connect.Response[v1.UpsertCommunityResponse], error)
 	// DeleteCommunity removes a community.
@@ -877,6 +895,12 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(adminServiceMethods.ByName("DeleteSector")),
 		connect.WithHandlerOptions(opts...),
 	)
+	adminServiceMoveSectorHandler := connect.NewUnaryHandler(
+		AdminServiceMoveSectorProcedure,
+		svc.MoveSector,
+		connect.WithSchema(adminServiceMethods.ByName("MoveSector")),
+		connect.WithHandlerOptions(opts...),
+	)
 	adminServiceUpsertCommunityHandler := connect.NewUnaryHandler(
 		AdminServiceUpsertCommunityProcedure,
 		svc.UpsertCommunity,
@@ -1029,6 +1053,8 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 			adminServiceUpsertSectorHandler.ServeHTTP(w, r)
 		case AdminServiceDeleteSectorProcedure:
 			adminServiceDeleteSectorHandler.ServeHTTP(w, r)
+		case AdminServiceMoveSectorProcedure:
+			adminServiceMoveSectorHandler.ServeHTTP(w, r)
 		case AdminServiceUpsertCommunityProcedure:
 			adminServiceUpsertCommunityHandler.ServeHTTP(w, r)
 		case AdminServiceDeleteCommunityProcedure:
@@ -1146,6 +1172,10 @@ func (UnimplementedAdminServiceHandler) UpsertSector(context.Context, *connect.R
 
 func (UnimplementedAdminServiceHandler) DeleteSector(context.Context, *connect.Request[v1.DeleteSectorRequest]) (*connect.Response[v1.DeleteSectorResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.DeleteSector is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) MoveSector(context.Context, *connect.Request[v1.MoveSectorRequest]) (*connect.Response[v1.MoveSectorResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.MoveSector is not implemented"))
 }
 
 func (UnimplementedAdminServiceHandler) UpsertCommunity(context.Context, *connect.Request[v1.UpsertCommunityRequest]) (*connect.Response[v1.UpsertCommunityResponse], error) {

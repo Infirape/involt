@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ClosePeriodRequest, ClosePeriodResponse, DeleteCommunityRequest, DeleteCommunityResponse, DeleteCustomerRequest, DeleteCustomerResponse, DeleteSectorRequest, DeleteSectorResponse, GetCollectionsRequest, GetCollectionsResponse, GetCommunitiesRequest, GetCommunitiesResponse, GetCustomersRequest, GetCustomersResponse, GetCustomerStatusHistoryRequest, GetCustomerStatusHistoryResponse, GetDashboardStatsRequest, GetDashboardStatsResponse, GetPeriodStatsRequest, GetPeriodStatsResponse, GetReadingsRequest, GetReadingsResponse, GetSectorsRequest, GetSectorsResponse, GetSettingsRequest, GetSettingsResponse, GetUsersRequest, GetUsersResponse, ListPeriodsRequest, ListPeriodsResponse, LoginRequest, LoginResponse, OpenPeriodRequest, OpenPeriodResponse, SetCustomerServiceStatusRequest, SetCustomerServiceStatusResponse, TogglePaymentStatusRequest, TogglePaymentStatusResponse, UpdateSettingsRequest, UpdateSettingsResponse, UpsertCommunityRequest, UpsertCommunityResponse, UpsertCustomerRequest, UpsertCustomerResponse, UpsertSectorRequest, UpsertSectorResponse, UpsertUserRequest, UpsertUserResponse } from "./admin_pb";
+import { ClosePeriodRequest, ClosePeriodResponse, DeleteCommunityRequest, DeleteCommunityResponse, DeleteCustomerRequest, DeleteCustomerResponse, DeleteSectorRequest, DeleteSectorResponse, GetCollectionsRequest, GetCollectionsResponse, GetCommunitiesRequest, GetCommunitiesResponse, GetCustomersRequest, GetCustomersResponse, GetCustomerStatusHistoryRequest, GetCustomerStatusHistoryResponse, GetDashboardStatsRequest, GetDashboardStatsResponse, GetPeriodStatsRequest, GetPeriodStatsResponse, GetReadingsRequest, GetReadingsResponse, GetSectorsRequest, GetSectorsResponse, GetSettingsRequest, GetSettingsResponse, GetUsersRequest, GetUsersResponse, ListPeriodsRequest, ListPeriodsResponse, LoginRequest, LoginResponse, MoveSectorRequest, MoveSectorResponse, OpenPeriodRequest, OpenPeriodResponse, SetCustomerServiceStatusRequest, SetCustomerServiceStatusResponse, TogglePaymentStatusRequest, TogglePaymentStatusResponse, UpdateSettingsRequest, UpdateSettingsResponse, UpsertCommunityRequest, UpsertCommunityResponse, UpsertCustomerRequest, UpsertCustomerResponse, UpsertSectorRequest, UpsertSectorResponse, UpsertUserRequest, UpsertUserResponse } from "./admin_pb";
 import { MethodKind } from "@bufbuild/protobuf";
 import { CreateFlatChargeRequest, CreateFlatChargeResponse, GetCashClosingRequest, GetCashClosingResponse, GetCustomerAccountRequest, GetCustomerAccountResponse, RegisterPaymentRequest, RegisterPaymentResponse, VoidPaymentRequest, VoidPaymentResponse } from "./payments_pb";
 import { GetCollectionsDashboardRequest, GetCollectionsDashboardResponse, GetDebtorsRequest, GetDebtorsResponse } from "./reports_pb";
@@ -213,6 +213,17 @@ export const AdminService = {
       name: "DeleteSector",
       I: DeleteSectorRequest,
       O: DeleteSectorResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * MoveSector moves a sector, with all its supplies, to another community (admins only).
+     *
+     * @generated from rpc involt.v1.AdminService.MoveSector
+     */
+    moveSector: {
+      name: "MoveSector",
+      I: MoveSectorRequest,
+      O: MoveSectorResponse,
       kind: MethodKind.Unary,
     },
     /**
