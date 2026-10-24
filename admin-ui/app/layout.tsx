@@ -14,11 +14,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | InVolt - Gestión de Suministros",
-    default: "InVolt | Sistema de Gestión de Lecturas y Facturación",
+    template: "%s | Hidroeléctrica Qarwaqiru Michay",
+    default: "Hidroeléctrica Qarwaqiru Michay | Municipalidad Distrital de Chetilla",
   },
   description:
-    "Plataforma integral para la administración de lecturas, control de consumo y facturación de servicios eléctricos y agua.",
+    "Gestión de lecturas, facturación y cobranza del servicio eléctrico de la Municipalidad Distrital de Chetilla. Aliado tecnológico: InVolt.",
   keywords: [
     "gestión de suministros",
     "lecturas eléctricas",

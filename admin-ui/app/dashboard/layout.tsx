@@ -1,28 +1,29 @@
 "use client";
 
 import {
-  LayoutDashboard,
-  LogOut,
-  Settings,
-  Users,
-  Zap,
   Calendar,
   ChevronLeft,
   ChevronRight,
-  Menu,
-  X,
-  MapPin,
   DollarSign,
+  LayoutDashboard,
+  LogOut,
+  MapPin,
+  Menu,
+  Settings,
+  Users,
+  X,
+  Zap,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useAuth } from "@/lib/hooks/useAuth";
-import { useState, useEffect } from "react";
-import { useConfigStore } from "@/lib/store/useConfigStore";
-import { adminClient } from "@/lib/rpc";
+import { useEffect, useState } from "react";
 import { PeriodStatus } from "@/app/gen/involt/v1/models_pb";
+import { InvoltAlly } from "@/components/brand/InvoltAlly";
 import { PeriodSelector } from "@/components/dashboard/layout/PeriodSelector";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { adminClient } from "@/lib/rpc";
+import { useConfigStore } from "@/lib/store/useConfigStore";
 
 export default function DashboardLayout({
   children,
@@ -112,11 +113,11 @@ export default function DashboardLayout({
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-card/50 backdrop-blur-xl border-b border-white/5 z-50 px-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Image
-            src="/assets/logo.png"
-            alt="Logo"
+            src="/assets/escudo_chetilla.png"
+            alt="Municipalidad Distrital de Chetilla"
             width={32}
-            height={32}
-            className="rounded-lg"
+            height={35}
+            className="h-9 w-auto object-contain"
           />
           <span className="font-black tracking-tighter text-sm uppercase">
             QARWAQIRU
@@ -173,11 +174,11 @@ export default function DashboardLayout({
           className={`p-8 flex items-center gap-3 transition-all duration-500 ${isCollapsed ? "px-6" : "px-8"}`}
         >
           <Image
-            src="/assets/logo.png"
-            alt="Logo"
-            width={40}
-            height={40}
-            className="rounded-lg shrink-0"
+            src="/assets/escudo_chetilla.png"
+            alt="Municipalidad Distrital de Chetilla"
+            width={44}
+            height={48}
+            className="h-12 w-auto object-contain shrink-0"
           />
           {!isCollapsed && (
             <div className="flex flex-col animate-in fade-in slide-in-from-left-2 duration-500">
@@ -238,7 +239,8 @@ export default function DashboardLayout({
           })}
         </nav>
 
-        <div className="p-3 border-t border-white/5">
+        <div className="p-3 border-t border-white/5 space-y-3">
+          <InvoltAlly compact={isCollapsed} className={isCollapsed ? "justify-center" : "px-4"} />
           <button
             type="button"
             onClick={handleLogout}
