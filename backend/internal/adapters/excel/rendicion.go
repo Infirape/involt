@@ -42,6 +42,7 @@ func writeRendicion(b *book, data ports.RemittanceData, meta ports.WorkbookMeta)
 
 	b.band(sheet, 1, colAll, 1, "RENDICIÓN SEMANAL DE COBRANZA", cellStyle{bold: true, size: 22, color: ledgerTitle})
 	_ = f.SetRowHeight(sheet, 1, 34)
+	b.addLogo(sheet, "J2", 118, 40, 4) // right of the info block, like the ledger template
 	row := writeRendicionInfo(b, sheet, 3, meta)
 
 	headerRow := row + 1

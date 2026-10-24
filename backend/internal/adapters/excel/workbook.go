@@ -4,10 +4,12 @@ package excel
 
 import (
 	"fmt"
+	_ "image/png" // decode the logo for AddPicture
 	"time"
 
 	"github.com/xuri/excelize/v2"
 
+	"github.com/infira/involt/backend/internal/adapters/assets"
 	"github.com/infira/involt/backend/internal/ports"
 )
 
@@ -78,9 +80,11 @@ func colName(col int) string {
 	return name
 }
 
-// writeHeader prints the report title, entity and filters; returns the next free row.
+// writeHeader prints the letterhead (report title, entity, municipal logo at F1, right of the
+// text and above the charts) and the filters; returns the next free row.
 func (b *book) writeHeader(sheet string, meta ports.WorkbookMeta) int {
 	f := b.f
+	b.addLogo(sheet, "F1", 62, 8, 2)
 	_ = f.SetCellValue(sheet, "A1", meta.Title)
 	_ = f.SetCellStyle(sheet, "A1", "A1", b.title)
 	_ = f.SetCellValue(sheet, "A2", fmt.Sprintf("%s · %s", meta.Entity, meta.Company))
@@ -231,6 +235,25 @@ func (b *book) freezeHeader(sheet string, row int) {
 		Selection: []excelize.Selection{{SQRef: first, ActiveCell: first, Pane: "bottomLeft"}},
 	})
 }
+
+// logoFile is the municipal coat of arms, a small copy sized for spreadsheets.
+const logoFile = "logo_chetilla_small.png"
+
+// addLogo floats the municipal logo at cell, scaled to heightPx (no-op if the asset is missing).
+func (b *book) addLogo(sheet, at string, heightPx float64, offsetX, offsetY int) {
+	path := assets.Path(logoFile)
+	if path == "" {
+		return
+	}
+	scale := heightPx / logoHeightPx
+	_ = b.f.AddPicture(sheet, at, path, &excelize.GraphicOptions{
+		ScaleX: scale, ScaleY: scale, OffsetX: offsetX, OffsetY: offsetY,
+		Positioning: "oneCell", LockAspectRatio: true, AltText: "Municipalidad Distrital de Chetilla",
+	})
+}
+
+// logoHeightPx is the pixel height of logoFile.
+const logoHeightPx = 160
 
 func (b *book) bytes() ([]byte, error) {
 	b.f.SetActiveSheet(0)

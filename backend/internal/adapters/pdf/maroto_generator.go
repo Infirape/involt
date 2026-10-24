@@ -7,9 +7,9 @@ import (
 	"image"
 	"image/color"
 	"image/png"
-	"os"
 	"time"
 
+	"github.com/infira/involt/backend/internal/adapters/assets"
 	"github.com/infira/involt/backend/internal/domain"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
@@ -38,19 +38,8 @@ func NewMarotoGenerator() *MarotoGenerator {
 }
 
 func (g *MarotoGenerator) resolveLogoPath() string {
-	candidates := []string{
-		"assets/logo_chetilla.png",
-		"../assets/logo_chetilla.png",
-		"../../assets/logo_chetilla.png",
-		"../../../assets/logo_chetilla.png",
-		"backend/assets/logo_chetilla.png",
-		"../backend/assets/logo_chetilla.png",
-		"../../backend/assets/logo_chetilla.png",
-	}
-	for _, c := range candidates {
-		if _, err := os.Stat(c); err == nil {
-			return c
-		}
+	if p := assets.Path("logo_chetilla.png"); p != "" {
+		return p
 	}
 	return "assets/logo_chetilla.png" // fallback
 }

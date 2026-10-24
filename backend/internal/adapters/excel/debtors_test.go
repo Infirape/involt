@@ -123,3 +123,31 @@ func TestAgingRangeLabel(t *testing.T) {
 		}
 	}
 }
+
+// hasLogo reports whether the sheet has a picture anchored at cell.
+func hasLogo(t *testing.T, f *excelize.File, sheet, cell string) bool {
+	t.Helper()
+	pics, err := f.GetPictures(sheet, cell)
+	return err == nil && len(pics) == 1
+}
+
+func TestWorkbooksCarryTheMunicipalLogo(t *testing.T) {
+	g := NewGenerator()
+	ctx := context.Background()
+	debtors, _ := g.DebtorsWorkbook(ctx, &involtv1.GetDebtorsResponse{}, testMeta("x"))
+	closing, _ := g.CashClosingWorkbook(ctx, &involtv1.GetCashClosingResponse{}, testMeta("x"))
+	collections, _ := g.CollectionsWorkbook(ctx, collectionsFixture(), testMeta("x"))
+	remit, _ := g.RemittanceWorkbook(ctx, ports.RemittanceData{Lines: collectionsFixture().Payments}, testMeta("x"))
+	for name, c := range map[string]struct {
+		data        []byte
+		sheet, cell string
+	}{
+		"morosos": {debtors, "Resumen", "F1"}, "cierre": {closing, "Resumen", "F1"},
+		"cobranzas": {collections, "Resumen", "F1"}, "rendición": {remit, "Rendición", "J2"},
+	} {
+		f, _ := openWorkbook(t, c.data)
+		if !hasLogo(t, f, c.sheet, c.cell) {
+			t.Fatalf("%s: no logo at %s!%s", name, c.sheet, c.cell)
+		}
+	}
+}
