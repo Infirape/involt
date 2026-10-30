@@ -11,6 +11,7 @@ import 'package:fixnum/fixnum.dart' as fixnum;
 import '../../gen/proto/involt/v1/sync.pb.dart' as pb;
 import '../../gen/proto/involt/v1/models.pb.dart' as models;
 import '../database.dart';
+import 'photo_store.dart';
 
 import '../../config/app_config.dart';
 
@@ -18,12 +19,14 @@ class SyncService {
   final AppDatabase db;
   final String baseUrl;
   final String? authToken;
+  final PhotoStore _photos;
 
   SyncService({
     required this.db,
     this.baseUrl = AppConfig.baseUrl,
     this.authToken,
-  });
+    PhotoStore? photos,
+  }) : _photos = photos ?? PhotoStore.appDocuments();
 
   protocol.Transport _getTransport() {
     final client = io.HttpClient();
@@ -368,18 +371,25 @@ class SyncService {
 
       print('📤 Sync: Pushing ${unsynced.length} readings...');
 
-      // 2. Prepare Protobuf request
+      // 2. Prepare Protobuf request. Photos still on the device are uploaded first; a reading
+      // whose photo fails to upload stays unsynced and is retried on the next sync.
       final request = pb.PushReadingsRequest();
+      final pushed = <Reading>[];
+      var pendingPhotos = 0;
       for (final r in unsynced) {
-        String? remotePhotoUrl = r.photoUrl;
-
-        // If it's a local file path, upload it first
-        if (r.photoUrl != null &&
-            r.photoUrl!.startsWith('/') &&
-            io.File(r.photoUrl!).existsSync()) {
-          debugPrint('📸 Sync: Uploading photo for reading ${r.id}...');
-          remotePhotoUrl = await uploadPhoto(io.File(r.photoUrl!));
+        final photo = await preparePhoto(r.photoUrl, uploadPhoto);
+        if (photo.retry) {
+          pendingPhotos++;
+          continue;
         }
+        if (photo.uploaded) {
+          // Keep the server copy now, so a failed push does not upload the photo again.
+          await (db.update(db.readings)..where((t) => t.id.equals(r.id))).write(
+            ReadingsCompanion(photoUrl: Value(photo.url)),
+          );
+          await _photos.discard(r.photoUrl);
+        }
+        pushed.add(r);
 
         request.readings.add(
           models.Reading(
@@ -388,7 +398,7 @@ class SyncService {
             previousValue: r.previousValue,
             currentValue: r.currentValue,
             consumption: r.consumptionKwh,
-            photoUrl: remotePhotoUrl ?? '',
+            photoUrl: photo.url,
             timestamp: r.timestamp.toIso8601String(),
             latitude: r.latitude,
             longitude: r.longitude,
@@ -400,6 +410,13 @@ class SyncService {
           ),
         );
       }
+      final photosError = pendingPhotos == 0
+          ? null
+          : Exception(
+              'No se pudieron subir $pendingPhotos fotos; esas lecturas se enviarán '
+              'en la próxima sincronización.',
+            );
+      if (pushed.isEmpty) throw photosError!;
 
       // 3. Call RPC
       final response = await transport
@@ -421,7 +438,7 @@ class SyncService {
 
         // 4. Mark as synced in local DB
         await db.batch((batch) {
-          for (final r in unsynced) {
+          for (final r in pushed) {
             batch.update(
               db.readings,
               ReadingsCompanion(isSynced: const Value(true)),
@@ -430,6 +447,7 @@ class SyncService {
           }
         });
         await _normalizeLocalReadingPeriodsFromIds();
+        if (photosError != null) throw photosError;
       } else {
         debugPrint('⚠️ Sync: Server reported failure during push');
       }

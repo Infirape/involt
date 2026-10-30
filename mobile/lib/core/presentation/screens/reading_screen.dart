@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../data/database.dart';
 import '../../data/repositories/drift_reading_repository.dart';
+import '../../data/services/photo_store.dart';
 import '../theme/app_colors.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/numeric_keypad.dart';
@@ -25,6 +26,11 @@ class _ReadingScreenState extends State<ReadingScreen> {
   final TextEditingController _commentController = TextEditingController();
 
   File? _image;
+  // Photo saved with the existing reading (device path or server path), and whether the
+  // user took a new one since.
+  String? _savedPhotoUrl;
+  bool _newPhoto = false;
+  final _photos = PhotoStore.appDocuments();
   Position? _currentPosition;
   bool _isSaving = false;
   double _previousValue = 0;
@@ -97,8 +103,10 @@ class _ReadingScreenState extends State<ReadingScreen> {
           _isAlreadyRegistered = true;
           _kwhController.text = existingReading.currentValue.toStringAsFixed(1);
           _commentController.text = existingReading.comment ?? '';
-          if (existingReading.photoUrl != null) {
-            _image = File(existingReading.photoUrl!);
+          _savedPhotoUrl = existingReading.photoUrl;
+          if (PhotoStore.isLocal(_savedPhotoUrl) &&
+              File(_savedPhotoUrl!).existsSync()) {
+            _image = File(_savedPhotoUrl!);
           }
           _showDuplicateEntryWarning();
         });
@@ -152,9 +160,17 @@ class _ReadingScreenState extends State<ReadingScreen> {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
       source: ImageSource.camera,
+      // Enough to read a meter, ~300 KB instead of a full-size camera photo.
+      maxWidth: 1600,
+      maxHeight: 1600,
       imageQuality: 70,
     );
-    if (pickedFile != null) setState(() => _image = File(pickedFile.path));
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+        _newPhoto = true;
+      });
+    }
   }
 
   double get _currentValue => double.tryParse(_kwhController.text) ?? 0;
@@ -215,14 +231,16 @@ class _ReadingScreenState extends State<ReadingScreen> {
 
     try {
       final repo = DriftReadingRepository(widget.db);
+      final readingId = 'read-${widget.customer.id}-$selectedPeriod';
+      final photoUrl = await _photoToSave(readingId);
       final reading = Reading(
-        id: 'read-${widget.customer.id}-$selectedPeriod',
+        id: readingId,
         customerId: widget.customer.id,
         period: selectedPeriod,
         previousValue: _previousValue,
         currentValue: _currentValue,
         consumptionKwh: _consumption,
-        photoUrl: _image?.path,
+        photoUrl: photoUrl,
         timestamp: DateTime.now(),
         latitude: _currentPosition?.latitude ?? 0,
         longitude: _currentPosition?.longitude ?? 0,
@@ -235,6 +253,7 @@ class _ReadingScreenState extends State<ReadingScreen> {
       );
 
       await repo.saveReading(reading);
+      if (_newPhoto) await _photos.discard(_savedPhotoUrl); // replaced
       if (mounted) Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(
@@ -243,6 +262,16 @@ class _ReadingScreenState extends State<ReadingScreen> {
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
+  }
+
+  /// A new photo is copied out of the camera cache; otherwise the saved one is kept.
+  Future<String?> _photoToSave(String readingId) async {
+    if (!_newPhoto || _image == null) return _savedPhotoUrl;
+    final kept = await _photos.keep(_image!.path, readingId);
+    try {
+      await _image!.delete(); // the camera cache copy
+    } catch (_) {}
+    return kept;
   }
 
   @override
@@ -441,14 +470,17 @@ class _ReadingScreenState extends State<ReadingScreen> {
               : null,
         ),
         child: _image == null
-            ? const Row(
+            ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.camera_alt, color: AppColors.volt, size: 20),
-                  SizedBox(width: 10),
+                  const Icon(Icons.camera_alt, color: AppColors.volt, size: 20),
+                  const SizedBox(width: 10),
                   Text(
-                    'AÑADIR FOTO (OPCIONAL)',
-                    style: TextStyle(
+                    // An uploaded photo is only on the server.
+                    (_savedPhotoUrl ?? '').isNotEmpty
+                        ? 'FOTO ENVIADA · TOCAR PARA CAMBIAR'
+                        : 'AÑADIR FOTO (OPCIONAL)',
+                    style: const TextStyle(
                       color: AppColors.volt,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
