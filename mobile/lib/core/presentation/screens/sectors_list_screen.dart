@@ -103,8 +103,8 @@ class _SectorsListScreenState extends State<SectorsListScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text(
-              'Hidroeléctrica Qarwaqiru Michay',
+            Text(
+              appState.brand.name,
               style: TextStyle(
                 color: AppColors.textPrimary,
                 fontWeight: FontWeight.bold,

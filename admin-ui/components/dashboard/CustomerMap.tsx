@@ -2,10 +2,21 @@
 
 import L from "leaflet";
 import { useEffect, useMemo, useState } from "react";
-import { MapContainer, Marker, Popup, TileLayer, ZoomControl } from "react-leaflet";
+import { MapContainer, Marker, Popup, TileLayer, useMap, ZoomControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import type { Customer } from "@/app/gen/involt/v1/models_pb";
+import { centerOf, DEFAULT_MAP_CENTER, type LatLng } from "@/lib/geo";
+import { useBrand } from "@/lib/hooks/useBrand";
 import { adminClient } from "@/lib/rpc";
+
+/** Moves the map once the customers (and so their center) are known. */
+function Recenter({ center }: { center: LatLng }) {
+  const map = useMap();
+  useEffect(() => {
+    map.setView(center);
+  }, [map, center]);
+  return null;
+}
 
 export default function CustomerMap() {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -26,8 +37,9 @@ export default function CustomerMap() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Chetilla, Cajamarca center
-  const center = useMemo<[number, number]>(() => [-7.147, -78.6727], []);
+  const brand = useBrand();
+  // Centered on the located customers.
+  const center = useMemo<LatLng>(() => centerOf(customers) ?? DEFAULT_MAP_CENTER, [customers]);
 
   // Custom Primary Glow Icon
   const primaryIcon = useMemo(() => {
@@ -67,7 +79,7 @@ export default function CustomerMap() {
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
-              Chetilla <span className="text-muted-foreground">QARWAQIRU</span>
+              {brand.name}
             </p>
           </div>
         </div>
@@ -85,6 +97,7 @@ export default function CustomerMap() {
         className="h-full w-full brightness-[0.8] contrast-[1.1]"
       >
         <ZoomControl position="bottomright" />
+        <Recenter center={center} />
         <TileLayer
           attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
           url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"

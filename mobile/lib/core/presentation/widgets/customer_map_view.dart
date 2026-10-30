@@ -63,8 +63,8 @@ class _CustomerMapViewState extends State<CustomerMapView> {
 
   @override
   Widget build(BuildContext context) {
-    // Initial center: User location > First customer > Chetilla
-    LatLng initialCenter = const LatLng(-7.1470, -78.6727); 
+    // Initial center: User location > First customer > default
+    LatLng initialCenter = const LatLng(-12.0464, -77.0428); // Lima, Perú
     if (widget.userLocation != null) {
       initialCenter = widget.userLocation!;
     } else if (widget.customers.isNotEmpty) {

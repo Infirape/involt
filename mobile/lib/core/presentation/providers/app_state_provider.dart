@@ -7,6 +7,7 @@ import 'package:connectrpc/protocol/connect.dart' as protocol;
 import '../../data/database.dart';
 import '../../gen/proto/involt/v1/admin.pb.dart' as pb;
 import '../../config/app_config.dart';
+import '../../config/brand.dart';
 import 'package:drift/drift.dart';
 
 import 'package:bcrypt/bcrypt.dart';
@@ -18,6 +19,7 @@ class AppStateProvider extends ChangeNotifier {
   String _userName = '';
   String _userRole = '';
   String _userEmail = '';
+  Brand _brand = Brand.fallback;
   List<String> _availablePeriods = const [];
   bool _isLoading = true;
 
@@ -30,6 +32,9 @@ class AppStateProvider extends ChangeNotifier {
   String get userName => _userName;
   String get userRole => _userRole;
   String get userEmail => _userEmail;
+
+  /// Brand of the user's company, InVolt until a login tells us the company.
+  Brand get brand => _brand;
   bool get isLoading => _isLoading;
   bool get isAuthenticated => _authToken.isNotEmpty;
   bool get isOffline => _authToken == 'OFFLINE_MODE';
@@ -60,6 +65,10 @@ class AppStateProvider extends ChangeNotifier {
     _userName = settingsMap['user_name'] ?? '';
     _userRole = settingsMap['user_role'] ?? '';
     _userEmail = settingsMap['user_email'] ?? '';
+    _brand = Brand.fromCompany(
+      name: settingsMap['company_name'],
+      entity: settingsMap['company_entity'],
+    );
 
     final enabledPeriodsSetting = settingsMap['enabled_periods'];
     _availablePeriods = _parseEnabledPeriods(enabledPeriodsSetting);
@@ -158,6 +167,7 @@ class AppStateProvider extends ChangeNotifier {
           role: response.message.user.role.name,
           email: response.message.user.email,
         );
+        await _persistBrand(response.message.user);
         return true;
       }
       return false;
@@ -201,6 +211,28 @@ class AppStateProvider extends ChangeNotifier {
       );
     });
 
+    notifyListeners();
+  }
+
+  /// Saves the company brand from an online login. It survives logout so offline logins on
+  /// this device keep showing it.
+  Future<void> _persistBrand(pb.User user) async {
+    _brand = user.hasCompany()
+        ? Brand.fromCompany(name: user.company.name, entity: user.company.entity)
+        : Brand.fallback;
+    final values = {
+      'company_name': user.hasCompany() ? user.company.name : '',
+      'company_entity': user.hasCompany() ? user.company.entity : '',
+    };
+    await db.batch((batch) {
+      for (final entry in values.entries) {
+        batch.insert(
+          db.settings,
+          SettingsCompanion.insert(key: entry.key, value: entry.value),
+          mode: InsertMode.insertOrReplace,
+        );
+      }
+    });
     notifyListeners();
   }
 

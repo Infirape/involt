@@ -3,8 +3,8 @@
 -- Configuración de la municipalidad/empresa
 CREATE TABLE IF NOT EXISTS settings (
     id TEXT PRIMARY KEY DEFAULT 'main',
-    municipalidad TEXT NOT NULL DEFAULT 'MUNICIPALIDAD DISTRITAL DE CHETILLA',
-    empresa TEXT NOT NULL DEFAULT 'HIDROELECTRICA QARWAQIRU MICHAY',
+    municipalidad TEXT NOT NULL DEFAULT '',
+    empresa TEXT NOT NULL DEFAULT 'InVolt',
     ruc TEXT NOT NULL DEFAULT '',
     direccion TEXT NOT NULL DEFAULT '',
     telefono TEXT NOT NULL DEFAULT '',
@@ -91,10 +91,10 @@ CREATE TABLE IF NOT EXISTS readings (
 );
 
 -- Initial Mock Data for Testing
-INSERT INTO communities (id, name) VALUES ('COM-001', 'Chetilla') ON CONFLICT DO NOTHING;
-INSERT INTO sectors (id, community_id, name) VALUES ('SEC-001', 'COM-001', 'Chetilla Centro') ON CONFLICT DO NOTHING;
+INSERT INTO communities (id, name) VALUES ('COM-001', 'Comunidad Principal') ON CONFLICT DO NOTHING;
+INSERT INTO sectors (id, community_id, name) VALUES ('SEC-001', 'COM-001', 'Centro') ON CONFLICT DO NOTHING;
 INSERT INTO sectors (id, community_id, name) VALUES ('SEC-002', 'COM-001', 'La Libertad') ON CONFLICT DO NOTHING;
-INSERT INTO settings (id, municipalidad, empresa, dias_vencimiento) VALUES ('main', 'MUNICIPALIDAD DISTRITAL DE CHETILLA', 'HIDROELECTRICA QARWAQIRU MICHAY', 15) ON CONFLICT DO NOTHING;
+INSERT INTO settings (id, municipalidad, empresa, dias_vencimiento) VALUES ('main', '', 'InVolt', 15) ON CONFLICT DO NOTHING;
 
 -- Admin and RBAC
 CREATE TABLE IF NOT EXISTS users (

@@ -82,7 +82,7 @@ export function CommunityModal({
                   )
                 }
                 className="bg-white/5 border-white/5 focus:border-primary/30 rounded-xl h-11"
-                placeholder="Ej: Chetilla Centro"
+                placeholder="Ej: Centro Poblado"
               />
             </div>
 

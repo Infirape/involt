@@ -37,11 +37,17 @@ func NewMarotoGenerator() *MarotoGenerator {
 	return &MarotoGenerator{}
 }
 
-func (g *MarotoGenerator) resolveLogoPath() string {
-	if p := assets.Path("logo_chetilla.png"); p != "" {
+// resolveLogoPath finds the company logo of the settings, falling back to the InVolt one.
+func (g *MarotoGenerator) resolveLogoPath(settings *domain.Settings) string {
+	if settings != nil && settings.Logo != "" {
+		if p := assets.Path(settings.Logo); p != "" {
+			return p
+		}
+	}
+	if p := assets.Path(domain.DefaultLogo); p != "" {
 		return p
 	}
-	return "assets/logo_chetilla.png" // fallback
+	return "assets/" + domain.DefaultLogo
 }
 
 func (g *MarotoGenerator) drawSmiley(img *image.RGBA, x0, y0, r int, happy bool) {
@@ -356,7 +362,7 @@ func (g *MarotoGenerator) addReceiptComponents(m core.Maroto, reading *domain.Re
 			).WithStyle(&props.Cell{BorderType: border.Left | border.Top, BorderThickness: borderThick, BorderColor: defaultBorderColor}),
 
 			col.New(4).Add(
-				mimage.NewFromFile(g.resolveLogoPath(), props.Rect{
+				mimage.NewFromFile(g.resolveLogoPath(settings), props.Rect{
 					Center:  true,
 					Percent: 75,
 					Top:     0.5,

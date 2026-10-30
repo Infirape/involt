@@ -14,14 +14,15 @@ import {
   X,
   Zap,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PeriodStatus } from "@/app/gen/involt/v1/models_pb";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { InvoltAlly } from "@/components/brand/InvoltAlly";
 import { PeriodSelector } from "@/components/dashboard/layout/PeriodSelector";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useBrand } from "@/lib/hooks/useBrand";
 import { adminClient } from "@/lib/rpc";
 import { useConfigStore } from "@/lib/store/useConfigStore";
 
@@ -33,6 +34,7 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const router = useRouter();
   const { isAdmin } = useAuth();
+  const brand = useBrand();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -112,15 +114,14 @@ export default function DashboardLayout({
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-card/50 backdrop-blur-xl border-b border-white/5 z-50 px-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Image
-            src="/assets/escudo_chetilla.png"
-            alt="Municipalidad Distrital de Chetilla"
+          <BrandLogo
+            brand={brand}
             width={32}
             height={35}
             className="h-9 w-auto object-contain"
           />
-          <span className="font-black tracking-tighter text-sm uppercase">
-            QARWAQIRU
+          <span className="font-black tracking-tighter text-sm uppercase line-clamp-1">
+            {brand.name}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -173,17 +174,16 @@ export default function DashboardLayout({
         <div
           className={`p-8 flex items-center gap-3 transition-all duration-500 ${isCollapsed ? "px-6" : "px-8"}`}
         >
-          <Image
-            src="/assets/escudo_chetilla.png"
-            alt="Municipalidad Distrital de Chetilla"
+          <BrandLogo
+            brand={brand}
             width={44}
             height={48}
             className="h-12 w-auto object-contain shrink-0"
           />
           {!isCollapsed && (
             <div className="flex flex-col animate-in fade-in slide-in-from-left-2 duration-500">
-              <span className="font-black tracking-tighter text-sm uppercase">
-                QARWAQIRU
+              <span className="font-black tracking-tighter text-sm uppercase line-clamp-2">
+                {brand.name}
               </span>
               <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
                 Admin Panel

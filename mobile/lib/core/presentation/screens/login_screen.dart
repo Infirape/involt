@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_colors.dart';
 import '../providers/app_state_provider.dart';
+import '../../config/app_config.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -126,8 +127,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                 ],
                               ).createShader(bounds);
                             },
-                            child: const Text(
-                              'QARWAQIRU MICHAY',
+                            child: Text(
+                              AppConfig.brandName.toUpperCase(),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 32,

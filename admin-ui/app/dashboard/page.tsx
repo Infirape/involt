@@ -15,6 +15,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { useBrand } from "@/lib/hooks/useBrand";
 import { useDashboard } from "./hooks/useDashboard";
 
 const CustomerMap = dynamic(
@@ -37,6 +38,7 @@ const CustomerMap = dynamic(
 export default function DashboardPage() {
   const router = useRouter();
   const { data, consumptionDelta } = useDashboard();
+  const brand = useBrand();
 
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   useEffect(() => {
@@ -118,7 +120,7 @@ export default function DashboardPage() {
             Dashboard
           </h1>
           <p className="text-muted-foreground/40 font-bold uppercase text-[10px] tracking-[0.3em]">
-            Gestión de Suministro Eléctrico • Chetilla, Cajamarca
+            Gestión de Suministro Eléctrico{brand.isDefault ? "" : ` • ${brand.name}`}
           </p>
         </div>
       </div>

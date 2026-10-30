@@ -6,7 +6,7 @@ interface InvoltAllyProps {
   className?: string;
 }
 
-/** Footer credit: InVolt appears only as the technology ally; Chetilla is the main brand. */
+/** Footer credit: InVolt appears only as the technology ally; the client company is the main brand. */
 export function InvoltAlly({ compact = false, className = "" }: InvoltAllyProps) {
   return (
     <div

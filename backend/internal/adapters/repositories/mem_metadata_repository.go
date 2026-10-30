@@ -23,9 +23,9 @@ func NewMemMetadataRepository() *MemMetadataRepository {
 }
 
 func (r *MemMetadataRepository) seed() {
-	r.communities["com-1"] = domain.Community{ID: "com-1", Name: "Chetilla"}
+	r.communities["com-1"] = domain.Community{ID: "com-1", Name: "Comunidad Demo"}
 
-	sectors := []string{"Alto Chetilla", "Cadena", "Casadencito", "Cercado", "Cochapampa"}
+	sectors := []string{"Sector Alto", "Sector Bajo", "Sector Centro", "Sector Norte", "Sector Sur"}
 	for i, name := range sectors {
 		id := "sec-" + string(rune('1'+i))
 		r.sectors[id] = domain.Sector{

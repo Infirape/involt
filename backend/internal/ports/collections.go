@@ -46,6 +46,7 @@ type AgreementDocumentGenerator interface {
 type WorkbookMeta struct {
 	Entity      string
 	Company     string
+	Logo        string // relative to the assets directory; empty = InVolt logo
 	Title       string
 	Filters     [][2]string // label, value
 	GeneratedAt time.Time

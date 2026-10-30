@@ -26,8 +26,7 @@ func (h *SettingsHandler) GetSettings(w http.ResponseWriter, r *http.Request) {
 		// Return default
 		settings = &domain.Settings{
 			ID:              "main",
-			Municipalidad:   "MUNICIPALIDAD DISTRITAL DE CHETILLA",
-			Empresa:         "HIDROELECTRICA QARWAQIRU MICHAY",
+			Empresa:         domain.DefaultBrandName,
 			DiasVencimiento: 15,
 		}
 	}

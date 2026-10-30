@@ -223,7 +223,7 @@ func (PeriodStatus) EnumDescriptor() ([]byte, []int) {
 	return file_involt_v1_models_proto_rawDescGZIP(), []int{3}
 }
 
-// Community represents a village or Caserio (e.g., Alto Chetilla, Cadena).
+// Community represents a village or Caserio.
 type Community struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`

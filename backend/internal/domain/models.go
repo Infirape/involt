@@ -27,6 +27,9 @@ type Settings struct {
 	IGV             bool      `db:"igv"`
 	// ReceiptCopies is DUPLICATE (usuario + administrativo) or SINGLE (solo usuario).
 	ReceiptCopies   string    `db:"receipt_copies"`
+	// Logo is the brand logo for documents, relative to the assets directory. It is not stored
+	// with the settings: it comes from the company of the user asking.
+	Logo            string    `db:"-"`
 	CreatedAt       time.Time `db:"created_at"`
 	UpdatedAt       time.Time `db:"updated_at"`
 }

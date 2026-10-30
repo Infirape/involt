@@ -21,5 +21,8 @@ void main() {
     
     // Note: We don't pumpAndSettle here because SplashScreen has a 5s loop animation
     // and an async sync call that would fail/hang in this simple smoke test.
+    // Unmount it and let its startup delay elapse so no timer is left pending.
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 6));
   });
 }

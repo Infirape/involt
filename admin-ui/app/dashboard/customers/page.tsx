@@ -31,7 +31,7 @@ export default function CustomersPage() {
             Gestión de Suministros
           </h1>
           <p className="text-muted-foreground font-medium">
-            Padrón general de clientes y medidores de Qarwaqiru
+            Padrón general de clientes y medidores
           </p>
         </div>
       </div>

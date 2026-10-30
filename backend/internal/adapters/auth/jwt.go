@@ -21,6 +21,7 @@ type Claims struct {
 	Email             string   `json:"email"`
 	Role              string   `json:"role"`
 	AssignedSectorIDs []string `json:"assigned_sector_ids"`
+	CompanyID         string   `json:"company_id,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -30,6 +31,7 @@ func (s *JWTService) GenerateToken(user *domain.User) (string, error) {
 		Email:             user.Email,
 		Role:              string(user.Role),
 		AssignedSectorIDs: user.AssignedSectorIDs,
+		CompanyID:         user.CompanyID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

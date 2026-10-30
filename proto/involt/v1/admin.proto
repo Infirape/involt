@@ -277,6 +277,17 @@ message User {
   string email = 2;
   UserRole role = 3;
   repeated string assigned_sector_ids = 4;
+  // The client company the user works for; unset means the InVolt brand.
+  Company company = 5;
+}
+
+// Company is the brand shown to its users and printed on documents.
+message Company {
+  string id = 1;
+  string name = 2;
+  string entity = 3;
+  // Logo path served by the backend under /assets/; empty means the InVolt logo.
+  string logo = 4;
 }
 
 message GetDashboardStatsRequest {

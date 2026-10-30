@@ -3,6 +3,7 @@
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { DEFAULT_MAP_CENTER } from "@/lib/geo";
 
 // Fix for default marker icon in Leaflet
 const icon = L.icon({
@@ -38,9 +39,9 @@ export default function LocationPicker({
   lng,
   onChange,
 }: LocationPickerProps) {
-  // Default to Chetilla if lat/lng are 0
-  const centerLat = lat !== 0 ? lat : -7.1475;
-  const centerLng = lng !== 0 ? lng : -78.6186;
+  // Default center when the customer has no location yet
+  const centerLat = lat !== 0 ? lat : DEFAULT_MAP_CENTER[0];
+  const centerLng = lng !== 0 ? lng : DEFAULT_MAP_CENTER[1];
 
   return (
     <div className="h-64 w-full rounded-2xl overflow-hidden border border-white/10 relative group">

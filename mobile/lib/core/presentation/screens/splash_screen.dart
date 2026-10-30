@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:involt/core/config/app_config.dart';
 import 'package:involt/core/presentation/theme/app_colors.dart';
 import 'package:involt/core/data/database.dart';
 import 'package:involt/main.dart'; // To access MainNavigationScreen
@@ -166,8 +167,8 @@ class _SplashScreenState extends State<SplashScreen>
                         ],
                       ).createShader(bounds);
                     },
-                    child: const Text(
-                      'QARWAQIRU MICHAY',
+                    child: Text(
+                      AppConfig.brandName,
                       style: TextStyle(
                         fontSize: 40,
                         fontWeight: FontWeight.w900,

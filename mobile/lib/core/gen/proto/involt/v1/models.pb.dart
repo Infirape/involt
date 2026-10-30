@@ -17,7 +17,7 @@ import 'models.pbenum.dart';
 
 export 'models.pbenum.dart';
 
-/// Community represents a village or Caserio (e.g., Alto Chetilla, Cadena).
+/// Community represents a village or Caserio.
 class Community extends $pb.GeneratedMessage {
   factory Community({
     $core.String? id,

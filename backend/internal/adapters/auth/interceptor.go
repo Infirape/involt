@@ -19,6 +19,7 @@ type UserContext struct {
 	Email             string
 	Role              string
 	AssignedSectorIDs []string
+	CompanyID         string
 }
 
 // NewAuthInterceptor creates a new ConnectRPC interceptor for JWT validation
@@ -45,15 +46,7 @@ func NewAuthInterceptor(jwtService *JWTService) connect.UnaryInterceptorFunc {
 				return nil, connect.NewError(connect.CodeUnauthenticated, err)
 			}
 
-			userCtx := &UserContext{
-				ID:                claims.UserID,
-				Email:             claims.Email,
-				Role:              claims.Role,
-				AssignedSectorIDs: claims.AssignedSectorIDs,
-			}
-
-			newCtx := context.WithValue(ctx, UserContextKey, userCtx)
-			return next(newCtx, req)
+			return next(WithClaims(ctx, claims), req)
 		}
 	}
 }
@@ -62,4 +55,15 @@ func NewAuthInterceptor(jwtService *JWTService) connect.UnaryInterceptorFunc {
 func GetUserFromContext(ctx context.Context) (*UserContext, bool) {
 	user, ok := ctx.Value(UserContextKey).(*UserContext)
 	return user, ok
+}
+
+// WithClaims stores the authenticated user from a validated token in the context.
+func WithClaims(ctx context.Context, claims *Claims) context.Context {
+	return context.WithValue(ctx, UserContextKey, &UserContext{
+		ID:                claims.UserID,
+		Email:             claims.Email,
+		Role:              claims.Role,
+		AssignedSectorIDs: claims.AssignedSectorIDs,
+		CompanyID:         claims.CompanyID,
+	})
 }

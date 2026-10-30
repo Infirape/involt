@@ -458,6 +458,7 @@ const User$json = {
     {'1': 'email', '3': 2, '4': 1, '5': 9, '10': 'email'},
     {'1': 'role', '3': 3, '4': 1, '5': 14, '6': '.involt.v1.UserRole', '10': 'role'},
     {'1': 'assigned_sector_ids', '3': 4, '4': 3, '5': 9, '10': 'assignedSectorIds'},
+    {'1': 'company', '3': 5, '4': 1, '5': 11, '6': '.involt.v1.Company', '10': 'company'},
   ],
 };
 
@@ -465,7 +466,24 @@ const User$json = {
 final $typed_data.Uint8List userDescriptor = $convert.base64Decode(
     'CgRVc2VyEg4KAmlkGAEgASgJUgJpZBIUCgVlbWFpbBgCIAEoCVIFZW1haWwSJwoEcm9sZRgDIA'
     'EoDjITLmludm9sdC52MS5Vc2VyUm9sZVIEcm9sZRIuChNhc3NpZ25lZF9zZWN0b3JfaWRzGAQg'
-    'AygJUhFhc3NpZ25lZFNlY3Rvcklkcw==');
+    'AygJUhFhc3NpZ25lZFNlY3RvcklkcxIsCgdjb21wYW55GAUgASgLMhIuaW52b2x0LnYxLkNvbX'
+    'BhbnlSB2NvbXBhbnk=');
+
+@$core.Deprecated('Use companyDescriptor instead')
+const Company$json = {
+  '1': 'Company',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+    {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
+    {'1': 'entity', '3': 3, '4': 1, '5': 9, '10': 'entity'},
+    {'1': 'logo', '3': 4, '4': 1, '5': 9, '10': 'logo'},
+  ],
+};
+
+/// Descriptor for `Company`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List companyDescriptor = $convert.base64Decode(
+    'CgdDb21wYW55Eg4KAmlkGAEgASgJUgJpZBISCgRuYW1lGAIgASgJUgRuYW1lEhYKBmVudGl0eR'
+    'gDIAEoCVIGZW50aXR5EhIKBGxvZ28YBCABKAlSBGxvZ28=');
 
 @$core.Deprecated('Use getDashboardStatsRequestDescriptor instead')
 const GetDashboardStatsRequest$json = {
@@ -862,6 +880,7 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> AdminServi
   '.involt.v1.LoginRequest': LoginRequest$json,
   '.involt.v1.LoginResponse': LoginResponse$json,
   '.involt.v1.User': User$json,
+  '.involt.v1.Company': Company$json,
   '.involt.v1.GetUsersRequest': GetUsersRequest$json,
   '.involt.v1.GetUsersResponse': GetUsersResponse$json,
   '.involt.v1.UpsertUserRequest': UpsertUserRequest$json,

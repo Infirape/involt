@@ -102,6 +102,7 @@ func (h *AdminHandler) Login(
 			Email:             user.Email,
 			Role:              mapDomainRoleToProto(user.Role),
 			AssignedSectorIds: user.AssignedSectorIDs,
+			Company:           companyToProto(user.Company),
 		},
 	}), nil
 }
@@ -157,6 +158,8 @@ func (h *AdminHandler) UpsertUser(
 
 	if domainUser.ID == "" {
 		domainUser.ID = uuid.New().String()
+		// New users join the company of the admin who creates them.
+		domainUser.CompanyID = userCtx.CompanyID
 	}
 
 	if req.Msg.Password != "" {

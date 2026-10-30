@@ -97,8 +97,8 @@ CREATE TABLE IF NOT EXISTS readings (
 -- Settings
 CREATE TABLE IF NOT EXISTS settings (
     id text DEFAULT 'main'::text PRIMARY KEY,
-    municipalidad text DEFAULT 'MUNICIPALIDAD DISTRITAL DE CHETILLA'::text NOT NULL,
-    empresa text DEFAULT 'HIDROELECTRICA QARWAQIRU MICHAY'::text NOT NULL,
+    municipalidad text DEFAULT ''::text NOT NULL,
+    empresa text DEFAULT 'InVolt'::text NOT NULL,
     ruc text,
     direccion text,
     telefono text,

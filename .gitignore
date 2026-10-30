@@ -19,3 +19,6 @@ jira_*.json
 
 # Docs (binaries/downloads)
 docs/
+
+# Credenciales de prueba locales
+usuario_prueba.md

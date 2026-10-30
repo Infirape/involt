@@ -82,7 +82,7 @@ func (g *MarotoGenerator) addDocumentHeader(m core.Maroto, settings *domain.Sett
 		ruc = "RUC " + settings.RUC
 	}
 	m.AddRows(row.New(20).Add(
-		col.New(3).Add(mimage.NewFromFile(g.resolveLogoPath(), props.Rect{Center: true, Percent: 90})),
+		col.New(3).Add(mimage.NewFromFile(g.resolveLogoPath(settings), props.Rect{Center: true, Percent: 90})),
 		col.New(9).Add(
 			text.New(settings.Municipalidad, props.Text{Top: 2, Size: 9, Style: fontstyle.Bold, Align: align.Right}),
 			text.New(settings.Empresa, props.Text{Top: 7, Size: 8, Align: align.Right}),

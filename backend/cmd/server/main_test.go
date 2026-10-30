@@ -13,30 +13,13 @@ func TestResolveAssetsDir(t *testing.T) {
 	}
 	t.Cleanup(func() { _ = os.Chdir(originalWD) })
 
-	t.Run("prefers ../assets when available", func(t *testing.T) {
+	t.Run("serves the backend assets when running from /backend", func(t *testing.T) {
 		tmp := t.TempDir()
 		work := filepath.Join(tmp, "backend")
-		if err := os.MkdirAll(filepath.Join(tmp, "assets"), 0o755); err != nil {
-			t.Fatalf("failed to create assets dir: %v", err)
-		}
-		if err := os.MkdirAll(work, 0o755); err != nil {
-			t.Fatalf("failed to create work dir: %v", err)
-		}
-		if err := os.Chdir(work); err != nil {
-			t.Fatalf("failed to chdir: %v", err)
-		}
-
-		got := resolveAssetsDir()
-		if got != "../assets" {
-			t.Fatalf("expected ../assets, got %s", got)
-		}
-	})
-
-	t.Run("falls back to assets when ../assets missing", func(t *testing.T) {
-		tmp := t.TempDir()
-		work := filepath.Join(tmp, "project")
-		if err := os.MkdirAll(filepath.Join(work, "assets"), 0o755); err != nil {
-			t.Fatalf("failed to create assets dir: %v", err)
+		for _, dir := range []string{filepath.Join(tmp, "assets"), filepath.Join(work, "assets")} {
+			if err := os.MkdirAll(dir, 0o755); err != nil {
+				t.Fatalf("failed to create %s: %v", dir, err)
+			}
 		}
 		if err := os.Chdir(work); err != nil {
 			t.Fatalf("failed to chdir: %v", err)
@@ -45,6 +28,23 @@ func TestResolveAssetsDir(t *testing.T) {
 		got := resolveAssetsDir()
 		if got != "assets" {
 			t.Fatalf("expected assets, got %s", got)
+		}
+	})
+
+	t.Run("serves backend/assets when running from the project root", func(t *testing.T) {
+		tmp := t.TempDir()
+		for _, dir := range []string{filepath.Join(tmp, "assets"), filepath.Join(tmp, "backend", "assets")} {
+			if err := os.MkdirAll(dir, 0o755); err != nil {
+				t.Fatalf("failed to create %s: %v", dir, err)
+			}
+		}
+		if err := os.Chdir(tmp); err != nil {
+			t.Fatalf("failed to chdir: %v", err)
+		}
+
+		got := resolveAssetsDir()
+		if got != "backend/assets" {
+			t.Fatalf("expected backend/assets, got %s", got)
 		}
 	})
 }

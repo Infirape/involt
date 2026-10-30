@@ -4,12 +4,15 @@ package excel
 
 import (
 	"fmt"
+	"image"
 	_ "image/png" // decode the logo for AddPicture
+	"os"
 	"time"
 
 	"github.com/xuri/excelize/v2"
 
 	"github.com/infira/involt/backend/internal/adapters/assets"
+	"github.com/infira/involt/backend/internal/domain"
 	"github.com/infira/involt/backend/internal/ports"
 )
 
@@ -34,6 +37,7 @@ type book struct {
 	section                                    int
 	ledgerStyles                               map[cellStyle]int
 	letterheads                                []string // sheets that get the logo beside the title
+	logo                                       string   // company logo, relative to the assets dir
 }
 
 func newBook() (*book, error) {
@@ -88,6 +92,7 @@ func (b *book) writeHeader(sheet string, meta ports.WorkbookMeta) int {
 	// No gridlines: they would cross the floating logo; tables keep their own borders.
 	_ = f.SetSheetView(sheet, 0, &excelize.ViewOptions{ShowGridLines: boolPtr(false)})
 	b.letterheads = append(b.letterheads, sheet) // logo placed in bytes(), once column A is sized
+	b.logo = meta.Logo
 	_ = f.SetCellValue(sheet, "B1", meta.Title)
 	_ = f.SetCellStyle(sheet, "B1", "B1", b.title)
 	_ = f.SetCellValue(sheet, "B2", fmt.Sprintf("%s · %s", meta.Entity, meta.Company))
@@ -239,27 +244,41 @@ func (b *book) freezeHeader(sheet string, row int) {
 	})
 }
 
-// logoFile is the municipal coat of arms, a small copy sized for spreadsheets.
-const logoFile = "logo_chetilla_small.png"
-
-// addLogo floats the municipal logo at cell, scaled to heightPx (no-op if the asset is missing).
-func (b *book) addLogo(sheet, at string, heightPx float64, offsetX, offsetY int) {
-	path := assets.Path(logoFile)
-	if path == "" {
-		return
+// logoPath finds the company logo, falling back to the InVolt one ("" if neither exists).
+func (b *book) logoPath() string {
+	if p := assets.Path(b.logo); b.logo != "" && p != "" {
+		return p
 	}
-	scale := heightPx / logoHeightPx
-	_ = b.f.AddPicture(sheet, at, path, &excelize.GraphicOptions{
-		ScaleX: scale, ScaleY: scale, OffsetX: offsetX, OffsetY: offsetY,
-		Positioning: "oneCell", LockAspectRatio: true, AltText: "Municipalidad Distrital de Chetilla",
-	})
+	return assets.Path(domain.DefaultLogo)
 }
 
-// Pixel size of logoFile.
-const (
-	logoWidthPx  = 146
-	logoHeightPx = 160
-)
+// logoSize returns the pixel size of the image at path (0, 0 if it can't be read).
+func logoSize(path string) (int, int) {
+	file, err := os.Open(path)
+	if err != nil {
+		return 0, 0
+	}
+	defer file.Close()
+	cfg, _, err := image.DecodeConfig(file)
+	if err != nil {
+		return 0, 0
+	}
+	return cfg.Width, cfg.Height
+}
+
+// addLogo floats the company logo at cell, scaled to heightPx (no-op if no logo is found).
+func (b *book) addLogo(sheet, at string, heightPx float64, offsetX, offsetY int) {
+	path := b.logoPath()
+	_, height := logoSize(path)
+	if height == 0 {
+		return
+	}
+	scale := heightPx / float64(height)
+	_ = b.f.AddPicture(sheet, at, path, &excelize.GraphicOptions{
+		ScaleX: scale, ScaleY: scale, OffsetX: offsetX, OffsetY: offsetY,
+		Positioning: "oneCell", LockAspectRatio: true, AltText: "Logo",
+	})
+}
 
 // letterheadLogoPx is the logo height beside the title (rows 1-3).
 const letterheadLogoPx = 62
@@ -267,7 +286,11 @@ const letterheadLogoPx = 62
 // placeLetterheadLogos puts the logo flush right in column A, right next to the title in B.
 // Column widths are in characters; ~7 px each plus padding (Calibri 11).
 func (b *book) placeLetterheadLogos() {
-	logoWidth := letterheadLogoPx * logoWidthPx / logoHeightPx
+	width, height := logoSize(b.logoPath())
+	if height == 0 {
+		return
+	}
+	logoWidth := letterheadLogoPx * width / height
 	for _, sheet := range b.letterheads {
 		chars, _ := b.f.GetColWidth(sheet, "A")
 		colPx := int(chars*7 + 5)

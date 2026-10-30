@@ -15,6 +15,7 @@ import (
 	"golang.org/x/net/http2/h2c"
 
 	"github.com/infira/involt/backend/internal/adapters/auth"
+	"github.com/infira/involt/backend/internal/adapters/branding"
 	"github.com/infira/involt/backend/internal/adapters/excel"
 	"github.com/infira/involt/backend/internal/adapters/handlers"
 	"github.com/infira/involt/backend/internal/adapters/pdf"
@@ -51,7 +52,8 @@ func main() {
 	}
 
 	// 2. Initialize Repositories
-	metaRepo := repositories.NewPostgresMetadataRepository(db)
+	// Settings come back with the brand of the requesting user's company.
+	metaRepo := branding.NewMetadataRepository(repositories.NewPostgresMetadataRepository(db), repositories.NewPostgresCompanyRepository(db))
 	customerRepo := repositories.NewPostgresCustomerRepository(db)
 	readingRepo := repositories.NewPostgresReadingRepository(db)
 	settingsRepo := repositories.NewSettingsRepository(db)
@@ -78,7 +80,8 @@ func main() {
 	mux := http.NewServeMux()
 
 	// ConnectRPC endpoints
-	authInterceptor := auth.NewAuthInterceptor(auth.NewJWTService(jwtSecret))
+	jwtService := auth.NewJWTService(jwtSecret)
+	authInterceptor := auth.NewAuthInterceptor(jwtService)
 
 	path, handler := involtv1connect.NewSyncServiceHandler(
 		syncHandler,
@@ -154,7 +157,7 @@ func main() {
 	log.Printf("🚀 InVolt Backend running on http://localhost:%s\n", port)
 	err = http.ListenAndServe(
 		"0.0.0.0:"+port,
-		c.Handler(h2c.NewHandler(mux, &http2.Server{})),
+		c.Handler(h2c.NewHandler(auth.IdentifyHTTP(jwtService, mux), &http2.Server{})),
 	)
 	if err != nil {
 		log.Fatalf("❌ Server failed: %v", err)
@@ -162,10 +165,11 @@ func main() {
 }
 
 func resolveAssetsDir() string {
+	// The backend's own assets (logos), as in the Docker image (/app/assets).
 	candidates := []string{
-		"../assets",   // running from /backend
-		"assets",      // running from project root
-		"../../assets", // fallback when running from /backend/cmd/server
+		"backend/assets", // running from project root
+		"assets",         // running from /backend
+		"../../assets",   // fallback when running from /backend/cmd/server
 	}
 
 	for _, candidate := range candidates {
@@ -175,7 +179,7 @@ func resolveAssetsDir() string {
 		}
 	}
 
-	return "../assets"
+	return "assets"
 }
 
 //go:embed schema.sql
@@ -194,6 +198,9 @@ func initSchema(db *sqlx.DB) error {
 	if _, err := db.Exec(collectionsSchemaSQL); err != nil {
 		log.Printf("⚠️ Notice during collections schema: %v", err)
 	}
+	if _, err := db.Exec(companiesSchemaSQL); err != nil {
+		log.Printf("⚠️ Notice during companies schema: %v", err)
+	}
 	return nil
 }
 
@@ -202,3 +209,6 @@ var paymentsSchemaSQL string
 
 //go:embed collections_schema.sql
 var collectionsSchemaSQL string
+
+//go:embed companies_schema.sql
+var companiesSchemaSQL string

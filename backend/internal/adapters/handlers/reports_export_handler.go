@@ -163,7 +163,7 @@ func (h *AdminHandler) workbookMeta(ctx context.Context, user *auth.UserContext,
 		settings = &domain.Settings{}
 	}
 	return ports.WorkbookMeta{
-		Entity: settings.Municipalidad, Company: settings.Empresa, Title: title,
+		Entity: settings.Municipalidad, Company: settings.Empresa, Logo: settings.Logo, Title: title,
 		Filters: filters, GeneratedAt: h.now(), GeneratedBy: user.Email,
 	}
 }

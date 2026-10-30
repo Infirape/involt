@@ -19,7 +19,7 @@ func NewPostgresAdminRepository(db *sqlx.DB) *PostgresAdminRepository {
 
 func (r *PostgresAdminRepository) GetUserByEmail(ctx context.Context, email string) (*domain.User, error) {
 	var user domain.User
-	query := `SELECT id, email, password_hash, role, created_at, updated_at FROM users WHERE email = $1`
+	query := `SELECT id, email, password_hash, role, COALESCE(company_id, '') AS company_id, created_at, updated_at FROM users WHERE email = $1`
 	err := r.db.GetContext(ctx, &user, query, email)
 	if err != nil {
 		return nil, fmt.Errorf("error getting user by email: %w", err)
@@ -34,12 +34,15 @@ func (r *PostgresAdminRepository) GetUserByEmail(ctx context.Context, email stri
 	}
 	user.AssignedSectorIDs = sectors
 
+	if err := r.loadCompany(ctx, &user); err != nil {
+		return nil, err
+	}
 	return &user, nil
 }
 
 func (r *PostgresAdminRepository) GetUserByID(ctx context.Context, id string) (*domain.User, error) {
 	var user domain.User
-	query := `SELECT id, email, password_hash, role, created_at, updated_at FROM users WHERE id = $1`
+	query := `SELECT id, email, password_hash, role, COALESCE(company_id, '') AS company_id, created_at, updated_at FROM users WHERE id = $1`
 	err := r.db.GetContext(ctx, &user, query, id)
 	if err != nil {
 		return nil, fmt.Errorf("error getting user by id: %w", err)
@@ -53,12 +56,15 @@ func (r *PostgresAdminRepository) GetUserByID(ctx context.Context, id string) (*
 	}
 	user.AssignedSectorIDs = sectors
 
+	if err := r.loadCompany(ctx, &user); err != nil {
+		return nil, err
+	}
 	return &user, nil
 }
 
 func (r *PostgresAdminRepository) ListUsers(ctx context.Context) ([]domain.User, error) {
 	var users []domain.User
-	query := `SELECT id, email, password_hash, role, created_at, updated_at FROM users ORDER BY email ASC`
+	query := `SELECT id, email, password_hash, role, COALESCE(company_id, '') AS company_id, created_at, updated_at FROM users ORDER BY email ASC`
 	err := r.db.SelectContext(ctx, &users, query)
 	if err != nil {
 		return nil, fmt.Errorf("error listing users: %w", err)
@@ -82,12 +88,13 @@ func (r *PostgresAdminRepository) UpsertUser(ctx context.Context, user *domain.U
 	}
 	defer tx.Rollback()
 
-	query := `INSERT INTO users (id, email, password_hash, role, updated_at)
-			  VALUES (:id, :email, :password_hash, :role, NOW())
+	query := `INSERT INTO users (id, email, password_hash, role, company_id, updated_at)
+			  VALUES (:id, :email, :password_hash, :role, NULLIF(:company_id, ''), NOW())
 			  ON CONFLICT (id) DO UPDATE SET
 			  email = EXCLUDED.email,
 			  password_hash = EXCLUDED.password_hash,
 			  role = EXCLUDED.role,
+			  company_id = COALESCE(EXCLUDED.company_id, users.company_id),
 			  updated_at = NOW()
 			  RETURNING id`
 	
@@ -113,4 +120,17 @@ func (r *PostgresAdminRepository) UpsertUser(ctx context.Context, user *domain.U
 	}
 
 	return tx.Commit()
+}
+
+// loadCompany attaches the user's company, if any.
+func (r *PostgresAdminRepository) loadCompany(ctx context.Context, user *domain.User) error {
+	if user.CompanyID == "" {
+		return nil
+	}
+	company, err := NewPostgresCompanyRepository(r.db).GetByID(ctx, user.CompanyID)
+	if err != nil {
+		return fmt.Errorf("error getting user company: %w", err)
+	}
+	user.Company = company
+	return nil
 }

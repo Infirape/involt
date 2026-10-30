@@ -4,7 +4,6 @@ import { Zap } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { InvoltAlly } from "@/components/brand/InvoltAlly";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -44,6 +43,13 @@ export default function LoginPage() {
             id: resp.user.id,
             email: resp.user.email,
             role: resp.user.role,
+            company: resp.user.company
+              ? {
+                  name: resp.user.company.name,
+                  entity: resp.user.company.entity,
+                  logo: resp.user.company.logo,
+                }
+              : undefined,
           }),
         );
       }
@@ -68,9 +74,9 @@ export default function LoginPage() {
               <div className="absolute -inset-1 bg-linear-to-r from-primary/50 to-primary/20 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
               <div className="relative p-1 rounded-2xl bg-black/40 border border-white/5 shadow-inner">
                 <Image
-                  src="/assets/escudo_chetilla.png"
-                  alt="Hidroeléctrica QARWAQIRU MICHAY"
-                  width={88}
+                  src="/assets/logo.png"
+                  alt="InVolt"
+                  width={96}
                   height={96}
                   priority
                   className="h-24 w-auto object-contain transition-transform duration-500 group-hover:scale-110"
@@ -79,11 +85,10 @@ export default function LoginPage() {
             </div>
           </div>
           <CardTitle className="text-3xl font-black tracking-tighter bg-linear-to-br from-white to-white/60 bg-clip-text text-transparent uppercase leading-tight">
-            Hidroeléctrica <br />
-            <span className="text-primary tracking-normal">QARWAQIRU MICHAY</span>
+            <span className="text-primary tracking-normal">InVolt</span>
           </CardTitle>
           <CardDescription className="text-muted-foreground/60 font-medium">
-            Portal de Gestión
+            Gestión de Suministro Eléctrico
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleLogin}>
@@ -149,9 +154,8 @@ export default function LoginPage() {
       </Card>
 
       <div className="fixed bottom-8 flex flex-col items-center gap-1">
-        <InvoltAlly />
         <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground/30 font-black">
-          Municipalidad Distrital de Chetilla &copy; 2026
+          InVolt &middot; Infira &copy; {new Date().getFullYear()}
         </span>
       </div>
     </div>

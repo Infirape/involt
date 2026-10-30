@@ -202,7 +202,7 @@ export default function UsersPage() {
                         )
                       }
                       className="bg-white/5 border-white/5 focus:border-primary/30 rounded-xl h-11"
-                      placeholder="usuario@qarwaqiru.com"
+                      placeholder="usuario@empresa.com"
                     />
                   </div>
                   <div className="space-y-2">

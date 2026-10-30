@@ -1791,6 +1791,7 @@ class User extends $pb.GeneratedMessage {
     $core.String? email,
     UserRole? role,
     $core.Iterable<$core.String>? assignedSectorIds,
+    Company? company,
   }) {
     final $result = create();
     if (id != null) {
@@ -1805,6 +1806,9 @@ class User extends $pb.GeneratedMessage {
     if (assignedSectorIds != null) {
       $result.assignedSectorIds.addAll(assignedSectorIds);
     }
+    if (company != null) {
+      $result.company = company;
+    }
     return $result;
   }
   User._() : super();
@@ -1816,6 +1820,7 @@ class User extends $pb.GeneratedMessage {
     ..aOS(2, _omitFieldNames ? '' : 'email')
     ..e<UserRole>(3, _omitFieldNames ? '' : 'role', $pb.PbFieldType.OE, defaultOrMaker: UserRole.USER_ROLE_UNSPECIFIED, valueOf: UserRole.valueOf, enumValues: UserRole.values)
     ..pPS(4, _omitFieldNames ? '' : 'assignedSectorIds')
+    ..aOM<Company>(5, _omitFieldNames ? '' : 'company', subBuilder: Company.create)
     ..hasRequiredFields = false
   ;
 
@@ -1869,6 +1874,112 @@ class User extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(4)
   $core.List<$core.String> get assignedSectorIds => $_getList(3);
+
+  /// The client company the user works for; unset means the InVolt brand.
+  @$pb.TagNumber(5)
+  Company get company => $_getN(4);
+  @$pb.TagNumber(5)
+  set company(Company v) { setField(5, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasCompany() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearCompany() => clearField(5);
+  @$pb.TagNumber(5)
+  Company ensureCompany() => $_ensure(4);
+}
+
+/// Company is the brand shown to its users and printed on documents.
+class Company extends $pb.GeneratedMessage {
+  factory Company({
+    $core.String? id,
+    $core.String? name,
+    $core.String? entity,
+    $core.String? logo,
+  }) {
+    final $result = create();
+    if (id != null) {
+      $result.id = id;
+    }
+    if (name != null) {
+      $result.name = name;
+    }
+    if (entity != null) {
+      $result.entity = entity;
+    }
+    if (logo != null) {
+      $result.logo = logo;
+    }
+    return $result;
+  }
+  Company._() : super();
+  factory Company.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Company.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Company', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..aOS(2, _omitFieldNames ? '' : 'name')
+    ..aOS(3, _omitFieldNames ? '' : 'entity')
+    ..aOS(4, _omitFieldNames ? '' : 'logo')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Company clone() => Company()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Company copyWith(void Function(Company) updates) => super.copyWith((message) => updates(message as Company)) as Company;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static Company create() => Company._();
+  Company createEmptyInstance() => create();
+  static $pb.PbList<Company> createRepeated() => $pb.PbList<Company>();
+  @$core.pragma('dart2js:noInline')
+  static Company getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Company>(create);
+  static Company? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get name => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set name($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasName() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearName() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get entity => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set entity($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasEntity() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearEntity() => clearField(3);
+
+  /// Logo path served by the backend under /assets/; empty means the InVolt logo.
+  @$pb.TagNumber(4)
+  $core.String get logo => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set logo($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasLogo() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearLogo() => clearField(4);
 }
 
 class GetDashboardStatsRequest extends $pb.GeneratedMessage {
