@@ -47,8 +47,11 @@ CREATE TABLE IF NOT EXISTS customers (
     initial_reading double precision DEFAULT 0,
     address text DEFAULT ''::text NOT NULL,
     contract_start date,
-    created_at timestamp with time zone DEFAULT now()
+    created_at timestamp with time zone DEFAULT now(),
+    deleted_at timestamp with time zone
 );
+-- Soft delete column used by the customer repository (older databases lack it).
+ALTER TABLE customers ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
 
 -- Periods
 CREATE TABLE IF NOT EXISTS periods (
@@ -115,3 +118,6 @@ CREATE TABLE IF NOT EXISTS app_configs (
     key text PRIMARY KEY,
     value text
 );
+
+-- Consumption receipt copies: DUPLICATE (usuario + administrativo) or SINGLE (solo usuario).
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS receipt_copies text NOT NULL DEFAULT 'DUPLICATE';

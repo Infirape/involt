@@ -1,0 +1,108 @@
+syntax = "proto3";
+
+package involt.v1;
+
+import "involt/v1/models.proto";
+
+option go_package = "github.com/infira/involt/backend/internal/gen/involt/v1;involtv1";
+
+enum AgingBucket {
+  AGING_BUCKET_UNSPECIFIED = 0;
+  AGING_BUCKET_CURRENT = 1; // not yet due
+  AGING_BUCKET_1_30 = 2;
+  AGING_BUCKET_31_60 = 3;
+  AGING_BUCKET_61_90 = 4;
+  AGING_BUCKET_OVER_90 = 5;
+}
+
+message AgingTotal {
+  AgingBucket bucket = 1;
+  double amount = 2;
+  int32 receipts = 3;
+  int32 customers = 4;
+}
+
+message SectorCollectionSummary {
+  string sector_id = 1;
+  string sector_name = 2;
+  string community_id = 3;
+  string community_name = 4;
+  double billed = 5;
+  double collected = 6;
+  double debt = 7;
+  int32 customers = 8;
+  int32 debtors = 9;
+}
+
+message PeriodCollectionSummary {
+  string period = 1; // YYYY-MM
+  double billed = 2; // receipts of this period
+  double collected = 3; // paid against receipts of this period
+  double cash_in = 4; // money received during this calendar month (any period)
+}
+
+message CollectionsDashboardTotals {
+  double billed = 1;
+  double collected = 2;
+  double total_debt = 3; // outstanding across ALL periods
+  double overdue_debt = 4;
+  int32 debtor_count = 5;
+  int32 cut_candidates = 6;
+  int32 temporary_cut_count = 7; // supplies in corte temporal (current, in scope)
+  int32 no_power_count = 8; // supplies sin energía (current, in scope)
+}
+
+message GetCollectionsDashboardRequest {
+  string from_period = 1; // YYYY-MM, default: 11 months before to_period
+  string to_period = 2; // YYYY-MM, default: current month
+  string community_id = 3; // optional
+  int32 cut_threshold = 4; // overdue receipts to flag a cut candidate, default 2
+  string sector_id = 5; // optional caserío
+}
+
+message GetCollectionsDashboardResponse {
+  CollectionsDashboardTotals totals = 1;
+  repeated SectorCollectionSummary by_sector = 2;
+  repeated PeriodCollectionSummary by_period = 3; // every month in range, chronological
+  repeated AgingTotal aging = 4; // outstanding across ALL periods
+  string from_period = 5; // effective range
+  string to_period = 6;
+}
+
+message DebtorRow {
+  string customer_id = 1;
+  string customer_code = 2;
+  string customer_name = 3;
+  string sector_id = 4;
+  string sector_name = 5;
+  string community_name = 6;
+  double total_debt = 7;
+  double overdue_debt = 8;
+  int32 pending_receipts = 9;
+  int32 overdue_receipts = 10;
+  string oldest_overdue_period = 11;
+  int32 days_overdue = 12;
+  string last_payment_at = 13; // ISO 8601, empty if never paid
+  bool cut_candidate = 14;
+  bool in_agreement = 15; // has an on-schedule agreement
+  bool agreement_in_default = 16;
+  ServiceStatus service_status = 17;
+}
+
+message GetDebtorsRequest {
+  string community_id = 1;
+  string sector_id = 2;
+  string search = 3; // name or code
+  int32 min_overdue_receipts = 4;
+  double min_debt = 5;
+  int32 cut_threshold = 6; // default 2
+  bool only_cut_candidates = 7;
+  ServiceStatus service_status = 8; // optional filter
+}
+
+message GetDebtorsResponse {
+  repeated DebtorRow debtors = 1; // highest debt first
+  double total_debt = 2; // of the returned rows
+  double overdue_debt = 3;
+  int32 cut_candidates = 4;
+}

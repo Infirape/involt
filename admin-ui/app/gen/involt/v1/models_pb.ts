@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file involt/v1/models.proto.
  */
 export const file_involt_v1_models: GenFile = /*@__PURE__*/
-  fileDesc("ChZpbnZvbHQvdjEvbW9kZWxzLnByb3RvEglpbnZvbHQudjEiPQoJQ29tbXVuaXR5EgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSFgoOY3VzdG9tZXJfY291bnQYAyABKA0iOAoGU2VjdG9yEgoKAmlkGAEgASgJEhQKDGNvbW11bml0eV9pZBgCIAEoCRIMCgRuYW1lGAMgASgJIrgCCghDdXN0b21lchIKCgJpZBgBIAEoCRIMCgRjb2RlGAIgASgJEgwKBG5hbWUYAyABKAkSFAoMY29tbXVuaXR5X2lkGAQgASgJEhEKCXNlY3Rvcl9pZBgFIAEoCRIyCg9jb25uZWN0aW9uX3R5cGUYBiABKA4yGS5pbnZvbHQudjEuQ29ubmVjdGlvblR5cGUSDgoGdGFyaWZmGAcgASgBEhQKDG1ldGVyX251bWJlchgIIAEoCRIQCghsYXRpdHVkZRgJIAEoARIRCglsb25naXR1ZGUYCiABKAESFwoPaW5pdGlhbF9yZWFkaW5nGAsgASgBEg8KB2FkZHJlc3MYDCABKAkSFgoOY29udHJhY3Rfc3RhcnQYDSABKAkSGgoSbGFzdF9yZWFkaW5nX3ZhbHVlGA4gASgBIq4ECgdSZWFkaW5nEgoKAmlkGAEgASgJEhMKC2N1c3RvbWVyX2lkGAIgASgJEhYKDnByZXZpb3VzX3ZhbHVlGAMgASgBEhUKDWN1cnJlbnRfdmFsdWUYBCABKAESEwoLY29uc3VtcHRpb24YBSABKAESEQoJcGhvdG9fdXJsGAYgASgJEhEKCXRpbWVzdGFtcBgHIAEoCRIQCghsYXRpdHVkZRgIIAEoARIRCglsb25naXR1ZGUYCSABKAESEgoKY2FyZ29fZmlqbxgKIAEoARIZChFhbHVtYnJhZG9fcHVibGljbxgLIAEoARIWCg5zYWxkb19yZWRvbmRlbxgMIAEoARIUCgx0b3RhbF90b19wYXkYDSABKAESFAoMcGVyaW9kX3N0YXJ0GA4gASgJEhIKCnBlcmlvZF9lbmQYDyABKAkSFQoNbWFudGVuaW1pZW50bxgQIAEoARISCgphZGp1c3RtZW50GBEgASgBEhAKCHN1YnRvdGFsGBIgASgBEhgKEHJvdW5kX2RpZmZlcmVuY2UYEyABKAESGAoQcHJldmlvdXNfYmFsYW5jZRgUIAEoARIVCg1vdmVyZHVlX3RvdGFsGBUgASgBEhcKD2V4cGlyYXRpb25fZGF0ZRgWIAEoCRIOCgZwZXJpb2QYFyABKAkSEwoLb2JzZXJ2YXRpb24YGCABKAkSFQoNY3VzdG9tZXJfbmFtZRgZIAEoCRIPCgdpc19wYWlkGBogASgIIj0KCUFwcENvbmZpZxIYChBtYXBfdXJsX3RlbXBsYXRlGAEgASgJEhYKDm1hcF91c2VyX2FnZW50GAIgASgJIuwBCghTZXR0aW5ncxIVCg1tdW5pY2lwYWxpZGFkGAEgASgJEg8KB2VtcHJlc2EYAiABKAkSCwoDcnVjGAMgASgJEhEKCWRpcmVjY2lvbhgEIAEoCRIQCgh0ZWxlZm9ubxgFIAEoCRINCgVlbWFpbBgGIAEoCRIYChBkaWFzX3ZlbmNpbWllbnRvGAcgASgFEhIKCnRhcmlmYV9rd2gYCCABKAESEgoKY2FyZ29fZmlqbxgJIAEoARIRCglhbHVtYnJhZG8YCiABKAESFQoNbWFudGVuaW1pZW50bxgLIAEoARILCgNpZ3YYDCABKAgifgoGUGVyaW9kEgoKAmlkGAEgASgJEhIKCnN0YXJ0X2RhdGUYAiABKAkSEAoIZW5kX2RhdGUYAyABKAkSJwoGc3RhdHVzGAQgASgOMhcuaW52b2x0LnYxLlBlcmlvZFN0YXR1cxIZChFpc19iaWxsaW5nX3BlcmlvZBgFIAEoCCJKCghPcGVyYXRvchIKCgJpZBgBIAEoCRINCgVlbWFpbBgCIAEoCRIVCg1wYXNzd29yZF9oYXNoGAMgASgJEgwKBHJvbGUYBCABKAkqcAoOQ29ubmVjdGlvblR5cGUSHwobQ09OTkVDVElPTl9UWVBFX1VOU1BFQ0lGSUVEEAASHgoaQ09OTkVDVElPTl9UWVBFX01PTk9GQVNJQ0EQARIdChlDT05ORUNUSU9OX1RZUEVfVFJJRkFTSUNBEAIqXwoMUGVyaW9kU3RhdHVzEh0KGVBFUklPRF9TVEFUVVNfVU5TUEVDSUZJRUQQABIWChJQRVJJT0RfU1RBVFVTX09QRU4QARIYChRQRVJJT0RfU1RBVFVTX0NMT1NFRBACQkJaQGdpdGh1Yi5jb20vaW5maXJhL2ludm9sdC9iYWNrZW5kL2ludGVybmFsL2dlbi9pbnZvbHQvdjE7aW52b2x0djFiBnByb3RvMw");
+  fileDesc("ChZpbnZvbHQvdjEvbW9kZWxzLnByb3RvEglpbnZvbHQudjEiPQoJQ29tbXVuaXR5EgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSFgoOY3VzdG9tZXJfY291bnQYAyABKA0iOAoGU2VjdG9yEgoKAmlkGAEgASgJEhQKDGNvbW11bml0eV9pZBgCIAEoCRIMCgRuYW1lGAMgASgJIo0DCghDdXN0b21lchIKCgJpZBgBIAEoCRIMCgRjb2RlGAIgASgJEgwKBG5hbWUYAyABKAkSFAoMY29tbXVuaXR5X2lkGAQgASgJEhEKCXNlY3Rvcl9pZBgFIAEoCRIyCg9jb25uZWN0aW9uX3R5cGUYBiABKA4yGS5pbnZvbHQudjEuQ29ubmVjdGlvblR5cGUSDgoGdGFyaWZmGAcgASgBEhQKDG1ldGVyX251bWJlchgIIAEoCRIQCghsYXRpdHVkZRgJIAEoARIRCglsb25naXR1ZGUYCiABKAESFwoPaW5pdGlhbF9yZWFkaW5nGAsgASgBEg8KB2FkZHJlc3MYDCABKAkSFgoOY29udHJhY3Rfc3RhcnQYDSABKAkSGgoSbGFzdF9yZWFkaW5nX3ZhbHVlGA4gASgBEjAKDnNlcnZpY2Vfc3RhdHVzGA8gASgOMhguaW52b2x0LnYxLlNlcnZpY2VTdGF0dXMSIQoZc2VydmljZV9zdGF0dXNfY2hhbmdlZF9hdBgQIAEoCSKuBAoHUmVhZGluZxIKCgJpZBgBIAEoCRITCgtjdXN0b21lcl9pZBgCIAEoCRIWCg5wcmV2aW91c192YWx1ZRgDIAEoARIVCg1jdXJyZW50X3ZhbHVlGAQgASgBEhMKC2NvbnN1bXB0aW9uGAUgASgBEhEKCXBob3RvX3VybBgGIAEoCRIRCgl0aW1lc3RhbXAYByABKAkSEAoIbGF0aXR1ZGUYCCABKAESEQoJbG9uZ2l0dWRlGAkgASgBEhIKCmNhcmdvX2Zpam8YCiABKAESGQoRYWx1bWJyYWRvX3B1YmxpY28YCyABKAESFgoOc2FsZG9fcmVkb25kZW8YDCABKAESFAoMdG90YWxfdG9fcGF5GA0gASgBEhQKDHBlcmlvZF9zdGFydBgOIAEoCRISCgpwZXJpb2RfZW5kGA8gASgJEhUKDW1hbnRlbmltaWVudG8YECABKAESEgoKYWRqdXN0bWVudBgRIAEoARIQCghzdWJ0b3RhbBgSIAEoARIYChByb3VuZF9kaWZmZXJlbmNlGBMgASgBEhgKEHByZXZpb3VzX2JhbGFuY2UYFCABKAESFQoNb3ZlcmR1ZV90b3RhbBgVIAEoARIXCg9leHBpcmF0aW9uX2RhdGUYFiABKAkSDgoGcGVyaW9kGBcgASgJEhMKC29ic2VydmF0aW9uGBggASgJEhUKDWN1c3RvbWVyX25hbWUYGSABKAkSDwoHaXNfcGFpZBgaIAEoCCI9CglBcHBDb25maWcSGAoQbWFwX3VybF90ZW1wbGF0ZRgBIAEoCRIWCg5tYXBfdXNlcl9hZ2VudBgCIAEoCSKeAgoIU2V0dGluZ3MSFQoNbXVuaWNpcGFsaWRhZBgBIAEoCRIPCgdlbXByZXNhGAIgASgJEgsKA3J1YxgDIAEoCRIRCglkaXJlY2Npb24YBCABKAkSEAoIdGVsZWZvbm8YBSABKAkSDQoFZW1haWwYBiABKAkSGAoQZGlhc192ZW5jaW1pZW50bxgHIAEoBRISCgp0YXJpZmFfa3doGAggASgBEhIKCmNhcmdvX2Zpam8YCSABKAESEQoJYWx1bWJyYWRvGAogASgBEhUKDW1hbnRlbmltaWVudG8YCyABKAESCwoDaWd2GAwgASgIEjAKDnJlY2VpcHRfY29waWVzGA0gASgOMhguaW52b2x0LnYxLlJlY2VpcHRDb3BpZXMifgoGUGVyaW9kEgoKAmlkGAEgASgJEhIKCnN0YXJ0X2RhdGUYAiABKAkSEAoIZW5kX2RhdGUYAyABKAkSJwoGc3RhdHVzGAQgASgOMhcuaW52b2x0LnYxLlBlcmlvZFN0YXR1cxIZChFpc19iaWxsaW5nX3BlcmlvZBgFIAEoCCJKCghPcGVyYXRvchIKCgJpZBgBIAEoCRINCgVlbWFpbBgCIAEoCRIVCg1wYXNzd29yZF9oYXNoGAMgASgJEgwKBHJvbGUYBCABKAkqcAoOQ29ubmVjdGlvblR5cGUSHwobQ09OTkVDVElPTl9UWVBFX1VOU1BFQ0lGSUVEEAASHgoaQ09OTkVDVElPTl9UWVBFX01PTk9GQVNJQ0EQARIdChlDT05ORUNUSU9OX1RZUEVfVFJJRkFTSUNBEAIqiQEKDVNlcnZpY2VTdGF0dXMSHgoaU0VSVklDRV9TVEFUVVNfVU5TUEVDSUZJRUQQABIZChVTRVJWSUNFX1NUQVRVU19BQ1RJVkUQARIgChxTRVJWSUNFX1NUQVRVU19URU1QT1JBUllfQ1VUEAISGwoXU0VSVklDRV9TVEFUVVNfTk9fUE9XRVIQAypoCg1SZWNlaXB0Q29waWVzEh4KGlJFQ0VJUFRfQ09QSUVTX1VOU1BFQ0lGSUVEEAASHAoYUkVDRUlQVF9DT1BJRVNfRFVQTElDQVRFEAESGQoVUkVDRUlQVF9DT1BJRVNfU0lOR0xFEAIqXwoMUGVyaW9kU3RhdHVzEh0KGVBFUklPRF9TVEFUVVNfVU5TUEVDSUZJRUQQABIWChJQRVJJT0RfU1RBVFVTX09QRU4QARIYChRQRVJJT0RfU1RBVFVTX0NMT1NFRBACQkJaQGdpdGh1Yi5jb20vaW5maXJhL2ludm9sdC9iYWNrZW5kL2ludGVybmFsL2dlbi9pbnZvbHQvdjE7aW52b2x0djFiBnByb3RvMw");
 
 /**
  * Community represents a village or Caserio (e.g., Alto Chetilla, Cadena).
@@ -147,6 +147,18 @@ export type Customer = Message<"involt.v1.Customer"> & {
    * @generated from field: double last_reading_value = 14;
    */
   lastReadingValue: number;
+
+  /**
+   * @generated from field: involt.v1.ServiceStatus service_status = 15;
+   */
+  serviceStatus: ServiceStatus;
+
+  /**
+   * ISO 8601, empty if never changed
+   *
+   * @generated from field: string service_status_changed_at = 16;
+   */
+  serviceStatusChangedAt: string;
 };
 
 /**
@@ -395,6 +407,11 @@ export type Settings = Message<"involt.v1.Settings"> & {
    * @generated from field: bool igv = 12;
    */
   igv: boolean;
+
+  /**
+   * @generated from field: involt.v1.ReceiptCopies receipt_copies = 13;
+   */
+  receiptCopies: ReceiptCopies;
 };
 
 /**
@@ -507,6 +524,79 @@ export const ConnectionTypeSchema: GenEnum<ConnectionType> = /*@__PURE__*/
   enumDesc(file_involt_v1_models, 0);
 
 /**
+ * ServiceStatus is whether a supply currently has electricity (set by admins).
+ *
+ * @generated from enum involt.v1.ServiceStatus
+ */
+export enum ServiceStatus {
+  /**
+   * @generated from enum value: SERVICE_STATUS_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * con servicio
+   *
+   * @generated from enum value: SERVICE_STATUS_ACTIVE = 1;
+   */
+  ACTIVE = 1,
+
+  /**
+   * corte temporal
+   *
+   * @generated from enum value: SERVICE_STATUS_TEMPORARY_CUT = 2;
+   */
+  TEMPORARY_CUT = 2,
+
+  /**
+   * sin energía
+   *
+   * @generated from enum value: SERVICE_STATUS_NO_POWER = 3;
+   */
+  NO_POWER = 3,
+}
+
+/**
+ * Describes the enum involt.v1.ServiceStatus.
+ */
+export const ServiceStatusSchema: GenEnum<ServiceStatus> = /*@__PURE__*/
+  enumDesc(file_involt_v1_models, 1);
+
+/**
+ * ReceiptCopies controls how many copies the consumption receipt PDF prints.
+ *
+ * @generated from enum involt.v1.ReceiptCopies
+ */
+export enum ReceiptCopies {
+  /**
+   * treated as DUPLICATE
+   *
+   * @generated from enum value: RECEIPT_COPIES_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * copia usuario + copia administrativa
+   *
+   * @generated from enum value: RECEIPT_COPIES_DUPLICATE = 1;
+   */
+  DUPLICATE = 1,
+
+  /**
+   * solo copia del suministro (usuario)
+   *
+   * @generated from enum value: RECEIPT_COPIES_SINGLE = 2;
+   */
+  SINGLE = 2,
+}
+
+/**
+ * Describes the enum involt.v1.ReceiptCopies.
+ */
+export const ReceiptCopiesSchema: GenEnum<ReceiptCopies> = /*@__PURE__*/
+  enumDesc(file_involt_v1_models, 2);
+
+/**
  * @generated from enum involt.v1.PeriodStatus
  */
 export enum PeriodStatus {
@@ -530,5 +620,5 @@ export enum PeriodStatus {
  * Describes the enum involt.v1.PeriodStatus.
  */
 export const PeriodStatusSchema: GenEnum<PeriodStatus> = /*@__PURE__*/
-  enumDesc(file_involt_v1_models, 1);
+  enumDesc(file_involt_v1_models, 3);
 

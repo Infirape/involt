@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+package involt.v1;
+
+option go_package = "github.com/infira/involt/backend/internal/gen/involt/v1;involtv1";
+
+enum LateFeeMode {
+  LATE_FEE_MODE_UNSPECIFIED = 0;
+  LATE_FEE_MODE_NONE = 1;
+  LATE_FEE_MODE_FIXED = 2; // value = soles per overdue receipt, once
+  LATE_FEE_MODE_PERCENT = 3; // value = % of the outstanding balance, once
+  LATE_FEE_MODE_MONTHLY_INTEREST = 4; // value = % of the balance per started month overdue
+}
+
+message CollectionPolicy {
+  LateFeeMode late_fee_mode = 1;
+  double late_fee_value = 2;
+  string late_fee_start_date = 3; // YYYY-MM-DD, empty = no limit
+  int32 agreement_max_installments = 4; // 0 disables agreements
+  double agreement_min_initial_percent = 5;
+  int32 agreement_grace_days = 6;
+  bool agreement_waive_late_fees = 7;
+  string updated_at = 8;
+  string updated_by = 9;
+}
+
+message GetCollectionPolicyRequest {}
+message GetCollectionPolicyResponse {
+  CollectionPolicy policy = 1;
+}
+
+message UpdateCollectionPolicyRequest {
+  CollectionPolicy policy = 1;
+}
+message UpdateCollectionPolicyResponse {
+  CollectionPolicy policy = 1;
+}
+
+enum AgreementStatus {
+  AGREEMENT_STATUS_UNSPECIFIED = 0;
+  AGREEMENT_STATUS_ACTIVE = 1; // on schedule
+  AGREEMENT_STATUS_IN_DEFAULT = 2; // an installment is past due beyond the grace days
+  AGREEMENT_STATUS_COMPLETED = 3;
+  AGREEMENT_STATUS_CANCELLED = 4;
+}
+
+message AgreementReceipt {
+  string reading_id = 1;
+  string period = 2;
+  double principal = 3;
+  double late_fee = 4;
+}
+
+message AgreementInstallment {
+  int32 number = 1;
+  string due_date = 2; // YYYY-MM-DD
+  double amount = 3;
+  bool paid = 4;
+}
+
+message PaymentAgreement {
+  string id = 1;
+  int64 number = 2;
+  string customer_id = 3;
+  string customer_name = 4;
+  string customer_code = 5;
+  AgreementStatus status = 6;
+  double total = 7;
+  double initial_amount = 8;
+  double paid = 9; // since signing
+  string notes = 10;
+  string created_at = 11;
+  string created_by_email = 12;
+  string cancelled_at = 13;
+  string cancel_reason = 14;
+  repeated AgreementReceipt receipts = 15;
+  repeated AgreementInstallment installments = 16;
+  int32 next_installment = 17; // 0 if none
+  double next_amount = 18;
+  string next_due_date = 19;
+  double overdue_amount = 20;
+  bool late_fees_waived = 21;
+}
+
+message AgreementRequest {
+  string customer_id = 1;
+  repeated string reading_ids = 2; // empty = all outstanding receipts
+  int32 installments = 3;
+  double initial_amount = 4; // collected at signing
+  string first_due_date = 5; // YYYY-MM-DD, default: same day next month
+  string notes = 6;
+  int32 initial_payment_method = 7; // PaymentMethod enum value; 0 = cash
+  string initial_payment_reference = 8;
+}
+
+message PreviewAgreementResponse {
+  double total = 1;
+  double principal = 2;
+  double late_fees = 3;
+  double min_initial_amount = 4;
+  int32 max_installments = 5;
+  bool late_fees_waived = 6;
+  repeated AgreementReceipt receipts = 7;
+  repeated AgreementInstallment installments = 8;
+  string validation_error = 9; // human readable, empty if the request is valid
+}
+
+message CreateAgreementResponse {
+  PaymentAgreement agreement = 1;
+  string initial_payment_id = 2;
+}
+
+message CancelAgreementRequest {
+  string agreement_id = 1;
+  string reason = 2;
+}
+message CancelAgreementResponse {
+  PaymentAgreement agreement = 1;
+}
+
+message WaiveLateFeeRequest {
+  repeated string reading_ids = 1;
+  string reason = 2;
+}
+message WaiveLateFeeResponse {
+  int32 waived = 1;
+}

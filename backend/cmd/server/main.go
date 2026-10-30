@@ -15,11 +15,13 @@ import (
 	"golang.org/x/net/http2/h2c"
 
 	"github.com/infira/involt/backend/internal/adapters/auth"
+	"github.com/infira/involt/backend/internal/adapters/excel"
 	"github.com/infira/involt/backend/internal/adapters/handlers"
 	"github.com/infira/involt/backend/internal/adapters/pdf"
 	"github.com/infira/involt/backend/internal/adapters/repositories"
 	"github.com/infira/involt/backend/internal/gen/involt/v1/involtv1connect"
 	"github.com/rs/cors"
+	"strings"
 )
 
 func main() {
@@ -55,6 +57,11 @@ func main() {
 	settingsRepo := repositories.NewSettingsRepository(db)
 	adminRepo := repositories.NewPostgresAdminRepository(db)
 	periodRepo := repositories.NewPostgresPeriodRepository(db)
+	paymentRepo := repositories.NewPostgresPaymentRepository(db)
+	reportRepo := repositories.NewPostgresCollectionsReportRepository(db)
+	policyRepo := repositories.NewPostgresCollectionPolicyRepository(db)
+	agreementRepo := repositories.NewPostgresAgreementRepository(db)
+	statusRepo := repositories.NewPostgresCustomerStatusRepository(db)
 	pdfGen := pdf.NewMarotoGenerator()
 
 	// 3. Initialize Handlers
@@ -65,7 +72,7 @@ func main() {
 
 	syncHandler := handlers.NewSyncHandler(metaRepo, customerRepo, readingRepo, periodRepo, adminRepo, pdfGen)
 	settingsHandler := handlers.NewSettingsHandler(settingsRepo)
-	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, periodRepo, jwtSecret, pdfGen)
+	adminSvcHandler := handlers.NewAdminHandler(adminRepo, metaRepo, customerRepo, readingRepo, periodRepo, jwtSecret, pdfGen, paymentRepo, pdfGen, reportRepo, policyRepo, agreementRepo, pdfGen, excel.NewGenerator(), statusRepo)
 
 	// 4. Setup Mux
 	mux := http.NewServeMux()
@@ -100,6 +107,14 @@ func main() {
 	// REST endpoints for PDF export
 	mux.HandleFunc("/admin/readings/bulk-pdf", adminSvcHandler.BulkPDF)
 	mux.HandleFunc("/admin/readings/pdf/", adminSvcHandler.DownloadReadingPDF)
+	mux.HandleFunc("/admin/payments/pdf/", adminSvcHandler.DownloadPaymentVoucher)
+	mux.HandleFunc("/admin/agreements/pdf/", adminSvcHandler.DownloadAgreementPDF)
+
+	// REST endpoints for Excel reports
+	mux.HandleFunc("/admin/reports/debtors.xlsx", adminSvcHandler.ExportDebtorsXLSX)
+	mux.HandleFunc("/admin/reports/cash-closing.xlsx", adminSvcHandler.ExportCashClosingXLSX)
+	mux.HandleFunc("/admin/reports/remittance.xlsx", adminSvcHandler.ExportRemittanceXLSX)
+	mux.HandleFunc("/admin/reports/collections.xlsx", adminSvcHandler.ExportCollectionsXLSX)
 
 	// API Health check
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -115,8 +130,16 @@ func main() {
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsDir))))
 
 	// 5. Start Server with h2c (HTTP/2 Cleartext) and CORS
+	allowedOrigins := []string{"http://localhost:3000", "http://localhost:3001", "http://localhost:3002", "http://localhost:3008"}
+	if envOrigins := os.Getenv("ALLOWED_ORIGINS"); envOrigins != "" {
+		for _, origin := range strings.Split(envOrigins, ",") {
+			allowedOrigins = append(allowedOrigins, strings.TrimSpace(origin))
+		}
+	}
+	log.Printf("🔒 CORS Allowed Origins: %v\n", allowedOrigins)
+
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:3001", "http://localhost:3002", "http://localhost:3008"},
+		AllowedOrigins:   allowedOrigins,
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Connect-Protocol-Version", "Content-Type", "Authorization"},
 		ExposedHeaders:   []string{"Connect-Protocol-Version", "Content-Disposition"},
@@ -160,5 +183,22 @@ var schemaSQL string
 
 func initSchema(db *sqlx.DB) error {
 	_, err := db.Exec(schemaSQL)
-	return err
+	if err != nil {
+		log.Printf("⚠️ Notice during initSchema: %v", err)
+	}
+	_, _ = db.Exec(`ALTER TABLE readings ADD COLUMN IF NOT EXISTS is_paid BOOLEAN NOT NULL DEFAULT FALSE;`)
+	_, _ = db.Exec(`ALTER TABLE readings ADD COLUMN IF NOT EXISTS payment_date TIMESTAMPTZ;`)
+	if _, err := db.Exec(paymentsSchemaSQL); err != nil {
+		log.Printf("⚠️ Notice during payments schema: %v", err)
+	}
+	if _, err := db.Exec(collectionsSchemaSQL); err != nil {
+		log.Printf("⚠️ Notice during collections schema: %v", err)
+	}
+	return nil
 }
+
+//go:embed payments_schema.sql
+var paymentsSchemaSQL string
+
+//go:embed collections_schema.sql
+var collectionsSchemaSQL string

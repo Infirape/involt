@@ -3,9 +3,9 @@ package handlers
 import (
 	"context"
 	"testing"
+	"time"
 
 	"connectrpc.com/connect"
-	"github.com/infira/involt/backend/internal/adapters/auth"
 	"github.com/infira/involt/backend/internal/domain"
 	involtv1 "github.com/infira/involt/backend/internal/gen/involt/v1"
 )
@@ -34,7 +34,7 @@ func TestGetCollectionsReturnsCustomersWithoutReadings(t *testing.T) {
 			return nil, nil
 		},
 	}
-	handler := &AdminHandler{customerRepo: customerRepo, readingRepo: readingRepo}
+	handler := &AdminHandler{customerRepo: customerRepo, readingRepo: readingRepo, paymentRepo: &fakePaymentRepo{}}
 
 	resp, err := handler.GetCollections(ctx, connect.NewRequest(&involtv1.GetCollectionsRequest{
 		SectorId: "sector-achupampa",
@@ -75,7 +75,7 @@ func TestGetCollectionsAttachesRequestedPeriodReadingsToCustomerRows(t *testing.
 			}, nil
 		},
 	}
-	handler := &AdminHandler{customerRepo: customerRepo, readingRepo: readingRepo}
+	handler := &AdminHandler{customerRepo: customerRepo, readingRepo: readingRepo, paymentRepo: &fakePaymentRepo{}}
 
 	resp, err := handler.GetCollections(ctx, connect.NewRequest(&involtv1.GetCollectionsRequest{
 		SectorId: "sector-achupampa",
@@ -103,104 +103,100 @@ func TestGetCollectionsAttachesRequestedPeriodReadingsToCustomerRows(t *testing.
 	}
 }
 
-func authenticatedTestContext() context.Context {
-	return context.WithValue(context.Background(), auth.UserContextKey, &auth.UserContext{
-		ID:    "admin-1",
-		Email: "admin@example.com",
-		Role:  "ADMIN",
-	})
+func TestGetCollectionsReportsReceiptBalancesDebtAndTotals(t *testing.T) {
+	ctx := authenticatedTestContext()
+	customerRepo := &collectionsCustomerRepoStub{
+		listBySectorFunc: func(_ context.Context, sectorID string) ([]domain.Customer, error) {
+			return []domain.Customer{{ID: "cust-001", Name: "Ana Luz", SectorID: sectorID}}, nil
+		},
+	}
+	readingRepo := &collectionsReadingRepoStub{
+		listBySectorFunc: func(context.Context, string, []string) ([]domain.Reading, error) {
+			return []domain.Reading{
+				{ID: "r-1", CustomerID: "cust-001", Period: "2026-09", TotalToPay: 10},
+				{ID: "r-2", CustomerID: "cust-001", Period: "2026-10", TotalToPay: 8},
+			}, nil
+		},
+	}
+	payments := &fakePaymentRepo{
+		payments: []*domain.Payment{{ID: "p", Amount: 13, Allocations: []domain.PaymentAllocation{
+			{ReadingID: "r-1", Amount: 10}, {ReadingID: "r-2", Amount: 3},
+		}}},
+		debts: map[string]float64{"cust-001": 25},
+	}
+	handler := &AdminHandler{customerRepo: customerRepo, readingRepo: readingRepo, paymentRepo: payments,
+		clock: func() time.Time { return fixedNow }}
+
+	resp, err := handler.GetCollections(ctx, connect.NewRequest(&involtv1.GetCollectionsRequest{
+		SectorId: "sec-1", Periods: []string{"2026-09", "2026-10"},
+	}))
+	if err != nil {
+		t.Fatalf("GetCollections: %v", err)
+	}
+	if resp.Msg.GetTotalBilled() != 18 || resp.Msg.GetTotalCollected() != 13 {
+		t.Fatalf("totals = %v / %v, want 18 / 13", resp.Msg.GetTotalBilled(), resp.Msg.GetTotalCollected())
+	}
+	row := resp.Msg.GetCustomers()[0]
+	if row.GetTotalDebt() != 25 {
+		t.Fatalf("total debt = %v, want 25 (all periods)", row.GetTotalDebt())
+	}
+	receipts := row.GetReceipts()
+	if len(receipts) != 2 || receipts[0].GetStatus() != involtv1.ReceiptStatus_RECEIPT_STATUS_PAID ||
+		receipts[1].GetStatus() != involtv1.ReceiptStatus_RECEIPT_STATUS_PARTIAL || receipts[1].GetBalance() != 5 {
+		t.Fatalf("receipts = %+v", receipts)
+	}
 }
 
-type collectionsCustomerRepoStub struct {
-	listBySectorFunc func(context.Context, string) ([]domain.Customer, error)
+func TestGetCollectionsDeniesUnassignedSector(t *testing.T) {
+	handler := &AdminHandler{}
+	_, err := handler.GetCollections(contextWithUser("s", "SUPERVISOR", "sec-2"), connect.NewRequest(&involtv1.GetCollectionsRequest{SectorId: "sec-1"}))
+	if connect.CodeOf(err) != connect.CodePermissionDenied {
+		t.Fatalf("code = %v, want PermissionDenied", connect.CodeOf(err))
+	}
 }
 
-func (s *collectionsCustomerRepoStub) GetByID(context.Context, string) (*domain.Customer, error) {
-	panic("not implemented")
-}
-func (s *collectionsCustomerRepoStub) GetByCode(context.Context, string) (*domain.Customer, error) {
-	panic("not implemented")
-}
-func (s *collectionsCustomerRepoStub) List(context.Context, []string, string, int, int, string, string) ([]domain.Customer, int, error) {
-	panic("not implemented")
-}
-func (s *collectionsCustomerRepoStub) ListAll(context.Context) ([]domain.Customer, error) {
-	panic("not implemented")
-}
-func (s *collectionsCustomerRepoStub) SaveBatch(context.Context, []domain.Customer) error {
-	panic("not implemented")
-}
-func (s *collectionsCustomerRepoStub) Save(context.Context, *domain.Customer) error {
-	panic("not implemented")
-}
-func (s *collectionsCustomerRepoStub) Delete(context.Context, string) error {
-	panic("not implemented")
-}
-func (s *collectionsCustomerRepoStub) CountBySector(context.Context, string) (int, error) {
-	panic("not implemented")
-}
-func (s *collectionsCustomerRepoStub) ListBySector(ctx context.Context, sectorID string) ([]domain.Customer, error) {
-	return s.listBySectorFunc(ctx, sectorID)
+func TestTogglePaymentStatusRegistersBalanceAsCashPayment(t *testing.T) {
+	h, payments, _ := newPaymentsTestHandler()
+	ctx := contextWithUser("admin-1", "ADMIN")
+
+	resp, err := h.TogglePaymentStatus(ctx, connect.NewRequest(&involtv1.TogglePaymentStatusRequest{
+		CustomerId: "cust-1", Period: "2026-09", IsPaid: true,
+	}))
+	if err != nil {
+		t.Fatalf("TogglePaymentStatus: %v", err)
+	}
+	if resp.Msg.GetReadingId() != "r-sep" || !resp.Msg.GetIsPaid() {
+		t.Fatalf("response = %+v", resp.Msg)
+	}
+	if len(payments.payments) != 1 || payments.payments[0].Amount != 12.5 || payments.payments[0].Allocations[0].ReadingID != "r-sep" {
+		t.Fatalf("payments = %+v", payments.payments)
+	}
 }
 
-type collectionsReadingRepoStub struct {
-	listBySectorFunc func(context.Context, string, []string) ([]domain.Reading, error)
+func TestTogglePaymentStatusCreatesFlatChargeWhenPeriodHasNoReading(t *testing.T) {
+	h, payments, readingRepo := newPaymentsTestHandler()
+	ctx := contextWithUser("admin-1", "ADMIN")
+
+	_, err := h.TogglePaymentStatus(ctx, connect.NewRequest(&involtv1.TogglePaymentStatusRequest{
+		CustomerId: "cust-1", Period: "2026-10", IsPaid: true, TotalToPay: 7,
+	}))
+	if err != nil {
+		t.Fatalf("TogglePaymentStatus: %v", err)
+	}
+	if len(readingRepo.saved) != 1 || readingRepo.saved[0].TotalToPay != 7 {
+		t.Fatalf("flat charge not created: %+v", readingRepo.saved)
+	}
+	if len(payments.payments) != 1 || payments.payments[0].Amount != 7 {
+		t.Fatalf("payments = %+v", payments.payments)
+	}
 }
 
-func (s *collectionsReadingRepoStub) Save(context.Context, *domain.Reading) error {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) GetByID(context.Context, string) (*domain.Reading, error) {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) ListByCustomer(context.Context, string) ([]domain.Reading, error) {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) GetLatestByCustomer(context.Context, string) (*domain.Reading, error) {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) GetLatestByCustomerExcludingID(context.Context, string, string) (*domain.Reading, error) {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) ListBySectorAndPeriod(context.Context, string, string, string) ([]domain.Reading, error) {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) CountByPeriod(context.Context, string) (int, error) {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) CountPendingByPeriod(context.Context, string) (int, error) {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) ListPeriods(context.Context) ([]string, error) {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) CountBySectorAndPeriod(context.Context, string, string) (int, error) {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) SumConsumptionBySectorAndPeriod(context.Context, string, string) (float64, error) {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) SumRevenueBySectorAndPeriod(context.Context, string, string) (float64, error) {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) SumRevenueByPeriod(context.Context, string) (float64, error) {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) SumConsumptionByPeriod(context.Context, string) (float64, error) {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) List(context.Context, string, string, string, int, int) ([]domain.Reading, int, error) {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) ListAll(context.Context) ([]domain.Reading, error) {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) UpdatePaymentStatus(context.Context, string, bool) error {
-	panic("not implemented")
-}
-func (s *collectionsReadingRepoStub) ListBySector(ctx context.Context, sectorID string, periods []string) ([]domain.Reading, error) {
-	return s.listBySectorFunc(ctx, sectorID, periods)
-}
-func (s *collectionsReadingRepoStub) GetByCustomerAndPeriod(context.Context, string, string) (*domain.Reading, error) {
-	panic("not implemented")
+func TestTogglePaymentStatusRejectsUnpay(t *testing.T) {
+	h, _, _ := newPaymentsTestHandler()
+	_, err := h.TogglePaymentStatus(contextWithUser("admin-1", "ADMIN"), connect.NewRequest(&involtv1.TogglePaymentStatusRequest{
+		CustomerId: "cust-1", Period: "2026-09", IsPaid: false,
+	}))
+	if connect.CodeOf(err) != connect.CodeFailedPrecondition {
+		t.Fatalf("code = %v, want FailedPrecondition", connect.CodeOf(err))
+	}
 }

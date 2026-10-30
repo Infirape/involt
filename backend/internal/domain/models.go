@@ -25,6 +25,8 @@ type Settings struct {
 	Alumbrado       float64   `db:"alumbrado"`
 	Mantenimiento   float64   `db:"mantenimiento"`
 	IGV             bool      `db:"igv"`
+	// ReceiptCopies is DUPLICATE (usuario + administrativo) or SINGLE (solo usuario).
+	ReceiptCopies   string    `db:"receipt_copies"`
 	CreatedAt       time.Time `db:"created_at"`
 	UpdatedAt       time.Time `db:"updated_at"`
 }
@@ -61,6 +63,9 @@ type Customer struct {
 	InitialReading float64      `db:"initial_reading"`
 	LastReadingValue float64     `db:"last_reading_value"`
 	ContractStart  time.Time    `db:"contract_start"`
+	// ServiceStatus is ACTIVE, TEMPORARY_CUT or NO_POWER (see EffectiveServiceStatus).
+	ServiceStatus          string     `db:"service_status"`
+	ServiceStatusChangedAt *time.Time `db:"service_status_changed_at"`
 }
 
 // Reading represents a captured meter value.

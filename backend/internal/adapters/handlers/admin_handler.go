@@ -29,6 +29,15 @@ type AdminHandler struct {
 	periodRepo   ports.PeriodRepository
 	jwtService   *auth.JWTService
 	pdfGen       ports.ReceiptGenerator
+	paymentRepo  ports.PaymentRepository
+	voucherGen   ports.PaymentVoucherGenerator
+	reportRepo   ports.CollectionsReportRepository
+	policyRepo   ports.CollectionPolicyRepository
+	agreementRepo ports.AgreementRepository
+	agreementDoc ports.AgreementDocumentGenerator
+	workbookGen  ports.ReportWorkbookGenerator
+	statusRepo   ports.CustomerStatusRepository
+	clock        func() time.Time
 }
 
 func NewAdminHandler(
@@ -39,6 +48,14 @@ func NewAdminHandler(
 	periodRepo ports.PeriodRepository,
 	jwtSecret string,
 	pdfGen ports.ReceiptGenerator,
+	paymentRepo ports.PaymentRepository,
+	voucherGen ports.PaymentVoucherGenerator,
+	reportRepo ports.CollectionsReportRepository,
+	policyRepo ports.CollectionPolicyRepository,
+	agreementRepo ports.AgreementRepository,
+	agreementDoc ports.AgreementDocumentGenerator,
+	workbookGen ports.ReportWorkbookGenerator,
+	statusRepo ports.CustomerStatusRepository,
 ) *AdminHandler {
 	return &AdminHandler{
 		adminRepo:    adminRepo,
@@ -48,6 +65,14 @@ func NewAdminHandler(
 		periodRepo:   periodRepo,
 		jwtService:   auth.NewJWTService(jwtSecret),
 		pdfGen:       pdfGen,
+		paymentRepo:  paymentRepo,
+		voucherGen:   voucherGen,
+		reportRepo:   reportRepo,
+		policyRepo:   policyRepo,
+		agreementRepo: agreementRepo,
+		agreementDoc: agreementDoc,
+		workbookGen:  workbookGen,
+		statusRepo:   statusRepo,
 	}
 }
 
@@ -242,6 +267,49 @@ func (h *AdminHandler) UpsertSector(
 	}), nil
 }
 
+func (h *AdminHandler) DeleteSector(
+	ctx context.Context,
+	req *connect.Request[involtv1.DeleteSectorRequest],
+) (*connect.Response[involtv1.DeleteSectorResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok || userCtx.Role != string(domain.RoleAdmin) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("only admins can delete sectors"))
+	}
+	if req.Msg.Id == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("sector id is required"))
+	}
+
+	count, err := h.customerRepo.CountBySector(ctx, req.Msg.Id)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("failed to count customers in sector: %w", err))
+	}
+	if count > 0 {
+		return nil, connect.NewError(
+			connect.CodeFailedPrecondition,
+			fmt.Errorf("no se puede eliminar el sector porque tiene %d suministros asociados", count),
+		)
+	}
+
+	if err := h.metaRepo.DeleteSector(ctx, req.Msg.Id); err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+	return connect.NewResponse(&involtv1.DeleteSectorResponse{Success: true}), nil
+}
+
+func (h *AdminHandler) DeleteCommunity(
+	ctx context.Context,
+	req *connect.Request[involtv1.DeleteCommunityRequest],
+) (*connect.Response[involtv1.DeleteCommunityResponse], error) {
+	userCtx, ok := auth.GetUserFromContext(ctx)
+	if !ok || userCtx.Role != string(domain.RoleAdmin) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("only admins can delete communities"))
+	}
+	if err := h.metaRepo.DeleteCommunity(ctx, req.Msg.Id); err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+	return connect.NewResponse(&involtv1.DeleteCommunityResponse{Success: true}), nil
+}
+
 func (h *AdminHandler) GetCommunities(
 	ctx context.Context,
 	req *connect.Request[involtv1.GetCommunitiesRequest],
@@ -334,7 +402,7 @@ func (h *AdminHandler) GetCustomers(
 	}
 
 	log.Printf("🔍 Admin: GetCustomers (Sector: %s, Community: %s, Search: %s, ExcludePeriod: %s)", req.Msg.SectorId, req.Msg.CommunityId, req.Msg.SearchQuery, req.Msg.ExcludePeriodId)
-	customers, total, err := h.customerRepo.List(ctx, allowedSectors, req.Msg.SearchQuery, int(pageSize), int(offset), req.Msg.ExcludePeriodId, req.Msg.CommunityId)
+	customers, total, err := h.customerRepo.List(ctx, allowedSectors, req.Msg.SearchQuery, int(pageSize), int(offset), req.Msg.ExcludePeriodId, req.Msg.CommunityId, serviceStatusFilter(req.Msg.ServiceStatus))
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
@@ -359,6 +427,10 @@ func (h *AdminHandler) GetCustomers(
 			InitialReading:   0, // Always 0, calculated from reading history
 			LastReadingValue: c.LastReadingValue,
 		}
+		// Service status comes from the shared mapper so every RPC reports it the same way.
+		mapped := domain.MapCustomerToProto(&c)
+		resp.Customers[i].ServiceStatus = mapped.ServiceStatus
+		resp.Customers[i].ServiceStatusChangedAt = mapped.ServiceStatusChangedAt
 	}
 
 	return connect.NewResponse(resp), nil
@@ -497,6 +569,7 @@ func (h *AdminHandler) GetSettings(
 			Alumbrado:       safeFloat(settings.Alumbrado),
 			Mantenimiento:   safeFloat(settings.Mantenimiento),
 			Igv:             settings.IGV,
+			ReceiptCopies:   receiptCopiesToProto(settings.ReceiptCopies),
 		},
 	}), nil
 }
@@ -523,6 +596,7 @@ func (h *AdminHandler) UpdateSettings(
 		Alumbrado:       safeFloat(s.Alumbrado),
 		Mantenimiento:   safeFloat(s.Mantenimiento),
 		IGV:             s.Igv,
+		ReceiptCopies:   receiptCopiesFromProto(s.ReceiptCopies),
 	}
 
 	err := h.metaRepo.SaveSettings(ctx, domainSettings)
@@ -561,6 +635,16 @@ func (h *AdminHandler) UpsertCustomer(
 		InitialReading:   0, // Always 0, calculated from reading history
 		LastReadingValue: c.LastReadingValue,
 		ContractStart:    contractStart,
+	}
+
+	// Reports group supplies by their own community: it always follows the sector's.
+	if domainCustomer.SectorID != "" {
+		communityID, err := h.sectorCommunity(ctx, domainCustomer.SectorID)
+		if err != nil {
+			return nil, err
+		}
+		domainCustomer.CommunityID = communityID
+		c.CommunityId = communityID
 	}
 
 	err := h.customerRepo.Save(ctx, domainCustomer)

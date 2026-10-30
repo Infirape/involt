@@ -15,9 +15,343 @@ import 'dart:core' as $core;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 import 'admin.pbenum.dart';
+import 'agreements.pb.dart' as $1;
 import 'models.pb.dart' as $0;
+import 'models.pbenum.dart' as $0;
+import 'payments.pb.dart' as $2;
+import 'reports.pb.dart' as $3;
 
 export 'admin.pbenum.dart';
+
+class SetCustomerServiceStatusRequest extends $pb.GeneratedMessage {
+  factory SetCustomerServiceStatusRequest({
+    $core.String? customerId,
+    $0.ServiceStatus? status,
+    $core.String? reason,
+  }) {
+    final $result = create();
+    if (customerId != null) {
+      $result.customerId = customerId;
+    }
+    if (status != null) {
+      $result.status = status;
+    }
+    if (reason != null) {
+      $result.reason = reason;
+    }
+    return $result;
+  }
+  SetCustomerServiceStatusRequest._() : super();
+  factory SetCustomerServiceStatusRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SetCustomerServiceStatusRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'SetCustomerServiceStatusRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'customerId')
+    ..e<$0.ServiceStatus>(2, _omitFieldNames ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: $0.ServiceStatus.SERVICE_STATUS_UNSPECIFIED, valueOf: $0.ServiceStatus.valueOf, enumValues: $0.ServiceStatus.values)
+    ..aOS(3, _omitFieldNames ? '' : 'reason')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  SetCustomerServiceStatusRequest clone() => SetCustomerServiceStatusRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  SetCustomerServiceStatusRequest copyWith(void Function(SetCustomerServiceStatusRequest) updates) => super.copyWith((message) => updates(message as SetCustomerServiceStatusRequest)) as SetCustomerServiceStatusRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SetCustomerServiceStatusRequest create() => SetCustomerServiceStatusRequest._();
+  SetCustomerServiceStatusRequest createEmptyInstance() => create();
+  static $pb.PbList<SetCustomerServiceStatusRequest> createRepeated() => $pb.PbList<SetCustomerServiceStatusRequest>();
+  @$core.pragma('dart2js:noInline')
+  static SetCustomerServiceStatusRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SetCustomerServiceStatusRequest>(create);
+  static SetCustomerServiceStatusRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get customerId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set customerId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasCustomerId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearCustomerId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $0.ServiceStatus get status => $_getN(1);
+  @$pb.TagNumber(2)
+  set status($0.ServiceStatus v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasStatus() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearStatus() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get reason => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set reason($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasReason() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearReason() => clearField(3);
+}
+
+class SetCustomerServiceStatusResponse extends $pb.GeneratedMessage {
+  factory SetCustomerServiceStatusResponse({
+    $0.Customer? customer,
+  }) {
+    final $result = create();
+    if (customer != null) {
+      $result.customer = customer;
+    }
+    return $result;
+  }
+  SetCustomerServiceStatusResponse._() : super();
+  factory SetCustomerServiceStatusResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SetCustomerServiceStatusResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'SetCustomerServiceStatusResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOM<$0.Customer>(1, _omitFieldNames ? '' : 'customer', subBuilder: $0.Customer.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  SetCustomerServiceStatusResponse clone() => SetCustomerServiceStatusResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  SetCustomerServiceStatusResponse copyWith(void Function(SetCustomerServiceStatusResponse) updates) => super.copyWith((message) => updates(message as SetCustomerServiceStatusResponse)) as SetCustomerServiceStatusResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SetCustomerServiceStatusResponse create() => SetCustomerServiceStatusResponse._();
+  SetCustomerServiceStatusResponse createEmptyInstance() => create();
+  static $pb.PbList<SetCustomerServiceStatusResponse> createRepeated() => $pb.PbList<SetCustomerServiceStatusResponse>();
+  @$core.pragma('dart2js:noInline')
+  static SetCustomerServiceStatusResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SetCustomerServiceStatusResponse>(create);
+  static SetCustomerServiceStatusResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $0.Customer get customer => $_getN(0);
+  @$pb.TagNumber(1)
+  set customer($0.Customer v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasCustomer() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearCustomer() => clearField(1);
+  @$pb.TagNumber(1)
+  $0.Customer ensureCustomer() => $_ensure(0);
+}
+
+class ServiceStatusChange extends $pb.GeneratedMessage {
+  factory ServiceStatusChange({
+    $0.ServiceStatus? previousStatus,
+    $0.ServiceStatus? status,
+    $core.String? reason,
+    $core.String? changedByEmail,
+    $core.String? changedAt,
+  }) {
+    final $result = create();
+    if (previousStatus != null) {
+      $result.previousStatus = previousStatus;
+    }
+    if (status != null) {
+      $result.status = status;
+    }
+    if (reason != null) {
+      $result.reason = reason;
+    }
+    if (changedByEmail != null) {
+      $result.changedByEmail = changedByEmail;
+    }
+    if (changedAt != null) {
+      $result.changedAt = changedAt;
+    }
+    return $result;
+  }
+  ServiceStatusChange._() : super();
+  factory ServiceStatusChange.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ServiceStatusChange.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ServiceStatusChange', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..e<$0.ServiceStatus>(1, _omitFieldNames ? '' : 'previousStatus', $pb.PbFieldType.OE, defaultOrMaker: $0.ServiceStatus.SERVICE_STATUS_UNSPECIFIED, valueOf: $0.ServiceStatus.valueOf, enumValues: $0.ServiceStatus.values)
+    ..e<$0.ServiceStatus>(2, _omitFieldNames ? '' : 'status', $pb.PbFieldType.OE, defaultOrMaker: $0.ServiceStatus.SERVICE_STATUS_UNSPECIFIED, valueOf: $0.ServiceStatus.valueOf, enumValues: $0.ServiceStatus.values)
+    ..aOS(3, _omitFieldNames ? '' : 'reason')
+    ..aOS(4, _omitFieldNames ? '' : 'changedByEmail')
+    ..aOS(5, _omitFieldNames ? '' : 'changedAt')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ServiceStatusChange clone() => ServiceStatusChange()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ServiceStatusChange copyWith(void Function(ServiceStatusChange) updates) => super.copyWith((message) => updates(message as ServiceStatusChange)) as ServiceStatusChange;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ServiceStatusChange create() => ServiceStatusChange._();
+  ServiceStatusChange createEmptyInstance() => create();
+  static $pb.PbList<ServiceStatusChange> createRepeated() => $pb.PbList<ServiceStatusChange>();
+  @$core.pragma('dart2js:noInline')
+  static ServiceStatusChange getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ServiceStatusChange>(create);
+  static ServiceStatusChange? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $0.ServiceStatus get previousStatus => $_getN(0);
+  @$pb.TagNumber(1)
+  set previousStatus($0.ServiceStatus v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasPreviousStatus() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearPreviousStatus() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $0.ServiceStatus get status => $_getN(1);
+  @$pb.TagNumber(2)
+  set status($0.ServiceStatus v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasStatus() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearStatus() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get reason => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set reason($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasReason() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearReason() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get changedByEmail => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set changedByEmail($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasChangedByEmail() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearChangedByEmail() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.String get changedAt => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set changedAt($core.String v) { $_setString(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasChangedAt() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearChangedAt() => clearField(5);
+}
+
+class GetCustomerStatusHistoryRequest extends $pb.GeneratedMessage {
+  factory GetCustomerStatusHistoryRequest({
+    $core.String? customerId,
+  }) {
+    final $result = create();
+    if (customerId != null) {
+      $result.customerId = customerId;
+    }
+    return $result;
+  }
+  GetCustomerStatusHistoryRequest._() : super();
+  factory GetCustomerStatusHistoryRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetCustomerStatusHistoryRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetCustomerStatusHistoryRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'customerId')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetCustomerStatusHistoryRequest clone() => GetCustomerStatusHistoryRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetCustomerStatusHistoryRequest copyWith(void Function(GetCustomerStatusHistoryRequest) updates) => super.copyWith((message) => updates(message as GetCustomerStatusHistoryRequest)) as GetCustomerStatusHistoryRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetCustomerStatusHistoryRequest create() => GetCustomerStatusHistoryRequest._();
+  GetCustomerStatusHistoryRequest createEmptyInstance() => create();
+  static $pb.PbList<GetCustomerStatusHistoryRequest> createRepeated() => $pb.PbList<GetCustomerStatusHistoryRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetCustomerStatusHistoryRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetCustomerStatusHistoryRequest>(create);
+  static GetCustomerStatusHistoryRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get customerId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set customerId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasCustomerId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearCustomerId() => clearField(1);
+}
+
+class GetCustomerStatusHistoryResponse extends $pb.GeneratedMessage {
+  factory GetCustomerStatusHistoryResponse({
+    $core.Iterable<ServiceStatusChange>? changes,
+  }) {
+    final $result = create();
+    if (changes != null) {
+      $result.changes.addAll(changes);
+    }
+    return $result;
+  }
+  GetCustomerStatusHistoryResponse._() : super();
+  factory GetCustomerStatusHistoryResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetCustomerStatusHistoryResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetCustomerStatusHistoryResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..pc<ServiceStatusChange>(1, _omitFieldNames ? '' : 'changes', $pb.PbFieldType.PM, subBuilder: ServiceStatusChange.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetCustomerStatusHistoryResponse clone() => GetCustomerStatusHistoryResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetCustomerStatusHistoryResponse copyWith(void Function(GetCustomerStatusHistoryResponse) updates) => super.copyWith((message) => updates(message as GetCustomerStatusHistoryResponse)) as GetCustomerStatusHistoryResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetCustomerStatusHistoryResponse create() => GetCustomerStatusHistoryResponse._();
+  GetCustomerStatusHistoryResponse createEmptyInstance() => create();
+  static $pb.PbList<GetCustomerStatusHistoryResponse> createRepeated() => $pb.PbList<GetCustomerStatusHistoryResponse>();
+  @$core.pragma('dart2js:noInline')
+  static GetCustomerStatusHistoryResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetCustomerStatusHistoryResponse>(create);
+  static GetCustomerStatusHistoryResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<ServiceStatusChange> get changes => $_getList(0);
+}
 
 class UpsertSectorRequest extends $pb.GeneratedMessage {
   factory UpsertSectorRequest({
@@ -811,6 +1145,7 @@ class GetCustomersRequest extends $pb.GeneratedMessage {
     $core.int? pageSize,
     $core.String? excludePeriodId,
     $core.String? communityId,
+    $0.ServiceStatus? serviceStatus,
   }) {
     final $result = create();
     if (sectorId != null) {
@@ -831,6 +1166,9 @@ class GetCustomersRequest extends $pb.GeneratedMessage {
     if (communityId != null) {
       $result.communityId = communityId;
     }
+    if (serviceStatus != null) {
+      $result.serviceStatus = serviceStatus;
+    }
     return $result;
   }
   GetCustomersRequest._() : super();
@@ -844,6 +1182,7 @@ class GetCustomersRequest extends $pb.GeneratedMessage {
     ..a<$core.int>(4, _omitFieldNames ? '' : 'pageSize', $pb.PbFieldType.O3)
     ..aOS(5, _omitFieldNames ? '' : 'excludePeriodId')
     ..aOS(6, _omitFieldNames ? '' : 'communityId')
+    ..e<$0.ServiceStatus>(7, _omitFieldNames ? '' : 'serviceStatus', $pb.PbFieldType.OE, defaultOrMaker: $0.ServiceStatus.SERVICE_STATUS_UNSPECIFIED, valueOf: $0.ServiceStatus.valueOf, enumValues: $0.ServiceStatus.values)
     ..hasRequiredFields = false
   ;
 
@@ -921,6 +1260,15 @@ class GetCustomersRequest extends $pb.GeneratedMessage {
   $core.bool hasCommunityId() => $_has(5);
   @$pb.TagNumber(6)
   void clearCommunityId() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $0.ServiceStatus get serviceStatus => $_getN(6);
+  @$pb.TagNumber(7)
+  set serviceStatus($0.ServiceStatus v) { setField(7, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasServiceStatus() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearServiceStatus() => clearField(7);
 }
 
 class GetCustomersResponse extends $pb.GeneratedMessage {
@@ -2661,6 +3009,8 @@ class GetCollectionsResponse extends $pb.GeneratedMessage {
   factory GetCollectionsResponse({
     $core.Iterable<$0.Reading>? readings,
     $core.Iterable<CollectionCustomer>? customers,
+    $core.double? totalBilled,
+    $core.double? totalCollected,
   }) {
     final $result = create();
     if (readings != null) {
@@ -2668,6 +3018,12 @@ class GetCollectionsResponse extends $pb.GeneratedMessage {
     }
     if (customers != null) {
       $result.customers.addAll(customers);
+    }
+    if (totalBilled != null) {
+      $result.totalBilled = totalBilled;
+    }
+    if (totalCollected != null) {
+      $result.totalCollected = totalCollected;
     }
     return $result;
   }
@@ -2678,6 +3034,8 @@ class GetCollectionsResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetCollectionsResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
     ..pc<$0.Reading>(1, _omitFieldNames ? '' : 'readings', $pb.PbFieldType.PM, subBuilder: $0.Reading.create)
     ..pc<CollectionCustomer>(2, _omitFieldNames ? '' : 'customers', $pb.PbFieldType.PM, subBuilder: CollectionCustomer.create)
+    ..a<$core.double>(3, _omitFieldNames ? '' : 'totalBilled', $pb.PbFieldType.OD)
+    ..a<$core.double>(4, _omitFieldNames ? '' : 'totalCollected', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -2707,12 +3065,32 @@ class GetCollectionsResponse extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(2)
   $core.List<CollectionCustomer> get customers => $_getList(1);
+
+  @$pb.TagNumber(3)
+  $core.double get totalBilled => $_getN(2);
+  @$pb.TagNumber(3)
+  set totalBilled($core.double v) { $_setDouble(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasTotalBilled() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearTotalBilled() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.double get totalCollected => $_getN(3);
+  @$pb.TagNumber(4)
+  set totalCollected($core.double v) { $_setDouble(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasTotalCollected() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearTotalCollected() => clearField(4);
 }
 
 class CollectionCustomer extends $pb.GeneratedMessage {
   factory CollectionCustomer({
     $0.Customer? customer,
     $core.Iterable<$0.Reading>? readings,
+    $core.Iterable<$2.ReceiptBalance>? receipts,
+    $core.double? totalDebt,
   }) {
     final $result = create();
     if (customer != null) {
@@ -2720,6 +3098,12 @@ class CollectionCustomer extends $pb.GeneratedMessage {
     }
     if (readings != null) {
       $result.readings.addAll(readings);
+    }
+    if (receipts != null) {
+      $result.receipts.addAll(receipts);
+    }
+    if (totalDebt != null) {
+      $result.totalDebt = totalDebt;
     }
     return $result;
   }
@@ -2730,6 +3114,8 @@ class CollectionCustomer extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'CollectionCustomer', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
     ..aOM<$0.Customer>(1, _omitFieldNames ? '' : 'customer', subBuilder: $0.Customer.create)
     ..pc<$0.Reading>(2, _omitFieldNames ? '' : 'readings', $pb.PbFieldType.PM, subBuilder: $0.Reading.create)
+    ..pc<$2.ReceiptBalance>(3, _omitFieldNames ? '' : 'receipts', $pb.PbFieldType.PM, subBuilder: $2.ReceiptBalance.create)
+    ..a<$core.double>(4, _omitFieldNames ? '' : 'totalDebt', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
@@ -2767,6 +3153,333 @@ class CollectionCustomer extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(2)
   $core.List<$0.Reading> get readings => $_getList(1);
+
+  @$pb.TagNumber(3)
+  $core.List<$2.ReceiptBalance> get receipts => $_getList(2);
+
+  @$pb.TagNumber(4)
+  $core.double get totalDebt => $_getN(3);
+  @$pb.TagNumber(4)
+  set totalDebt($core.double v) { $_setDouble(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasTotalDebt() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearTotalDebt() => clearField(4);
+}
+
+class DeleteSectorRequest extends $pb.GeneratedMessage {
+  factory DeleteSectorRequest({
+    $core.String? id,
+  }) {
+    final $result = create();
+    if (id != null) {
+      $result.id = id;
+    }
+    return $result;
+  }
+  DeleteSectorRequest._() : super();
+  factory DeleteSectorRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeleteSectorRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'DeleteSectorRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DeleteSectorRequest clone() => DeleteSectorRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DeleteSectorRequest copyWith(void Function(DeleteSectorRequest) updates) => super.copyWith((message) => updates(message as DeleteSectorRequest)) as DeleteSectorRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteSectorRequest create() => DeleteSectorRequest._();
+  DeleteSectorRequest createEmptyInstance() => create();
+  static $pb.PbList<DeleteSectorRequest> createRepeated() => $pb.PbList<DeleteSectorRequest>();
+  @$core.pragma('dart2js:noInline')
+  static DeleteSectorRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteSectorRequest>(create);
+  static DeleteSectorRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+}
+
+class DeleteSectorResponse extends $pb.GeneratedMessage {
+  factory DeleteSectorResponse({
+    $core.bool? success,
+  }) {
+    final $result = create();
+    if (success != null) {
+      $result.success = success;
+    }
+    return $result;
+  }
+  DeleteSectorResponse._() : super();
+  factory DeleteSectorResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeleteSectorResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'DeleteSectorResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'success')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DeleteSectorResponse clone() => DeleteSectorResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DeleteSectorResponse copyWith(void Function(DeleteSectorResponse) updates) => super.copyWith((message) => updates(message as DeleteSectorResponse)) as DeleteSectorResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteSectorResponse create() => DeleteSectorResponse._();
+  DeleteSectorResponse createEmptyInstance() => create();
+  static $pb.PbList<DeleteSectorResponse> createRepeated() => $pb.PbList<DeleteSectorResponse>();
+  @$core.pragma('dart2js:noInline')
+  static DeleteSectorResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteSectorResponse>(create);
+  static DeleteSectorResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.bool get success => $_getBF(0);
+  @$pb.TagNumber(1)
+  set success($core.bool v) { $_setBool(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSuccess() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSuccess() => clearField(1);
+}
+
+class DeleteCommunityRequest extends $pb.GeneratedMessage {
+  factory DeleteCommunityRequest({
+    $core.String? id,
+  }) {
+    final $result = create();
+    if (id != null) {
+      $result.id = id;
+    }
+    return $result;
+  }
+  DeleteCommunityRequest._() : super();
+  factory DeleteCommunityRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeleteCommunityRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'DeleteCommunityRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DeleteCommunityRequest clone() => DeleteCommunityRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DeleteCommunityRequest copyWith(void Function(DeleteCommunityRequest) updates) => super.copyWith((message) => updates(message as DeleteCommunityRequest)) as DeleteCommunityRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteCommunityRequest create() => DeleteCommunityRequest._();
+  DeleteCommunityRequest createEmptyInstance() => create();
+  static $pb.PbList<DeleteCommunityRequest> createRepeated() => $pb.PbList<DeleteCommunityRequest>();
+  @$core.pragma('dart2js:noInline')
+  static DeleteCommunityRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteCommunityRequest>(create);
+  static DeleteCommunityRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+}
+
+class DeleteCommunityResponse extends $pb.GeneratedMessage {
+  factory DeleteCommunityResponse({
+    $core.bool? success,
+  }) {
+    final $result = create();
+    if (success != null) {
+      $result.success = success;
+    }
+    return $result;
+  }
+  DeleteCommunityResponse._() : super();
+  factory DeleteCommunityResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeleteCommunityResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'DeleteCommunityResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'success')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DeleteCommunityResponse clone() => DeleteCommunityResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DeleteCommunityResponse copyWith(void Function(DeleteCommunityResponse) updates) => super.copyWith((message) => updates(message as DeleteCommunityResponse)) as DeleteCommunityResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static DeleteCommunityResponse create() => DeleteCommunityResponse._();
+  DeleteCommunityResponse createEmptyInstance() => create();
+  static $pb.PbList<DeleteCommunityResponse> createRepeated() => $pb.PbList<DeleteCommunityResponse>();
+  @$core.pragma('dart2js:noInline')
+  static DeleteCommunityResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteCommunityResponse>(create);
+  static DeleteCommunityResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.bool get success => $_getBF(0);
+  @$pb.TagNumber(1)
+  set success($core.bool v) { $_setBool(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSuccess() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSuccess() => clearField(1);
+}
+
+class MoveSectorRequest extends $pb.GeneratedMessage {
+  factory MoveSectorRequest({
+    $core.String? sectorId,
+    $core.String? communityId,
+  }) {
+    final $result = create();
+    if (sectorId != null) {
+      $result.sectorId = sectorId;
+    }
+    if (communityId != null) {
+      $result.communityId = communityId;
+    }
+    return $result;
+  }
+  MoveSectorRequest._() : super();
+  factory MoveSectorRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory MoveSectorRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'MoveSectorRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'sectorId')
+    ..aOS(2, _omitFieldNames ? '' : 'communityId')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  MoveSectorRequest clone() => MoveSectorRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  MoveSectorRequest copyWith(void Function(MoveSectorRequest) updates) => super.copyWith((message) => updates(message as MoveSectorRequest)) as MoveSectorRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static MoveSectorRequest create() => MoveSectorRequest._();
+  MoveSectorRequest createEmptyInstance() => create();
+  static $pb.PbList<MoveSectorRequest> createRepeated() => $pb.PbList<MoveSectorRequest>();
+  @$core.pragma('dart2js:noInline')
+  static MoveSectorRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MoveSectorRequest>(create);
+  static MoveSectorRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get sectorId => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set sectorId($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSectorId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSectorId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get communityId => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set communityId($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasCommunityId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearCommunityId() => clearField(2);
+}
+
+class MoveSectorResponse extends $pb.GeneratedMessage {
+  factory MoveSectorResponse({
+    $core.int? movedCustomers,
+  }) {
+    final $result = create();
+    if (movedCustomers != null) {
+      $result.movedCustomers = movedCustomers;
+    }
+    return $result;
+  }
+  MoveSectorResponse._() : super();
+  factory MoveSectorResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory MoveSectorResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'MoveSectorResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
+    ..a<$core.int>(1, _omitFieldNames ? '' : 'movedCustomers', $pb.PbFieldType.O3)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  MoveSectorResponse clone() => MoveSectorResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  MoveSectorResponse copyWith(void Function(MoveSectorResponse) updates) => super.copyWith((message) => updates(message as MoveSectorResponse)) as MoveSectorResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static MoveSectorResponse create() => MoveSectorResponse._();
+  MoveSectorResponse createEmptyInstance() => create();
+  static $pb.PbList<MoveSectorResponse> createRepeated() => $pb.PbList<MoveSectorResponse>();
+  @$core.pragma('dart2js:noInline')
+  static MoveSectorResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MoveSectorResponse>(create);
+  static MoveSectorResponse? _defaultInstance;
+
+  /// Number of supplies that moved with the sector.
+  @$pb.TagNumber(1)
+  $core.int get movedCustomers => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set movedCustomers($core.int v) { $_setSignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasMovedCustomers() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMovedCustomers() => clearField(1);
 }
 
 class AdminServiceApi {
@@ -2824,14 +3537,68 @@ class AdminServiceApi {
   $async.Future<UpsertSectorResponse> upsertSector($pb.ClientContext? ctx, UpsertSectorRequest request) =>
     _client.invoke<UpsertSectorResponse>(ctx, 'AdminService', 'UpsertSector', request, UpsertSectorResponse())
   ;
+  $async.Future<DeleteSectorResponse> deleteSector($pb.ClientContext? ctx, DeleteSectorRequest request) =>
+    _client.invoke<DeleteSectorResponse>(ctx, 'AdminService', 'DeleteSector', request, DeleteSectorResponse())
+  ;
+  $async.Future<MoveSectorResponse> moveSector($pb.ClientContext? ctx, MoveSectorRequest request) =>
+    _client.invoke<MoveSectorResponse>(ctx, 'AdminService', 'MoveSector', request, MoveSectorResponse())
+  ;
   $async.Future<UpsertCommunityResponse> upsertCommunity($pb.ClientContext? ctx, UpsertCommunityRequest request) =>
     _client.invoke<UpsertCommunityResponse>(ctx, 'AdminService', 'UpsertCommunity', request, UpsertCommunityResponse())
+  ;
+  $async.Future<DeleteCommunityResponse> deleteCommunity($pb.ClientContext? ctx, DeleteCommunityRequest request) =>
+    _client.invoke<DeleteCommunityResponse>(ctx, 'AdminService', 'DeleteCommunity', request, DeleteCommunityResponse())
   ;
   $async.Future<TogglePaymentStatusResponse> togglePaymentStatus($pb.ClientContext? ctx, TogglePaymentStatusRequest request) =>
     _client.invoke<TogglePaymentStatusResponse>(ctx, 'AdminService', 'TogglePaymentStatus', request, TogglePaymentStatusResponse())
   ;
   $async.Future<GetCollectionsResponse> getCollections($pb.ClientContext? ctx, GetCollectionsRequest request) =>
     _client.invoke<GetCollectionsResponse>(ctx, 'AdminService', 'GetCollections', request, GetCollectionsResponse())
+  ;
+  $async.Future<$2.GetCustomerAccountResponse> getCustomerAccount($pb.ClientContext? ctx, $2.GetCustomerAccountRequest request) =>
+    _client.invoke<$2.GetCustomerAccountResponse>(ctx, 'AdminService', 'GetCustomerAccount', request, $2.GetCustomerAccountResponse())
+  ;
+  $async.Future<$2.RegisterPaymentResponse> registerPayment($pb.ClientContext? ctx, $2.RegisterPaymentRequest request) =>
+    _client.invoke<$2.RegisterPaymentResponse>(ctx, 'AdminService', 'RegisterPayment', request, $2.RegisterPaymentResponse())
+  ;
+  $async.Future<$2.VoidPaymentResponse> voidPayment($pb.ClientContext? ctx, $2.VoidPaymentRequest request) =>
+    _client.invoke<$2.VoidPaymentResponse>(ctx, 'AdminService', 'VoidPayment', request, $2.VoidPaymentResponse())
+  ;
+  $async.Future<$2.CreateFlatChargeResponse> createFlatCharge($pb.ClientContext? ctx, $2.CreateFlatChargeRequest request) =>
+    _client.invoke<$2.CreateFlatChargeResponse>(ctx, 'AdminService', 'CreateFlatCharge', request, $2.CreateFlatChargeResponse())
+  ;
+  $async.Future<$2.GetCashClosingResponse> getCashClosing($pb.ClientContext? ctx, $2.GetCashClosingRequest request) =>
+    _client.invoke<$2.GetCashClosingResponse>(ctx, 'AdminService', 'GetCashClosing', request, $2.GetCashClosingResponse())
+  ;
+  $async.Future<$3.GetCollectionsDashboardResponse> getCollectionsDashboard($pb.ClientContext? ctx, $3.GetCollectionsDashboardRequest request) =>
+    _client.invoke<$3.GetCollectionsDashboardResponse>(ctx, 'AdminService', 'GetCollectionsDashboard', request, $3.GetCollectionsDashboardResponse())
+  ;
+  $async.Future<$3.GetDebtorsResponse> getDebtors($pb.ClientContext? ctx, $3.GetDebtorsRequest request) =>
+    _client.invoke<$3.GetDebtorsResponse>(ctx, 'AdminService', 'GetDebtors', request, $3.GetDebtorsResponse())
+  ;
+  $async.Future<$1.GetCollectionPolicyResponse> getCollectionPolicy($pb.ClientContext? ctx, $1.GetCollectionPolicyRequest request) =>
+    _client.invoke<$1.GetCollectionPolicyResponse>(ctx, 'AdminService', 'GetCollectionPolicy', request, $1.GetCollectionPolicyResponse())
+  ;
+  $async.Future<$1.UpdateCollectionPolicyResponse> updateCollectionPolicy($pb.ClientContext? ctx, $1.UpdateCollectionPolicyRequest request) =>
+    _client.invoke<$1.UpdateCollectionPolicyResponse>(ctx, 'AdminService', 'UpdateCollectionPolicy', request, $1.UpdateCollectionPolicyResponse())
+  ;
+  $async.Future<$1.WaiveLateFeeResponse> waiveLateFee($pb.ClientContext? ctx, $1.WaiveLateFeeRequest request) =>
+    _client.invoke<$1.WaiveLateFeeResponse>(ctx, 'AdminService', 'WaiveLateFee', request, $1.WaiveLateFeeResponse())
+  ;
+  $async.Future<$1.PreviewAgreementResponse> previewAgreement($pb.ClientContext? ctx, $1.AgreementRequest request) =>
+    _client.invoke<$1.PreviewAgreementResponse>(ctx, 'AdminService', 'PreviewAgreement', request, $1.PreviewAgreementResponse())
+  ;
+  $async.Future<$1.CreateAgreementResponse> createAgreement($pb.ClientContext? ctx, $1.AgreementRequest request) =>
+    _client.invoke<$1.CreateAgreementResponse>(ctx, 'AdminService', 'CreateAgreement', request, $1.CreateAgreementResponse())
+  ;
+  $async.Future<$1.CancelAgreementResponse> cancelAgreement($pb.ClientContext? ctx, $1.CancelAgreementRequest request) =>
+    _client.invoke<$1.CancelAgreementResponse>(ctx, 'AdminService', 'CancelAgreement', request, $1.CancelAgreementResponse())
+  ;
+  $async.Future<SetCustomerServiceStatusResponse> setCustomerServiceStatus($pb.ClientContext? ctx, SetCustomerServiceStatusRequest request) =>
+    _client.invoke<SetCustomerServiceStatusResponse>(ctx, 'AdminService', 'SetCustomerServiceStatus', request, SetCustomerServiceStatusResponse())
+  ;
+  $async.Future<GetCustomerStatusHistoryResponse> getCustomerStatusHistory($pb.ClientContext? ctx, GetCustomerStatusHistoryRequest request) =>
+    _client.invoke<GetCustomerStatusHistoryResponse>(ctx, 'AdminService', 'GetCustomerStatusHistory', request, GetCustomerStatusHistoryResponse())
   ;
 }
 

@@ -1,15 +1,17 @@
 "use client";
 
-import { MapPin, Plus, Search, X, Edit2, Users, ChevronDown, ChevronRight, FileSpreadsheet } from "lucide-react";
-import { useEffect, useState, useRef, Fragment } from "react";
+import { ChevronDown, ChevronRight, Edit2, MapPin, Plus, Search, Users, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { CustomerTable, type CustomerTableHandle } from "@/components/dashboard/CustomerTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { useRouter } from "next/navigation";
-import { useCommunities } from "./hooks/useCommunities";
-import { CustomerTable, type CustomerTableHandle } from "@/components/dashboard/CustomerTable";
 import { CommunityModal } from "./components/CommunityModal";
+import { MoveSectorDialog } from "./components/MoveSectorDialog";
+import { SectorCard } from "./components/SectorCard";
+import { type SectorWithCount, useCommunities } from "./hooks/useCommunities";
 
 export default function CommunitiesPage() {
   const { isAdmin, loading: authLoading } = useAuth();
@@ -29,6 +31,9 @@ export default function CommunitiesPage() {
     setSearchQuery,
     handleOpenModal,
     handleSave,
+    deleteSector,
+    moveSector,
+    allCommunities,
     downloadSectorCSV,
   } = useCommunities({
     onSaveSuccess: (newSectors) => {
@@ -42,10 +47,9 @@ export default function CommunitiesPage() {
     id: string;
     name: string;
   } | null>(null);
+  const [movingSector, setMovingSector] = useState<SectorWithCount | null>(null);
   const tableRef = useRef<CustomerTableHandle>(null);
-  const [expandedCommunities, setExpandedCommunities] = useState<
-    Record<string, boolean>
-  >({});
+  const [expandedCommunities, setExpandedCommunities] = useState<Record<string, boolean>>({});
 
   const toggleExpand = (communityId: string) => {
     setExpandedCommunities((prev) => ({
@@ -126,10 +130,7 @@ export default function CommunitiesPage() {
                   ))
                 ) : data.communities.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan={5}
-                      className="px-6 py-12 text-center text-muted-foreground italic"
-                    >
+                    <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground italic">
                       No se encontraron comunidades
                     </td>
                   </tr>
@@ -156,9 +157,7 @@ export default function CommunitiesPage() {
                             <div className="w-10 h-10 rounded-full bg-linear-to-br from-primary/20 to-secondary/20 flex items-center justify-center border border-white/5">
                               <MapPin className="w-5 h-5 text-primary" />
                             </div>
-                            <span className="font-bold text-sm tracking-tight">
-                              {c.name}
-                            </span>
+                            <span className="font-bold text-sm tracking-tight">{c.name}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -196,51 +195,19 @@ export default function CommunitiesPage() {
                                 {data.sectors
                                   .filter((s) => s.communityId === c.id)
                                   .map((s) => (
-                                    <div
+                                    <SectorCard
                                       key={s.id}
-                                      className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-primary/20 transition-all duration-300 group/sector"
-                                    >
-                                      <div className="flex flex-col gap-0.5">
-                                        <span className="text-xs font-black uppercase tracking-wide text-white/90">
-                                          {s.name}
-                                        </span>
-                                        <span className="text-[10px] font-bold text-muted-foreground/60 uppercase">
-                                          {s.customerCount ?? 0} Suministros
-                                        </span>
-                                      </div>
-                                      <div className="flex gap-1">
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          onClick={() => downloadSectorCSV(s.id, s.name)}
-                                          className="w-8 h-8 rounded-lg hover:bg-emerald-500/10 text-emerald-400 opacity-60 hover:opacity-100 transition-all"
-                                          title={`Descargar Excel de ${s.name}`}
-                                        >
-                                          <FileSpreadsheet className="w-4 h-4" />
-                                        </Button>
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          onClick={() =>
-                                            setViewingSector({
-                                              id: s.id,
-                                              name: s.name,
-                                            })
-                                          }
-                                          className="w-8 h-8 rounded-lg hover:bg-cyan-500/10 text-cyan-400 opacity-60 hover:opacity-100 transition-all"
-                                          title={`Ver suministros de ${s.name}`}
-                                        >
-                                          <Users className="w-4 h-4" />
-                                        </Button>
-                                      </div>
-                                    </div>
+                                      sector={s}
+                                      onDownload={() => downloadSectorCSV(s.id, s.name)}
+                                      onView={() => setViewingSector({ id: s.id, name: s.name })}
+                                      onMove={() => setMovingSector(s)}
+                                      onDelete={() => deleteSector(s.id)}
+                                    />
                                   ))}
-                                {data.sectors.filter(
-                                  (s) => s.communityId === c.id,
-                                ).length === 0 && (
+                                {data.sectors.filter((s) => s.communityId === c.id).length ===
+                                  0 && (
                                   <p className="text-xs text-muted-foreground italic col-span-full">
-                                    No hay sectores registrados para esta
-                                    comunidad.
+                                    No hay sectores registrados para esta comunidad.
                                   </p>
                                 )}
                               </div>
@@ -269,6 +236,18 @@ export default function CommunitiesPage() {
         onSave={handleSave}
         saving={saving}
       />
+      {movingSector && (
+        <MoveSectorDialog
+          sector={movingSector}
+          communities={allCommunities}
+          onClose={() => setMovingSector(null)}
+          onMove={async (communityId) => {
+            const ok = await moveSector(movingSector.id, communityId);
+            if (ok) setExpandedCommunities((prev) => ({ ...prev, [communityId]: true }));
+            return ok;
+          }}
+        />
+      )}
       {/* View Customers Modal */}
       {viewingSector && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md animate-in fade-in duration-300">
@@ -302,11 +281,7 @@ export default function CommunitiesPage() {
               </div>
             </div>
             <div className="p-8 overflow-y-auto flex-1">
-              <CustomerTable
-                ref={tableRef}
-                sectorId={viewingSector.id}
-                hideHeaderButtons
-              />
+              <CustomerTable ref={tableRef} sectorId={viewingSector.id} hideHeaderButtons />
             </div>
           </Card>
         </div>

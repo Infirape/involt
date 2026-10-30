@@ -135,6 +135,7 @@ func (h *SyncHandler) PullMetadata(
 			Alumbrado:       settings.Alumbrado,
 			Mantenimiento:   settings.Mantenimiento,
 			Igv:             settings.IGV,
+			ReceiptCopies:   receiptCopiesToProto(settings.ReceiptCopies),
 		},
 	}
 

@@ -4,6 +4,7 @@ import { Zap } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { InvoltAlly } from "@/components/brand/InvoltAlly";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -67,11 +68,12 @@ export default function LoginPage() {
               <div className="absolute -inset-1 bg-linear-to-r from-primary/50 to-primary/20 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
               <div className="relative p-1 rounded-2xl bg-black/40 border border-white/5 shadow-inner">
                 <Image
-                  src="/assets/logo_chetilla.png"
+                  src="/assets/escudo_chetilla.png"
                   alt="Hidroeléctrica QARWAQIRU MICHAY"
-                  width={80}
-                  height={80}
-                  className="rounded-xl transition-transform duration-500 group-hover:scale-110"
+                  width={88}
+                  height={96}
+                  priority
+                  className="h-24 w-auto object-contain transition-transform duration-500 group-hover:scale-110"
                 />
               </div>
             </div>
@@ -146,9 +148,11 @@ export default function LoginPage() {
         </form>
       </Card>
 
-      <div className="fixed bottom-8 text-center text-[10px] uppercase tracking-[0.2em] text-muted-foreground/30 font-black">
-        Powered by <span className="text-white/60">InVolt</span> / Energía Rural
-        Inteligente &copy; 2026
+      <div className="fixed bottom-8 flex flex-col items-center gap-1">
+        <InvoltAlly />
+        <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground/30 font-black">
+          Municipalidad Distrital de Chetilla &copy; 2026
+        </span>
       </div>
     </div>
   );

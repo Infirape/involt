@@ -33,7 +33,7 @@ type ReadingRepository interface {
 type CustomerRepository interface {
 	GetByID(ctx context.Context, id string) (*domain.Customer, error)
 	GetByCode(ctx context.Context, code string) (*domain.Customer, error)
-	List(ctx context.Context, allowedSectorIDs []string, searchQuery string, limit, offset int, excludePeriodID string, communityID string) ([]domain.Customer, int, error)
+	List(ctx context.Context, allowedSectorIDs []string, searchQuery string, limit, offset int, excludePeriodID string, communityID string, serviceStatus string) ([]domain.Customer, int, error)
 	ListAll(ctx context.Context) ([]domain.Customer, error)
 	SaveBatch(ctx context.Context, customers []domain.Customer) error
 	Save(ctx context.Context, customer *domain.Customer) error
@@ -48,6 +48,11 @@ type MetadataRepository interface {
 	ListSectors(ctx context.Context) ([]domain.Sector, error)
 	SaveCommunities(ctx context.Context, communities []domain.Community) error
 	SaveSectors(ctx context.Context, sectors []domain.Sector) error
+	DeleteSector(ctx context.Context, id string) error
+	// MoveSector reassigns a sector, and every supply in it, to another community; returns how
+	// many supplies moved.
+	MoveSector(ctx context.Context, sectorID, communityID string) (int, error)
+	DeleteCommunity(ctx context.Context, id string) error
 	GetAppConfig(ctx context.Context) (*domain.AppConfig, error)
 	GetSettings(ctx context.Context) (*domain.Settings, error)
 	SaveSettings(ctx context.Context, settings *domain.Settings) error

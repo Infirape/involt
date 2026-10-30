@@ -23,10 +23,10 @@ export async function downloadFile(url: string, defaultFileName: string) {
     const blob = await response.blob();
     const contentDisposition = response.headers.get("Content-Disposition");
     let fileName = defaultFileName;
-    
+
     if (contentDisposition) {
       const match = contentDisposition.match(/filename=(.+)/);
-      if (match && match[1]) fileName = match[1].replace(/["']/g, "");
+      if (match?.[1]) fileName = match[1].replace(/["']/g, "");
     }
 
     const downloadUrl = window.URL.createObjectURL(blob);
@@ -41,4 +41,15 @@ export async function downloadFile(url: string, defaultFileName: string) {
     console.error("Download error:", err);
     throw err;
   }
+}
+
+export function generateUUID(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 }

@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+package involt.v1;
+
+import "involt/v1/agreements.proto";
+import "involt/v1/models.proto";
+
+option go_package = "github.com/infira/involt/backend/internal/gen/involt/v1;involtv1";
+
+// PaymentMethod is how the customer paid at the cash desk.
+enum PaymentMethod {
+  PAYMENT_METHOD_UNSPECIFIED = 0;
+  PAYMENT_METHOD_CASH = 1;
+  PAYMENT_METHOD_YAPE = 2;
+  PAYMENT_METHOD_PLIN = 3;
+  PAYMENT_METHOD_TRANSFER = 4;
+  PAYMENT_METHOD_OTHER = 5;
+}
+
+// ReceiptStatus is the collection state of a receipt (reading).
+enum ReceiptStatus {
+  RECEIPT_STATUS_UNSPECIFIED = 0;
+  RECEIPT_STATUS_PAID = 1;
+  RECEIPT_STATUS_PARTIAL = 2;
+  RECEIPT_STATUS_PENDING = 3;
+  RECEIPT_STATUS_OVERDUE = 4;
+  RECEIPT_STATUS_IN_AGREEMENT = 5; // covered by an on-schedule payment agreement
+}
+
+// ReceiptBalance is a receipt with how much has been paid and what is still owed.
+message ReceiptBalance {
+  Reading reading = 1;
+  double paid_amount = 2;
+  double balance = 3;
+  ReceiptStatus status = 4;
+  double late_fee = 5; // unpaid mora owed today
+  bool late_fee_waived = 6;
+  string agreement_id = 7; // active agreement covering this receipt, if any
+}
+
+message PaymentAllocation {
+  string reading_id = 1;
+  string period = 2;
+  double amount = 3; // principal
+  double late_fee = 4;
+}
+
+message Payment {
+  string id = 1;
+  int64 receipt_number = 2;
+  string customer_id = 3;
+  string customer_name = 4;
+  string customer_code = 5;
+  double amount = 6;
+  PaymentMethod method = 7;
+  string reference = 8; // e.g. Yape operation number
+  string observation = 9;
+  string collected_by_email = 10;
+  string paid_at = 11; // ISO 8601
+  bool voided = 12;
+  string voided_at = 13;
+  string void_reason = 14;
+  repeated PaymentAllocation allocations = 15;
+  string collected_by = 16;
+}
+
+message GetCustomerAccountRequest {
+  string customer_id = 1;
+}
+
+message GetCustomerAccountResponse {
+  Customer customer = 1;
+  repeated ReceiptBalance receipts = 2; // every receipt, oldest period first
+  repeated Payment payments = 3; // newest first, including voided
+  double total_debt = 4; // principal + mora
+  int32 overdue_count = 5;
+  double total_late_fees = 6;
+  repeated PaymentAgreement agreements = 7; // newest first
+  bool agreements_enabled = 8;
+}
+
+message RegisterPaymentRequest {
+  string customer_id = 1;
+  // Receipts to apply the payment to. Empty means all outstanding receipts.
+  // The amount is always applied oldest period first.
+  repeated string reading_ids = 2;
+  double amount = 3;
+  PaymentMethod method = 4;
+  string reference = 5;
+  string observation = 6;
+}
+
+message RegisterPaymentResponse {
+  Payment payment = 1;
+}
+
+message VoidPaymentRequest {
+  string payment_id = 1;
+  string reason = 2;
+}
+
+message VoidPaymentResponse {
+  Payment payment = 1;
+}
+
+// CreateFlatChargeRequest bills a period that has no meter reading (fixed fee).
+message CreateFlatChargeRequest {
+  string customer_id = 1;
+  string period = 2; // YYYY-MM
+  double amount = 3; // 0 = use cargo fijo + alumbrado + mantenimiento from settings
+  string observation = 4;
+}
+
+message CreateFlatChargeResponse {
+  Reading reading = 1;
+}
+
+message GetCashClosingRequest {
+  string date_from = 1; // YYYY-MM-DD, inclusive (America/Lima)
+  string date_to = 2; // YYYY-MM-DD, inclusive (America/Lima)
+  string collected_by = 3; // optional user id
+}
+
+message MethodTotal {
+  PaymentMethod method = 1;
+  double amount = 2;
+  int32 count = 3;
+}
+
+message CollectorTotal {
+  string collected_by = 1;
+  string collected_by_email = 2;
+  double amount = 3;
+  int32 count = 4;
+}
+
+message GetCashClosingResponse {
+  repeated Payment payments = 1; // includes voided, flagged
+  double total_amount = 2; // excludes voided
+  int32 payment_count = 3; // excludes voided
+  repeated MethodTotal by_method = 4;
+  repeated CollectorTotal by_collector = 5;
+  double voided_amount = 6;
+  int32 voided_count = 7;
+}

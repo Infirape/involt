@@ -13,7 +13,10 @@ import 'dart:convert' as $convert;
 import 'dart:core' as $core;
 import 'dart:typed_data' as $typed_data;
 
+import 'agreements.pbjson.dart' as $1;
 import 'models.pbjson.dart' as $0;
+import 'payments.pbjson.dart' as $2;
+import 'reports.pbjson.dart' as $3;
 
 @$core.Deprecated('Use userRoleDescriptor instead')
 const UserRole$json = {
@@ -30,6 +33,81 @@ const UserRole$json = {
 final $typed_data.Uint8List userRoleDescriptor = $convert.base64Decode(
     'CghVc2VyUm9sZRIZChVVU0VSX1JPTEVfVU5TUEVDSUZJRUQQABITCg9VU0VSX1JPTEVfQURNSU'
     '4QARIYChRVU0VSX1JPTEVfU1VQRVJWSVNPUhACEhQKEFVTRVJfUk9MRV9SRUFERVIQAw==');
+
+@$core.Deprecated('Use setCustomerServiceStatusRequestDescriptor instead')
+const SetCustomerServiceStatusRequest$json = {
+  '1': 'SetCustomerServiceStatusRequest',
+  '2': [
+    {'1': 'customer_id', '3': 1, '4': 1, '5': 9, '10': 'customerId'},
+    {'1': 'status', '3': 2, '4': 1, '5': 14, '6': '.involt.v1.ServiceStatus', '10': 'status'},
+    {'1': 'reason', '3': 3, '4': 1, '5': 9, '10': 'reason'},
+  ],
+};
+
+/// Descriptor for `SetCustomerServiceStatusRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List setCustomerServiceStatusRequestDescriptor = $convert.base64Decode(
+    'Ch9TZXRDdXN0b21lclNlcnZpY2VTdGF0dXNSZXF1ZXN0Eh8KC2N1c3RvbWVyX2lkGAEgASgJUg'
+    'pjdXN0b21lcklkEjAKBnN0YXR1cxgCIAEoDjIYLmludm9sdC52MS5TZXJ2aWNlU3RhdHVzUgZz'
+    'dGF0dXMSFgoGcmVhc29uGAMgASgJUgZyZWFzb24=');
+
+@$core.Deprecated('Use setCustomerServiceStatusResponseDescriptor instead')
+const SetCustomerServiceStatusResponse$json = {
+  '1': 'SetCustomerServiceStatusResponse',
+  '2': [
+    {'1': 'customer', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Customer', '10': 'customer'},
+  ],
+};
+
+/// Descriptor for `SetCustomerServiceStatusResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List setCustomerServiceStatusResponseDescriptor = $convert.base64Decode(
+    'CiBTZXRDdXN0b21lclNlcnZpY2VTdGF0dXNSZXNwb25zZRIvCghjdXN0b21lchgBIAEoCzITLm'
+    'ludm9sdC52MS5DdXN0b21lclIIY3VzdG9tZXI=');
+
+@$core.Deprecated('Use serviceStatusChangeDescriptor instead')
+const ServiceStatusChange$json = {
+  '1': 'ServiceStatusChange',
+  '2': [
+    {'1': 'previous_status', '3': 1, '4': 1, '5': 14, '6': '.involt.v1.ServiceStatus', '10': 'previousStatus'},
+    {'1': 'status', '3': 2, '4': 1, '5': 14, '6': '.involt.v1.ServiceStatus', '10': 'status'},
+    {'1': 'reason', '3': 3, '4': 1, '5': 9, '10': 'reason'},
+    {'1': 'changed_by_email', '3': 4, '4': 1, '5': 9, '10': 'changedByEmail'},
+    {'1': 'changed_at', '3': 5, '4': 1, '5': 9, '10': 'changedAt'},
+  ],
+};
+
+/// Descriptor for `ServiceStatusChange`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List serviceStatusChangeDescriptor = $convert.base64Decode(
+    'ChNTZXJ2aWNlU3RhdHVzQ2hhbmdlEkEKD3ByZXZpb3VzX3N0YXR1cxgBIAEoDjIYLmludm9sdC'
+    '52MS5TZXJ2aWNlU3RhdHVzUg5wcmV2aW91c1N0YXR1cxIwCgZzdGF0dXMYAiABKA4yGC5pbnZv'
+    'bHQudjEuU2VydmljZVN0YXR1c1IGc3RhdHVzEhYKBnJlYXNvbhgDIAEoCVIGcmVhc29uEigKEG'
+    'NoYW5nZWRfYnlfZW1haWwYBCABKAlSDmNoYW5nZWRCeUVtYWlsEh0KCmNoYW5nZWRfYXQYBSAB'
+    'KAlSCWNoYW5nZWRBdA==');
+
+@$core.Deprecated('Use getCustomerStatusHistoryRequestDescriptor instead')
+const GetCustomerStatusHistoryRequest$json = {
+  '1': 'GetCustomerStatusHistoryRequest',
+  '2': [
+    {'1': 'customer_id', '3': 1, '4': 1, '5': 9, '10': 'customerId'},
+  ],
+};
+
+/// Descriptor for `GetCustomerStatusHistoryRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getCustomerStatusHistoryRequestDescriptor = $convert.base64Decode(
+    'Ch9HZXRDdXN0b21lclN0YXR1c0hpc3RvcnlSZXF1ZXN0Eh8KC2N1c3RvbWVyX2lkGAEgASgJUg'
+    'pjdXN0b21lcklk');
+
+@$core.Deprecated('Use getCustomerStatusHistoryResponseDescriptor instead')
+const GetCustomerStatusHistoryResponse$json = {
+  '1': 'GetCustomerStatusHistoryResponse',
+  '2': [
+    {'1': 'changes', '3': 1, '4': 3, '5': 11, '6': '.involt.v1.ServiceStatusChange', '10': 'changes'},
+  ],
+};
+
+/// Descriptor for `GetCustomerStatusHistoryResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getCustomerStatusHistoryResponseDescriptor = $convert.base64Decode(
+    'CiBHZXRDdXN0b21lclN0YXR1c0hpc3RvcnlSZXNwb25zZRI4CgdjaGFuZ2VzGAEgAygLMh4uaW'
+    '52b2x0LnYxLlNlcnZpY2VTdGF0dXNDaGFuZ2VSB2NoYW5nZXM=');
 
 @$core.Deprecated('Use upsertSectorRequestDescriptor instead')
 const UpsertSectorRequest$json = {
@@ -238,6 +316,7 @@ const GetCustomersRequest$json = {
     {'1': 'page_size', '3': 4, '4': 1, '5': 5, '10': 'pageSize'},
     {'1': 'exclude_period_id', '3': 5, '4': 1, '5': 9, '10': 'excludePeriodId'},
     {'1': 'community_id', '3': 6, '4': 1, '5': 9, '10': 'communityId'},
+    {'1': 'service_status', '3': 7, '4': 1, '5': 14, '6': '.involt.v1.ServiceStatus', '10': 'serviceStatus'},
   ],
 };
 
@@ -247,7 +326,8 @@ final $typed_data.Uint8List getCustomersRequestDescriptor = $convert.base64Decod
     'VhcmNoX3F1ZXJ5GAIgASgJUgtzZWFyY2hRdWVyeRIfCgtwYWdlX251bWJlchgDIAEoBVIKcGFn'
     'ZU51bWJlchIbCglwYWdlX3NpemUYBCABKAVSCHBhZ2VTaXplEioKEWV4Y2x1ZGVfcGVyaW9kX2'
     'lkGAUgASgJUg9leGNsdWRlUGVyaW9kSWQSIQoMY29tbXVuaXR5X2lkGAYgASgJUgtjb21tdW5p'
-    'dHlJZA==');
+    'dHlJZBI/Cg5zZXJ2aWNlX3N0YXR1cxgHIAEoDjIYLmludm9sdC52MS5TZXJ2aWNlU3RhdHVzUg'
+    '1zZXJ2aWNlU3RhdHVz');
 
 @$core.Deprecated('Use getCustomersResponseDescriptor instead')
 const GetCustomersResponse$json = {
@@ -628,6 +708,8 @@ const GetCollectionsResponse$json = {
   '2': [
     {'1': 'readings', '3': 1, '4': 3, '5': 11, '6': '.involt.v1.Reading', '10': 'readings'},
     {'1': 'customers', '3': 2, '4': 3, '5': 11, '6': '.involt.v1.CollectionCustomer', '10': 'customers'},
+    {'1': 'total_billed', '3': 3, '4': 1, '5': 1, '10': 'totalBilled'},
+    {'1': 'total_collected', '3': 4, '4': 1, '5': 1, '10': 'totalCollected'},
   ],
 };
 
@@ -635,7 +717,8 @@ const GetCollectionsResponse$json = {
 final $typed_data.Uint8List getCollectionsResponseDescriptor = $convert.base64Decode(
     'ChZHZXRDb2xsZWN0aW9uc1Jlc3BvbnNlEi4KCHJlYWRpbmdzGAEgAygLMhIuaW52b2x0LnYxLl'
     'JlYWRpbmdSCHJlYWRpbmdzEjsKCWN1c3RvbWVycxgCIAMoCzIdLmludm9sdC52MS5Db2xsZWN0'
-    'aW9uQ3VzdG9tZXJSCWN1c3RvbWVycw==');
+    'aW9uQ3VzdG9tZXJSCWN1c3RvbWVycxIhCgx0b3RhbF9iaWxsZWQYAyABKAFSC3RvdGFsQmlsbG'
+    'VkEicKD3RvdGFsX2NvbGxlY3RlZBgEIAEoAVIOdG90YWxDb2xsZWN0ZWQ=');
 
 @$core.Deprecated('Use collectionCustomerDescriptor instead')
 const CollectionCustomer$json = {
@@ -643,6 +726,8 @@ const CollectionCustomer$json = {
   '2': [
     {'1': 'customer', '3': 1, '4': 1, '5': 11, '6': '.involt.v1.Customer', '10': 'customer'},
     {'1': 'readings', '3': 2, '4': 3, '5': 11, '6': '.involt.v1.Reading', '10': 'readings'},
+    {'1': 'receipts', '3': 3, '4': 3, '5': 11, '6': '.involt.v1.ReceiptBalance', '10': 'receipts'},
+    {'1': 'total_debt', '3': 4, '4': 1, '5': 1, '10': 'totalDebt'},
   ],
 };
 
@@ -650,7 +735,83 @@ const CollectionCustomer$json = {
 final $typed_data.Uint8List collectionCustomerDescriptor = $convert.base64Decode(
     'ChJDb2xsZWN0aW9uQ3VzdG9tZXISLwoIY3VzdG9tZXIYASABKAsyEy5pbnZvbHQudjEuQ3VzdG'
     '9tZXJSCGN1c3RvbWVyEi4KCHJlYWRpbmdzGAIgAygLMhIuaW52b2x0LnYxLlJlYWRpbmdSCHJl'
-    'YWRpbmdz');
+    'YWRpbmdzEjUKCHJlY2VpcHRzGAMgAygLMhkuaW52b2x0LnYxLlJlY2VpcHRCYWxhbmNlUghyZW'
+    'NlaXB0cxIdCgp0b3RhbF9kZWJ0GAQgASgBUgl0b3RhbERlYnQ=');
+
+@$core.Deprecated('Use deleteSectorRequestDescriptor instead')
+const DeleteSectorRequest$json = {
+  '1': 'DeleteSectorRequest',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+  ],
+};
+
+/// Descriptor for `DeleteSectorRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteSectorRequestDescriptor = $convert.base64Decode(
+    'ChNEZWxldGVTZWN0b3JSZXF1ZXN0Eg4KAmlkGAEgASgJUgJpZA==');
+
+@$core.Deprecated('Use deleteSectorResponseDescriptor instead')
+const DeleteSectorResponse$json = {
+  '1': 'DeleteSectorResponse',
+  '2': [
+    {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
+  ],
+};
+
+/// Descriptor for `DeleteSectorResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteSectorResponseDescriptor = $convert.base64Decode(
+    'ChREZWxldGVTZWN0b3JSZXNwb25zZRIYCgdzdWNjZXNzGAEgASgIUgdzdWNjZXNz');
+
+@$core.Deprecated('Use deleteCommunityRequestDescriptor instead')
+const DeleteCommunityRequest$json = {
+  '1': 'DeleteCommunityRequest',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+  ],
+};
+
+/// Descriptor for `DeleteCommunityRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteCommunityRequestDescriptor = $convert.base64Decode(
+    'ChZEZWxldGVDb21tdW5pdHlSZXF1ZXN0Eg4KAmlkGAEgASgJUgJpZA==');
+
+@$core.Deprecated('Use deleteCommunityResponseDescriptor instead')
+const DeleteCommunityResponse$json = {
+  '1': 'DeleteCommunityResponse',
+  '2': [
+    {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
+  ],
+};
+
+/// Descriptor for `DeleteCommunityResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deleteCommunityResponseDescriptor = $convert.base64Decode(
+    'ChdEZWxldGVDb21tdW5pdHlSZXNwb25zZRIYCgdzdWNjZXNzGAEgASgIUgdzdWNjZXNz');
+
+@$core.Deprecated('Use moveSectorRequestDescriptor instead')
+const MoveSectorRequest$json = {
+  '1': 'MoveSectorRequest',
+  '2': [
+    {'1': 'sector_id', '3': 1, '4': 1, '5': 9, '10': 'sectorId'},
+    {'1': 'community_id', '3': 2, '4': 1, '5': 9, '10': 'communityId'},
+  ],
+};
+
+/// Descriptor for `MoveSectorRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List moveSectorRequestDescriptor = $convert.base64Decode(
+    'ChFNb3ZlU2VjdG9yUmVxdWVzdBIbCglzZWN0b3JfaWQYASABKAlSCHNlY3RvcklkEiEKDGNvbW'
+    '11bml0eV9pZBgCIAEoCVILY29tbXVuaXR5SWQ=');
+
+@$core.Deprecated('Use moveSectorResponseDescriptor instead')
+const MoveSectorResponse$json = {
+  '1': 'MoveSectorResponse',
+  '2': [
+    {'1': 'moved_customers', '3': 1, '4': 1, '5': 5, '10': 'movedCustomers'},
+  ],
+};
+
+/// Descriptor for `MoveSectorResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List moveSectorResponseDescriptor = $convert.base64Decode(
+    'ChJNb3ZlU2VjdG9yUmVzcG9uc2USJwoPbW92ZWRfY3VzdG9tZXJzGAEgASgFUg5tb3ZlZEN1c3'
+    'RvbWVycw==');
 
 const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
   '1': 'AdminService',
@@ -672,9 +833,27 @@ const $core.Map<$core.String, $core.dynamic> AdminServiceBase$json = {
     {'1': 'OpenPeriod', '2': '.involt.v1.OpenPeriodRequest', '3': '.involt.v1.OpenPeriodResponse'},
     {'1': 'ClosePeriod', '2': '.involt.v1.ClosePeriodRequest', '3': '.involt.v1.ClosePeriodResponse'},
     {'1': 'UpsertSector', '2': '.involt.v1.UpsertSectorRequest', '3': '.involt.v1.UpsertSectorResponse'},
+    {'1': 'DeleteSector', '2': '.involt.v1.DeleteSectorRequest', '3': '.involt.v1.DeleteSectorResponse'},
+    {'1': 'MoveSector', '2': '.involt.v1.MoveSectorRequest', '3': '.involt.v1.MoveSectorResponse'},
     {'1': 'UpsertCommunity', '2': '.involt.v1.UpsertCommunityRequest', '3': '.involt.v1.UpsertCommunityResponse'},
+    {'1': 'DeleteCommunity', '2': '.involt.v1.DeleteCommunityRequest', '3': '.involt.v1.DeleteCommunityResponse'},
     {'1': 'TogglePaymentStatus', '2': '.involt.v1.TogglePaymentStatusRequest', '3': '.involt.v1.TogglePaymentStatusResponse'},
     {'1': 'GetCollections', '2': '.involt.v1.GetCollectionsRequest', '3': '.involt.v1.GetCollectionsResponse'},
+    {'1': 'GetCustomerAccount', '2': '.involt.v1.GetCustomerAccountRequest', '3': '.involt.v1.GetCustomerAccountResponse'},
+    {'1': 'RegisterPayment', '2': '.involt.v1.RegisterPaymentRequest', '3': '.involt.v1.RegisterPaymentResponse'},
+    {'1': 'VoidPayment', '2': '.involt.v1.VoidPaymentRequest', '3': '.involt.v1.VoidPaymentResponse'},
+    {'1': 'CreateFlatCharge', '2': '.involt.v1.CreateFlatChargeRequest', '3': '.involt.v1.CreateFlatChargeResponse'},
+    {'1': 'GetCashClosing', '2': '.involt.v1.GetCashClosingRequest', '3': '.involt.v1.GetCashClosingResponse'},
+    {'1': 'GetCollectionsDashboard', '2': '.involt.v1.GetCollectionsDashboardRequest', '3': '.involt.v1.GetCollectionsDashboardResponse'},
+    {'1': 'GetDebtors', '2': '.involt.v1.GetDebtorsRequest', '3': '.involt.v1.GetDebtorsResponse'},
+    {'1': 'GetCollectionPolicy', '2': '.involt.v1.GetCollectionPolicyRequest', '3': '.involt.v1.GetCollectionPolicyResponse'},
+    {'1': 'UpdateCollectionPolicy', '2': '.involt.v1.UpdateCollectionPolicyRequest', '3': '.involt.v1.UpdateCollectionPolicyResponse'},
+    {'1': 'WaiveLateFee', '2': '.involt.v1.WaiveLateFeeRequest', '3': '.involt.v1.WaiveLateFeeResponse'},
+    {'1': 'PreviewAgreement', '2': '.involt.v1.AgreementRequest', '3': '.involt.v1.PreviewAgreementResponse'},
+    {'1': 'CreateAgreement', '2': '.involt.v1.AgreementRequest', '3': '.involt.v1.CreateAgreementResponse'},
+    {'1': 'CancelAgreement', '2': '.involt.v1.CancelAgreementRequest', '3': '.involt.v1.CancelAgreementResponse'},
+    {'1': 'SetCustomerServiceStatus', '2': '.involt.v1.SetCustomerServiceStatusRequest', '3': '.involt.v1.SetCustomerServiceStatusResponse'},
+    {'1': 'GetCustomerStatusHistory', '2': '.involt.v1.GetCustomerStatusHistoryRequest', '3': '.involt.v1.GetCustomerStatusHistoryResponse'},
   ],
 };
 
@@ -723,13 +902,63 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> AdminServi
   '.involt.v1.ClosePeriodResponse': ClosePeriodResponse$json,
   '.involt.v1.UpsertSectorRequest': UpsertSectorRequest$json,
   '.involt.v1.UpsertSectorResponse': UpsertSectorResponse$json,
+  '.involt.v1.DeleteSectorRequest': DeleteSectorRequest$json,
+  '.involt.v1.DeleteSectorResponse': DeleteSectorResponse$json,
+  '.involt.v1.MoveSectorRequest': MoveSectorRequest$json,
+  '.involt.v1.MoveSectorResponse': MoveSectorResponse$json,
   '.involt.v1.UpsertCommunityRequest': UpsertCommunityRequest$json,
   '.involt.v1.UpsertCommunityResponse': UpsertCommunityResponse$json,
+  '.involt.v1.DeleteCommunityRequest': DeleteCommunityRequest$json,
+  '.involt.v1.DeleteCommunityResponse': DeleteCommunityResponse$json,
   '.involt.v1.TogglePaymentStatusRequest': TogglePaymentStatusRequest$json,
   '.involt.v1.TogglePaymentStatusResponse': TogglePaymentStatusResponse$json,
   '.involt.v1.GetCollectionsRequest': GetCollectionsRequest$json,
   '.involt.v1.GetCollectionsResponse': GetCollectionsResponse$json,
   '.involt.v1.CollectionCustomer': CollectionCustomer$json,
+  '.involt.v1.ReceiptBalance': $2.ReceiptBalance$json,
+  '.involt.v1.GetCustomerAccountRequest': $2.GetCustomerAccountRequest$json,
+  '.involt.v1.GetCustomerAccountResponse': $2.GetCustomerAccountResponse$json,
+  '.involt.v1.Payment': $2.Payment$json,
+  '.involt.v1.PaymentAllocation': $2.PaymentAllocation$json,
+  '.involt.v1.PaymentAgreement': $1.PaymentAgreement$json,
+  '.involt.v1.AgreementReceipt': $1.AgreementReceipt$json,
+  '.involt.v1.AgreementInstallment': $1.AgreementInstallment$json,
+  '.involt.v1.RegisterPaymentRequest': $2.RegisterPaymentRequest$json,
+  '.involt.v1.RegisterPaymentResponse': $2.RegisterPaymentResponse$json,
+  '.involt.v1.VoidPaymentRequest': $2.VoidPaymentRequest$json,
+  '.involt.v1.VoidPaymentResponse': $2.VoidPaymentResponse$json,
+  '.involt.v1.CreateFlatChargeRequest': $2.CreateFlatChargeRequest$json,
+  '.involt.v1.CreateFlatChargeResponse': $2.CreateFlatChargeResponse$json,
+  '.involt.v1.GetCashClosingRequest': $2.GetCashClosingRequest$json,
+  '.involt.v1.GetCashClosingResponse': $2.GetCashClosingResponse$json,
+  '.involt.v1.MethodTotal': $2.MethodTotal$json,
+  '.involt.v1.CollectorTotal': $2.CollectorTotal$json,
+  '.involt.v1.GetCollectionsDashboardRequest': $3.GetCollectionsDashboardRequest$json,
+  '.involt.v1.GetCollectionsDashboardResponse': $3.GetCollectionsDashboardResponse$json,
+  '.involt.v1.CollectionsDashboardTotals': $3.CollectionsDashboardTotals$json,
+  '.involt.v1.SectorCollectionSummary': $3.SectorCollectionSummary$json,
+  '.involt.v1.PeriodCollectionSummary': $3.PeriodCollectionSummary$json,
+  '.involt.v1.AgingTotal': $3.AgingTotal$json,
+  '.involt.v1.GetDebtorsRequest': $3.GetDebtorsRequest$json,
+  '.involt.v1.GetDebtorsResponse': $3.GetDebtorsResponse$json,
+  '.involt.v1.DebtorRow': $3.DebtorRow$json,
+  '.involt.v1.GetCollectionPolicyRequest': $1.GetCollectionPolicyRequest$json,
+  '.involt.v1.GetCollectionPolicyResponse': $1.GetCollectionPolicyResponse$json,
+  '.involt.v1.CollectionPolicy': $1.CollectionPolicy$json,
+  '.involt.v1.UpdateCollectionPolicyRequest': $1.UpdateCollectionPolicyRequest$json,
+  '.involt.v1.UpdateCollectionPolicyResponse': $1.UpdateCollectionPolicyResponse$json,
+  '.involt.v1.WaiveLateFeeRequest': $1.WaiveLateFeeRequest$json,
+  '.involt.v1.WaiveLateFeeResponse': $1.WaiveLateFeeResponse$json,
+  '.involt.v1.AgreementRequest': $1.AgreementRequest$json,
+  '.involt.v1.PreviewAgreementResponse': $1.PreviewAgreementResponse$json,
+  '.involt.v1.CreateAgreementResponse': $1.CreateAgreementResponse$json,
+  '.involt.v1.CancelAgreementRequest': $1.CancelAgreementRequest$json,
+  '.involt.v1.CancelAgreementResponse': $1.CancelAgreementResponse$json,
+  '.involt.v1.SetCustomerServiceStatusRequest': SetCustomerServiceStatusRequest$json,
+  '.involt.v1.SetCustomerServiceStatusResponse': SetCustomerServiceStatusResponse$json,
+  '.involt.v1.GetCustomerStatusHistoryRequest': GetCustomerStatusHistoryRequest$json,
+  '.involt.v1.GetCustomerStatusHistoryResponse': GetCustomerStatusHistoryResponse$json,
+  '.involt.v1.ServiceStatusChange': ServiceStatusChange$json,
 };
 
 /// Descriptor for `AdminService`. Decode as a `google.protobuf.ServiceDescriptorProto`.
@@ -758,10 +987,40 @@ final $typed_data.Uint8List adminServiceDescriptor = $convert.base64Decode(
     '5PcGVuUGVyaW9kUmVxdWVzdBodLmludm9sdC52MS5PcGVuUGVyaW9kUmVzcG9uc2USTAoLQ2xv'
     'c2VQZXJpb2QSHS5pbnZvbHQudjEuQ2xvc2VQZXJpb2RSZXF1ZXN0Gh4uaW52b2x0LnYxLkNsb3'
     'NlUGVyaW9kUmVzcG9uc2USTwoMVXBzZXJ0U2VjdG9yEh4uaW52b2x0LnYxLlVwc2VydFNlY3Rv'
-    'clJlcXVlc3QaHy5pbnZvbHQudjEuVXBzZXJ0U2VjdG9yUmVzcG9uc2USWAoPVXBzZXJ0Q29tbX'
-    'VuaXR5EiEuaW52b2x0LnYxLlVwc2VydENvbW11bml0eVJlcXVlc3QaIi5pbnZvbHQudjEuVXBz'
-    'ZXJ0Q29tbXVuaXR5UmVzcG9uc2USZAoTVG9nZ2xlUGF5bWVudFN0YXR1cxIlLmludm9sdC52MS'
-    '5Ub2dnbGVQYXltZW50U3RhdHVzUmVxdWVzdBomLmludm9sdC52MS5Ub2dnbGVQYXltZW50U3Rh'
-    'dHVzUmVzcG9uc2USVQoOR2V0Q29sbGVjdGlvbnMSIC5pbnZvbHQudjEuR2V0Q29sbGVjdGlvbn'
-    'NSZXF1ZXN0GiEuaW52b2x0LnYxLkdldENvbGxlY3Rpb25zUmVzcG9uc2U=');
+    'clJlcXVlc3QaHy5pbnZvbHQudjEuVXBzZXJ0U2VjdG9yUmVzcG9uc2USTwoMRGVsZXRlU2VjdG'
+    '9yEh4uaW52b2x0LnYxLkRlbGV0ZVNlY3RvclJlcXVlc3QaHy5pbnZvbHQudjEuRGVsZXRlU2Vj'
+    'dG9yUmVzcG9uc2USSQoKTW92ZVNlY3RvchIcLmludm9sdC52MS5Nb3ZlU2VjdG9yUmVxdWVzdB'
+    'odLmludm9sdC52MS5Nb3ZlU2VjdG9yUmVzcG9uc2USWAoPVXBzZXJ0Q29tbXVuaXR5EiEuaW52'
+    'b2x0LnYxLlVwc2VydENvbW11bml0eVJlcXVlc3QaIi5pbnZvbHQudjEuVXBzZXJ0Q29tbXVuaX'
+    'R5UmVzcG9uc2USWAoPRGVsZXRlQ29tbXVuaXR5EiEuaW52b2x0LnYxLkRlbGV0ZUNvbW11bml0'
+    'eVJlcXVlc3QaIi5pbnZvbHQudjEuRGVsZXRlQ29tbXVuaXR5UmVzcG9uc2USZAoTVG9nZ2xlUG'
+    'F5bWVudFN0YXR1cxIlLmludm9sdC52MS5Ub2dnbGVQYXltZW50U3RhdHVzUmVxdWVzdBomLmlu'
+    'dm9sdC52MS5Ub2dnbGVQYXltZW50U3RhdHVzUmVzcG9uc2USVQoOR2V0Q29sbGVjdGlvbnMSIC'
+    '5pbnZvbHQudjEuR2V0Q29sbGVjdGlvbnNSZXF1ZXN0GiEuaW52b2x0LnYxLkdldENvbGxlY3Rp'
+    'b25zUmVzcG9uc2USYQoSR2V0Q3VzdG9tZXJBY2NvdW50EiQuaW52b2x0LnYxLkdldEN1c3RvbW'
+    'VyQWNjb3VudFJlcXVlc3QaJS5pbnZvbHQudjEuR2V0Q3VzdG9tZXJBY2NvdW50UmVzcG9uc2US'
+    'WAoPUmVnaXN0ZXJQYXltZW50EiEuaW52b2x0LnYxLlJlZ2lzdGVyUGF5bWVudFJlcXVlc3QaIi'
+    '5pbnZvbHQudjEuUmVnaXN0ZXJQYXltZW50UmVzcG9uc2USTAoLVm9pZFBheW1lbnQSHS5pbnZv'
+    'bHQudjEuVm9pZFBheW1lbnRSZXF1ZXN0Gh4uaW52b2x0LnYxLlZvaWRQYXltZW50UmVzcG9uc2'
+    'USWwoQQ3JlYXRlRmxhdENoYXJnZRIiLmludm9sdC52MS5DcmVhdGVGbGF0Q2hhcmdlUmVxdWVz'
+    'dBojLmludm9sdC52MS5DcmVhdGVGbGF0Q2hhcmdlUmVzcG9uc2USVQoOR2V0Q2FzaENsb3Npbm'
+    'cSIC5pbnZvbHQudjEuR2V0Q2FzaENsb3NpbmdSZXF1ZXN0GiEuaW52b2x0LnYxLkdldENhc2hD'
+    'bG9zaW5nUmVzcG9uc2UScAoXR2V0Q29sbGVjdGlvbnNEYXNoYm9hcmQSKS5pbnZvbHQudjEuR2'
+    'V0Q29sbGVjdGlvbnNEYXNoYm9hcmRSZXF1ZXN0GiouaW52b2x0LnYxLkdldENvbGxlY3Rpb25z'
+    'RGFzaGJvYXJkUmVzcG9uc2USSQoKR2V0RGVidG9ycxIcLmludm9sdC52MS5HZXREZWJ0b3JzUm'
+    'VxdWVzdBodLmludm9sdC52MS5HZXREZWJ0b3JzUmVzcG9uc2USZAoTR2V0Q29sbGVjdGlvblBv'
+    'bGljeRIlLmludm9sdC52MS5HZXRDb2xsZWN0aW9uUG9saWN5UmVxdWVzdBomLmludm9sdC52MS'
+    '5HZXRDb2xsZWN0aW9uUG9saWN5UmVzcG9uc2USbQoWVXBkYXRlQ29sbGVjdGlvblBvbGljeRIo'
+    'Lmludm9sdC52MS5VcGRhdGVDb2xsZWN0aW9uUG9saWN5UmVxdWVzdBopLmludm9sdC52MS5VcG'
+    'RhdGVDb2xsZWN0aW9uUG9saWN5UmVzcG9uc2USTwoMV2FpdmVMYXRlRmVlEh4uaW52b2x0LnYx'
+    'LldhaXZlTGF0ZUZlZVJlcXVlc3QaHy5pbnZvbHQudjEuV2FpdmVMYXRlRmVlUmVzcG9uc2USVA'
+    'oQUHJldmlld0FncmVlbWVudBIbLmludm9sdC52MS5BZ3JlZW1lbnRSZXF1ZXN0GiMuaW52b2x0'
+    'LnYxLlByZXZpZXdBZ3JlZW1lbnRSZXNwb25zZRJSCg9DcmVhdGVBZ3JlZW1lbnQSGy5pbnZvbH'
+    'QudjEuQWdyZWVtZW50UmVxdWVzdBoiLmludm9sdC52MS5DcmVhdGVBZ3JlZW1lbnRSZXNwb25z'
+    'ZRJYCg9DYW5jZWxBZ3JlZW1lbnQSIS5pbnZvbHQudjEuQ2FuY2VsQWdyZWVtZW50UmVxdWVzdB'
+    'oiLmludm9sdC52MS5DYW5jZWxBZ3JlZW1lbnRSZXNwb25zZRJzChhTZXRDdXN0b21lclNlcnZp'
+    'Y2VTdGF0dXMSKi5pbnZvbHQudjEuU2V0Q3VzdG9tZXJTZXJ2aWNlU3RhdHVzUmVxdWVzdBorLm'
+    'ludm9sdC52MS5TZXRDdXN0b21lclNlcnZpY2VTdGF0dXNSZXNwb25zZRJzChhHZXRDdXN0b21l'
+    'clN0YXR1c0hpc3RvcnkSKi5pbnZvbHQudjEuR2V0Q3VzdG9tZXJTdGF0dXNIaXN0b3J5UmVxdW'
+    'VzdBorLmludm9sdC52MS5HZXRDdXN0b21lclN0YXR1c0hpc3RvcnlSZXNwb25zZQ==');
 

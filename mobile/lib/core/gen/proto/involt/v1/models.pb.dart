@@ -192,6 +192,8 @@ class Customer extends $pb.GeneratedMessage {
     $core.String? address,
     $core.String? contractStart,
     $core.double? lastReadingValue,
+    ServiceStatus? serviceStatus,
+    $core.String? serviceStatusChangedAt,
   }) {
     final $result = create();
     if (id != null) {
@@ -236,6 +238,12 @@ class Customer extends $pb.GeneratedMessage {
     if (lastReadingValue != null) {
       $result.lastReadingValue = lastReadingValue;
     }
+    if (serviceStatus != null) {
+      $result.serviceStatus = serviceStatus;
+    }
+    if (serviceStatusChangedAt != null) {
+      $result.serviceStatusChangedAt = serviceStatusChangedAt;
+    }
     return $result;
   }
   Customer._() : super();
@@ -257,6 +265,8 @@ class Customer extends $pb.GeneratedMessage {
     ..aOS(12, _omitFieldNames ? '' : 'address')
     ..aOS(13, _omitFieldNames ? '' : 'contractStart')
     ..a<$core.double>(14, _omitFieldNames ? '' : 'lastReadingValue', $pb.PbFieldType.OD)
+    ..e<ServiceStatus>(15, _omitFieldNames ? '' : 'serviceStatus', $pb.PbFieldType.OE, defaultOrMaker: ServiceStatus.SERVICE_STATUS_UNSPECIFIED, valueOf: ServiceStatus.valueOf, enumValues: ServiceStatus.values)
+    ..aOS(16, _omitFieldNames ? '' : 'serviceStatusChangedAt')
     ..hasRequiredFields = false
   ;
 
@@ -406,6 +416,24 @@ class Customer extends $pb.GeneratedMessage {
   $core.bool hasLastReadingValue() => $_has(13);
   @$pb.TagNumber(14)
   void clearLastReadingValue() => clearField(14);
+
+  @$pb.TagNumber(15)
+  ServiceStatus get serviceStatus => $_getN(14);
+  @$pb.TagNumber(15)
+  set serviceStatus(ServiceStatus v) { setField(15, v); }
+  @$pb.TagNumber(15)
+  $core.bool hasServiceStatus() => $_has(14);
+  @$pb.TagNumber(15)
+  void clearServiceStatus() => clearField(15);
+
+  @$pb.TagNumber(16)
+  $core.String get serviceStatusChangedAt => $_getSZ(15);
+  @$pb.TagNumber(16)
+  set serviceStatusChangedAt($core.String v) { $_setString(15, v); }
+  @$pb.TagNumber(16)
+  $core.bool hasServiceStatusChangedAt() => $_has(15);
+  @$pb.TagNumber(16)
+  void clearServiceStatusChangedAt() => clearField(16);
 }
 
 /// Reading represents a captured meter value at a point in time.
@@ -891,6 +919,7 @@ class Settings extends $pb.GeneratedMessage {
     $core.double? alumbrado,
     $core.double? mantenimiento,
     $core.bool? igv,
+    ReceiptCopies? receiptCopies,
   }) {
     final $result = create();
     if (municipalidad != null) {
@@ -929,6 +958,9 @@ class Settings extends $pb.GeneratedMessage {
     if (igv != null) {
       $result.igv = igv;
     }
+    if (receiptCopies != null) {
+      $result.receiptCopies = receiptCopies;
+    }
     return $result;
   }
   Settings._() : super();
@@ -948,6 +980,7 @@ class Settings extends $pb.GeneratedMessage {
     ..a<$core.double>(10, _omitFieldNames ? '' : 'alumbrado', $pb.PbFieldType.OD)
     ..a<$core.double>(11, _omitFieldNames ? '' : 'mantenimiento', $pb.PbFieldType.OD)
     ..aOB(12, _omitFieldNames ? '' : 'igv')
+    ..e<ReceiptCopies>(13, _omitFieldNames ? '' : 'receiptCopies', $pb.PbFieldType.OE, defaultOrMaker: ReceiptCopies.RECEIPT_COPIES_UNSPECIFIED, valueOf: ReceiptCopies.valueOf, enumValues: ReceiptCopies.values)
     ..hasRequiredFields = false
   ;
 
@@ -1079,6 +1112,15 @@ class Settings extends $pb.GeneratedMessage {
   $core.bool hasIgv() => $_has(11);
   @$pb.TagNumber(12)
   void clearIgv() => clearField(12);
+
+  @$pb.TagNumber(13)
+  ReceiptCopies get receiptCopies => $_getN(12);
+  @$pb.TagNumber(13)
+  set receiptCopies(ReceiptCopies v) { setField(13, v); }
+  @$pb.TagNumber(13)
+  $core.bool hasReceiptCopies() => $_has(12);
+  @$pb.TagNumber(13)
+  void clearReceiptCopies() => clearField(13);
 }
 
 class Period extends $pb.GeneratedMessage {

@@ -166,7 +166,21 @@ func MapCustomerToProto(d *Customer) *involtv1.Customer {
 		connType = involtv1.ConnectionType_CONNECTION_TYPE_TRIFASICA
 	}
 
+	status := involtv1.ServiceStatus_SERVICE_STATUS_ACTIVE
+	switch d.EffectiveServiceStatus() {
+	case ServiceTemporaryCut:
+		status = involtv1.ServiceStatus_SERVICE_STATUS_TEMPORARY_CUT
+	case ServiceNoPower:
+		status = involtv1.ServiceStatus_SERVICE_STATUS_NO_POWER
+	}
+	changedAt := ""
+	if d.ServiceStatusChangedAt != nil {
+		changedAt = d.ServiceStatusChangedAt.Format(time.RFC3339)
+	}
+
 	return &involtv1.Customer{
+		ServiceStatus:          status,
+		ServiceStatusChangedAt: changedAt,
 		Id:               d.ID,
 		Code:             d.Code,
 		Name:             d.Name,

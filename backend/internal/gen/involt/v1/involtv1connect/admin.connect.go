@@ -79,15 +79,67 @@ const (
 	// AdminServiceUpsertSectorProcedure is the fully-qualified name of the AdminService's UpsertSector
 	// RPC.
 	AdminServiceUpsertSectorProcedure = "/involt.v1.AdminService/UpsertSector"
+	// AdminServiceDeleteSectorProcedure is the fully-qualified name of the AdminService's DeleteSector
+	// RPC.
+	AdminServiceDeleteSectorProcedure = "/involt.v1.AdminService/DeleteSector"
+	// AdminServiceMoveSectorProcedure is the fully-qualified name of the AdminService's MoveSector RPC.
+	AdminServiceMoveSectorProcedure = "/involt.v1.AdminService/MoveSector"
 	// AdminServiceUpsertCommunityProcedure is the fully-qualified name of the AdminService's
 	// UpsertCommunity RPC.
 	AdminServiceUpsertCommunityProcedure = "/involt.v1.AdminService/UpsertCommunity"
+	// AdminServiceDeleteCommunityProcedure is the fully-qualified name of the AdminService's
+	// DeleteCommunity RPC.
+	AdminServiceDeleteCommunityProcedure = "/involt.v1.AdminService/DeleteCommunity"
 	// AdminServiceTogglePaymentStatusProcedure is the fully-qualified name of the AdminService's
 	// TogglePaymentStatus RPC.
 	AdminServiceTogglePaymentStatusProcedure = "/involt.v1.AdminService/TogglePaymentStatus"
 	// AdminServiceGetCollectionsProcedure is the fully-qualified name of the AdminService's
 	// GetCollections RPC.
 	AdminServiceGetCollectionsProcedure = "/involt.v1.AdminService/GetCollections"
+	// AdminServiceGetCustomerAccountProcedure is the fully-qualified name of the AdminService's
+	// GetCustomerAccount RPC.
+	AdminServiceGetCustomerAccountProcedure = "/involt.v1.AdminService/GetCustomerAccount"
+	// AdminServiceRegisterPaymentProcedure is the fully-qualified name of the AdminService's
+	// RegisterPayment RPC.
+	AdminServiceRegisterPaymentProcedure = "/involt.v1.AdminService/RegisterPayment"
+	// AdminServiceVoidPaymentProcedure is the fully-qualified name of the AdminService's VoidPayment
+	// RPC.
+	AdminServiceVoidPaymentProcedure = "/involt.v1.AdminService/VoidPayment"
+	// AdminServiceCreateFlatChargeProcedure is the fully-qualified name of the AdminService's
+	// CreateFlatCharge RPC.
+	AdminServiceCreateFlatChargeProcedure = "/involt.v1.AdminService/CreateFlatCharge"
+	// AdminServiceGetCashClosingProcedure is the fully-qualified name of the AdminService's
+	// GetCashClosing RPC.
+	AdminServiceGetCashClosingProcedure = "/involt.v1.AdminService/GetCashClosing"
+	// AdminServiceGetCollectionsDashboardProcedure is the fully-qualified name of the AdminService's
+	// GetCollectionsDashboard RPC.
+	AdminServiceGetCollectionsDashboardProcedure = "/involt.v1.AdminService/GetCollectionsDashboard"
+	// AdminServiceGetDebtorsProcedure is the fully-qualified name of the AdminService's GetDebtors RPC.
+	AdminServiceGetDebtorsProcedure = "/involt.v1.AdminService/GetDebtors"
+	// AdminServiceGetCollectionPolicyProcedure is the fully-qualified name of the AdminService's
+	// GetCollectionPolicy RPC.
+	AdminServiceGetCollectionPolicyProcedure = "/involt.v1.AdminService/GetCollectionPolicy"
+	// AdminServiceUpdateCollectionPolicyProcedure is the fully-qualified name of the AdminService's
+	// UpdateCollectionPolicy RPC.
+	AdminServiceUpdateCollectionPolicyProcedure = "/involt.v1.AdminService/UpdateCollectionPolicy"
+	// AdminServiceWaiveLateFeeProcedure is the fully-qualified name of the AdminService's WaiveLateFee
+	// RPC.
+	AdminServiceWaiveLateFeeProcedure = "/involt.v1.AdminService/WaiveLateFee"
+	// AdminServicePreviewAgreementProcedure is the fully-qualified name of the AdminService's
+	// PreviewAgreement RPC.
+	AdminServicePreviewAgreementProcedure = "/involt.v1.AdminService/PreviewAgreement"
+	// AdminServiceCreateAgreementProcedure is the fully-qualified name of the AdminService's
+	// CreateAgreement RPC.
+	AdminServiceCreateAgreementProcedure = "/involt.v1.AdminService/CreateAgreement"
+	// AdminServiceCancelAgreementProcedure is the fully-qualified name of the AdminService's
+	// CancelAgreement RPC.
+	AdminServiceCancelAgreementProcedure = "/involt.v1.AdminService/CancelAgreement"
+	// AdminServiceSetCustomerServiceStatusProcedure is the fully-qualified name of the AdminService's
+	// SetCustomerServiceStatus RPC.
+	AdminServiceSetCustomerServiceStatusProcedure = "/involt.v1.AdminService/SetCustomerServiceStatus"
+	// AdminServiceGetCustomerStatusHistoryProcedure is the fully-qualified name of the AdminService's
+	// GetCustomerStatusHistory RPC.
+	AdminServiceGetCustomerStatusHistoryProcedure = "/involt.v1.AdminService/GetCustomerStatusHistory"
 )
 
 // AdminServiceClient is a client for the involt.v1.AdminService service.
@@ -126,12 +178,50 @@ type AdminServiceClient interface {
 	ClosePeriod(context.Context, *connect.Request[v1.ClosePeriodRequest]) (*connect.Response[v1.ClosePeriodResponse], error)
 	// UpsertSector creates or updates a sector.
 	UpsertSector(context.Context, *connect.Request[v1.UpsertSectorRequest]) (*connect.Response[v1.UpsertSectorResponse], error)
+	// DeleteSector removes a sector.
+	DeleteSector(context.Context, *connect.Request[v1.DeleteSectorRequest]) (*connect.Response[v1.DeleteSectorResponse], error)
+	// MoveSector moves a sector, with all its supplies, to another community (admins only).
+	MoveSector(context.Context, *connect.Request[v1.MoveSectorRequest]) (*connect.Response[v1.MoveSectorResponse], error)
 	// UpsertCommunity creates or updates a community.
 	UpsertCommunity(context.Context, *connect.Request[v1.UpsertCommunityRequest]) (*connect.Response[v1.UpsertCommunityResponse], error)
+	// DeleteCommunity removes a community.
+	DeleteCommunity(context.Context, *connect.Request[v1.DeleteCommunityRequest]) (*connect.Response[v1.DeleteCommunityResponse], error)
 	// TogglePaymentStatus updates the payment status of a reading.
+	// Deprecated: use RegisterPayment / VoidPayment. Marking as paid registers a cash payment
+	// for the outstanding balance; marking as unpaid is rejected.
 	TogglePaymentStatus(context.Context, *connect.Request[v1.TogglePaymentStatusRequest]) (*connect.Response[v1.TogglePaymentStatusResponse], error)
 	// GetCollections returns the payment matrix for a sector across periods.
 	GetCollections(context.Context, *connect.Request[v1.GetCollectionsRequest]) (*connect.Response[v1.GetCollectionsResponse], error)
+	// GetCustomerAccount returns a customer's receipts with balances and payment history.
+	GetCustomerAccount(context.Context, *connect.Request[v1.GetCustomerAccountRequest]) (*connect.Response[v1.GetCustomerAccountResponse], error)
+	// RegisterPayment records a (possibly partial) payment applied oldest debt first.
+	RegisterPayment(context.Context, *connect.Request[v1.RegisterPaymentRequest]) (*connect.Response[v1.RegisterPaymentResponse], error)
+	// VoidPayment annuls a payment (admin/supervisor only), restoring the debt.
+	VoidPayment(context.Context, *connect.Request[v1.VoidPaymentRequest]) (*connect.Response[v1.VoidPaymentResponse], error)
+	// CreateFlatCharge bills a period without meter reading using the fixed fee.
+	CreateFlatCharge(context.Context, *connect.Request[v1.CreateFlatChargeRequest]) (*connect.Response[v1.CreateFlatChargeResponse], error)
+	// GetCashClosing summarizes payments collected in a date range (cierre de caja).
+	GetCashClosing(context.Context, *connect.Request[v1.GetCashClosingRequest]) (*connect.Response[v1.GetCashClosingResponse], error)
+	// GetCollectionsDashboard returns billed vs collected by sector and month, plus debt aging.
+	GetCollectionsDashboard(context.Context, *connect.Request[v1.GetCollectionsDashboardRequest]) (*connect.Response[v1.GetCollectionsDashboardResponse], error)
+	// GetDebtors lists customers with outstanding balance and service-cut candidates.
+	GetDebtors(context.Context, *connect.Request[v1.GetDebtorsRequest]) (*connect.Response[v1.GetDebtorsResponse], error)
+	// GetCollectionPolicy returns the late fee and agreement rules.
+	GetCollectionPolicy(context.Context, *connect.Request[v1.GetCollectionPolicyRequest]) (*connect.Response[v1.GetCollectionPolicyResponse], error)
+	// UpdateCollectionPolicy changes the late fee and agreement rules (admin only).
+	UpdateCollectionPolicy(context.Context, *connect.Request[v1.UpdateCollectionPolicyRequest]) (*connect.Response[v1.UpdateCollectionPolicyResponse], error)
+	// WaiveLateFee forgives the mora of receipts (admin/supervisor).
+	WaiveLateFee(context.Context, *connect.Request[v1.WaiveLateFeeRequest]) (*connect.Response[v1.WaiveLateFeeResponse], error)
+	// PreviewAgreement computes an agreement's totals and schedule without saving it.
+	PreviewAgreement(context.Context, *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.PreviewAgreementResponse], error)
+	// CreateAgreement signs a payment agreement and collects its initial payment.
+	CreateAgreement(context.Context, *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.CreateAgreementResponse], error)
+	// CancelAgreement cancels an active agreement (admin/supervisor).
+	CancelAgreement(context.Context, *connect.Request[v1.CancelAgreementRequest]) (*connect.Response[v1.CancelAgreementResponse], error)
+	// SetCustomerServiceStatus changes a supply's service status (admin only, reason required).
+	SetCustomerServiceStatus(context.Context, *connect.Request[v1.SetCustomerServiceStatusRequest]) (*connect.Response[v1.SetCustomerServiceStatusResponse], error)
+	// GetCustomerStatusHistory lists a supply's service status changes, newest first.
+	GetCustomerStatusHistory(context.Context, *connect.Request[v1.GetCustomerStatusHistoryRequest]) (*connect.Response[v1.GetCustomerStatusHistoryResponse], error)
 }
 
 // NewAdminServiceClient constructs a client for the involt.v1.AdminService service. By default, it
@@ -247,10 +337,28 @@ func NewAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(adminServiceMethods.ByName("UpsertSector")),
 			connect.WithClientOptions(opts...),
 		),
+		deleteSector: connect.NewClient[v1.DeleteSectorRequest, v1.DeleteSectorResponse](
+			httpClient,
+			baseURL+AdminServiceDeleteSectorProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("DeleteSector")),
+			connect.WithClientOptions(opts...),
+		),
+		moveSector: connect.NewClient[v1.MoveSectorRequest, v1.MoveSectorResponse](
+			httpClient,
+			baseURL+AdminServiceMoveSectorProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("MoveSector")),
+			connect.WithClientOptions(opts...),
+		),
 		upsertCommunity: connect.NewClient[v1.UpsertCommunityRequest, v1.UpsertCommunityResponse](
 			httpClient,
 			baseURL+AdminServiceUpsertCommunityProcedure,
 			connect.WithSchema(adminServiceMethods.ByName("UpsertCommunity")),
+			connect.WithClientOptions(opts...),
+		),
+		deleteCommunity: connect.NewClient[v1.DeleteCommunityRequest, v1.DeleteCommunityResponse](
+			httpClient,
+			baseURL+AdminServiceDeleteCommunityProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("DeleteCommunity")),
 			connect.WithClientOptions(opts...),
 		),
 		togglePaymentStatus: connect.NewClient[v1.TogglePaymentStatusRequest, v1.TogglePaymentStatusResponse](
@@ -265,31 +373,139 @@ func NewAdminServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(adminServiceMethods.ByName("GetCollections")),
 			connect.WithClientOptions(opts...),
 		),
+		getCustomerAccount: connect.NewClient[v1.GetCustomerAccountRequest, v1.GetCustomerAccountResponse](
+			httpClient,
+			baseURL+AdminServiceGetCustomerAccountProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("GetCustomerAccount")),
+			connect.WithClientOptions(opts...),
+		),
+		registerPayment: connect.NewClient[v1.RegisterPaymentRequest, v1.RegisterPaymentResponse](
+			httpClient,
+			baseURL+AdminServiceRegisterPaymentProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("RegisterPayment")),
+			connect.WithClientOptions(opts...),
+		),
+		voidPayment: connect.NewClient[v1.VoidPaymentRequest, v1.VoidPaymentResponse](
+			httpClient,
+			baseURL+AdminServiceVoidPaymentProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("VoidPayment")),
+			connect.WithClientOptions(opts...),
+		),
+		createFlatCharge: connect.NewClient[v1.CreateFlatChargeRequest, v1.CreateFlatChargeResponse](
+			httpClient,
+			baseURL+AdminServiceCreateFlatChargeProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("CreateFlatCharge")),
+			connect.WithClientOptions(opts...),
+		),
+		getCashClosing: connect.NewClient[v1.GetCashClosingRequest, v1.GetCashClosingResponse](
+			httpClient,
+			baseURL+AdminServiceGetCashClosingProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("GetCashClosing")),
+			connect.WithClientOptions(opts...),
+		),
+		getCollectionsDashboard: connect.NewClient[v1.GetCollectionsDashboardRequest, v1.GetCollectionsDashboardResponse](
+			httpClient,
+			baseURL+AdminServiceGetCollectionsDashboardProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("GetCollectionsDashboard")),
+			connect.WithClientOptions(opts...),
+		),
+		getDebtors: connect.NewClient[v1.GetDebtorsRequest, v1.GetDebtorsResponse](
+			httpClient,
+			baseURL+AdminServiceGetDebtorsProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("GetDebtors")),
+			connect.WithClientOptions(opts...),
+		),
+		getCollectionPolicy: connect.NewClient[v1.GetCollectionPolicyRequest, v1.GetCollectionPolicyResponse](
+			httpClient,
+			baseURL+AdminServiceGetCollectionPolicyProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("GetCollectionPolicy")),
+			connect.WithClientOptions(opts...),
+		),
+		updateCollectionPolicy: connect.NewClient[v1.UpdateCollectionPolicyRequest, v1.UpdateCollectionPolicyResponse](
+			httpClient,
+			baseURL+AdminServiceUpdateCollectionPolicyProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("UpdateCollectionPolicy")),
+			connect.WithClientOptions(opts...),
+		),
+		waiveLateFee: connect.NewClient[v1.WaiveLateFeeRequest, v1.WaiveLateFeeResponse](
+			httpClient,
+			baseURL+AdminServiceWaiveLateFeeProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("WaiveLateFee")),
+			connect.WithClientOptions(opts...),
+		),
+		previewAgreement: connect.NewClient[v1.AgreementRequest, v1.PreviewAgreementResponse](
+			httpClient,
+			baseURL+AdminServicePreviewAgreementProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("PreviewAgreement")),
+			connect.WithClientOptions(opts...),
+		),
+		createAgreement: connect.NewClient[v1.AgreementRequest, v1.CreateAgreementResponse](
+			httpClient,
+			baseURL+AdminServiceCreateAgreementProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("CreateAgreement")),
+			connect.WithClientOptions(opts...),
+		),
+		cancelAgreement: connect.NewClient[v1.CancelAgreementRequest, v1.CancelAgreementResponse](
+			httpClient,
+			baseURL+AdminServiceCancelAgreementProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("CancelAgreement")),
+			connect.WithClientOptions(opts...),
+		),
+		setCustomerServiceStatus: connect.NewClient[v1.SetCustomerServiceStatusRequest, v1.SetCustomerServiceStatusResponse](
+			httpClient,
+			baseURL+AdminServiceSetCustomerServiceStatusProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("SetCustomerServiceStatus")),
+			connect.WithClientOptions(opts...),
+		),
+		getCustomerStatusHistory: connect.NewClient[v1.GetCustomerStatusHistoryRequest, v1.GetCustomerStatusHistoryResponse](
+			httpClient,
+			baseURL+AdminServiceGetCustomerStatusHistoryProcedure,
+			connect.WithSchema(adminServiceMethods.ByName("GetCustomerStatusHistory")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // adminServiceClient implements AdminServiceClient.
 type adminServiceClient struct {
-	login               *connect.Client[v1.LoginRequest, v1.LoginResponse]
-	getUsers            *connect.Client[v1.GetUsersRequest, v1.GetUsersResponse]
-	upsertUser          *connect.Client[v1.UpsertUserRequest, v1.UpsertUserResponse]
-	getSectors          *connect.Client[v1.GetSectorsRequest, v1.GetSectorsResponse]
-	getCommunities      *connect.Client[v1.GetCommunitiesRequest, v1.GetCommunitiesResponse]
-	getCustomers        *connect.Client[v1.GetCustomersRequest, v1.GetCustomersResponse]
-	getReadings         *connect.Client[v1.GetReadingsRequest, v1.GetReadingsResponse]
-	getSettings         *connect.Client[v1.GetSettingsRequest, v1.GetSettingsResponse]
-	updateSettings      *connect.Client[v1.UpdateSettingsRequest, v1.UpdateSettingsResponse]
-	upsertCustomer      *connect.Client[v1.UpsertCustomerRequest, v1.UpsertCustomerResponse]
-	deleteCustomer      *connect.Client[v1.DeleteCustomerRequest, v1.DeleteCustomerResponse]
-	getDashboardStats   *connect.Client[v1.GetDashboardStatsRequest, v1.GetDashboardStatsResponse]
-	listPeriods         *connect.Client[v1.ListPeriodsRequest, v1.ListPeriodsResponse]
-	getPeriodStats      *connect.Client[v1.GetPeriodStatsRequest, v1.GetPeriodStatsResponse]
-	openPeriod          *connect.Client[v1.OpenPeriodRequest, v1.OpenPeriodResponse]
-	closePeriod         *connect.Client[v1.ClosePeriodRequest, v1.ClosePeriodResponse]
-	upsertSector        *connect.Client[v1.UpsertSectorRequest, v1.UpsertSectorResponse]
-	upsertCommunity     *connect.Client[v1.UpsertCommunityRequest, v1.UpsertCommunityResponse]
-	togglePaymentStatus *connect.Client[v1.TogglePaymentStatusRequest, v1.TogglePaymentStatusResponse]
-	getCollections      *connect.Client[v1.GetCollectionsRequest, v1.GetCollectionsResponse]
+	login                    *connect.Client[v1.LoginRequest, v1.LoginResponse]
+	getUsers                 *connect.Client[v1.GetUsersRequest, v1.GetUsersResponse]
+	upsertUser               *connect.Client[v1.UpsertUserRequest, v1.UpsertUserResponse]
+	getSectors               *connect.Client[v1.GetSectorsRequest, v1.GetSectorsResponse]
+	getCommunities           *connect.Client[v1.GetCommunitiesRequest, v1.GetCommunitiesResponse]
+	getCustomers             *connect.Client[v1.GetCustomersRequest, v1.GetCustomersResponse]
+	getReadings              *connect.Client[v1.GetReadingsRequest, v1.GetReadingsResponse]
+	getSettings              *connect.Client[v1.GetSettingsRequest, v1.GetSettingsResponse]
+	updateSettings           *connect.Client[v1.UpdateSettingsRequest, v1.UpdateSettingsResponse]
+	upsertCustomer           *connect.Client[v1.UpsertCustomerRequest, v1.UpsertCustomerResponse]
+	deleteCustomer           *connect.Client[v1.DeleteCustomerRequest, v1.DeleteCustomerResponse]
+	getDashboardStats        *connect.Client[v1.GetDashboardStatsRequest, v1.GetDashboardStatsResponse]
+	listPeriods              *connect.Client[v1.ListPeriodsRequest, v1.ListPeriodsResponse]
+	getPeriodStats           *connect.Client[v1.GetPeriodStatsRequest, v1.GetPeriodStatsResponse]
+	openPeriod               *connect.Client[v1.OpenPeriodRequest, v1.OpenPeriodResponse]
+	closePeriod              *connect.Client[v1.ClosePeriodRequest, v1.ClosePeriodResponse]
+	upsertSector             *connect.Client[v1.UpsertSectorRequest, v1.UpsertSectorResponse]
+	deleteSector             *connect.Client[v1.DeleteSectorRequest, v1.DeleteSectorResponse]
+	moveSector               *connect.Client[v1.MoveSectorRequest, v1.MoveSectorResponse]
+	upsertCommunity          *connect.Client[v1.UpsertCommunityRequest, v1.UpsertCommunityResponse]
+	deleteCommunity          *connect.Client[v1.DeleteCommunityRequest, v1.DeleteCommunityResponse]
+	togglePaymentStatus      *connect.Client[v1.TogglePaymentStatusRequest, v1.TogglePaymentStatusResponse]
+	getCollections           *connect.Client[v1.GetCollectionsRequest, v1.GetCollectionsResponse]
+	getCustomerAccount       *connect.Client[v1.GetCustomerAccountRequest, v1.GetCustomerAccountResponse]
+	registerPayment          *connect.Client[v1.RegisterPaymentRequest, v1.RegisterPaymentResponse]
+	voidPayment              *connect.Client[v1.VoidPaymentRequest, v1.VoidPaymentResponse]
+	createFlatCharge         *connect.Client[v1.CreateFlatChargeRequest, v1.CreateFlatChargeResponse]
+	getCashClosing           *connect.Client[v1.GetCashClosingRequest, v1.GetCashClosingResponse]
+	getCollectionsDashboard  *connect.Client[v1.GetCollectionsDashboardRequest, v1.GetCollectionsDashboardResponse]
+	getDebtors               *connect.Client[v1.GetDebtorsRequest, v1.GetDebtorsResponse]
+	getCollectionPolicy      *connect.Client[v1.GetCollectionPolicyRequest, v1.GetCollectionPolicyResponse]
+	updateCollectionPolicy   *connect.Client[v1.UpdateCollectionPolicyRequest, v1.UpdateCollectionPolicyResponse]
+	waiveLateFee             *connect.Client[v1.WaiveLateFeeRequest, v1.WaiveLateFeeResponse]
+	previewAgreement         *connect.Client[v1.AgreementRequest, v1.PreviewAgreementResponse]
+	createAgreement          *connect.Client[v1.AgreementRequest, v1.CreateAgreementResponse]
+	cancelAgreement          *connect.Client[v1.CancelAgreementRequest, v1.CancelAgreementResponse]
+	setCustomerServiceStatus *connect.Client[v1.SetCustomerServiceStatusRequest, v1.SetCustomerServiceStatusResponse]
+	getCustomerStatusHistory *connect.Client[v1.GetCustomerStatusHistoryRequest, v1.GetCustomerStatusHistoryResponse]
 }
 
 // Login calls involt.v1.AdminService.Login.
@@ -377,9 +593,24 @@ func (c *adminServiceClient) UpsertSector(ctx context.Context, req *connect.Requ
 	return c.upsertSector.CallUnary(ctx, req)
 }
 
+// DeleteSector calls involt.v1.AdminService.DeleteSector.
+func (c *adminServiceClient) DeleteSector(ctx context.Context, req *connect.Request[v1.DeleteSectorRequest]) (*connect.Response[v1.DeleteSectorResponse], error) {
+	return c.deleteSector.CallUnary(ctx, req)
+}
+
+// MoveSector calls involt.v1.AdminService.MoveSector.
+func (c *adminServiceClient) MoveSector(ctx context.Context, req *connect.Request[v1.MoveSectorRequest]) (*connect.Response[v1.MoveSectorResponse], error) {
+	return c.moveSector.CallUnary(ctx, req)
+}
+
 // UpsertCommunity calls involt.v1.AdminService.UpsertCommunity.
 func (c *adminServiceClient) UpsertCommunity(ctx context.Context, req *connect.Request[v1.UpsertCommunityRequest]) (*connect.Response[v1.UpsertCommunityResponse], error) {
 	return c.upsertCommunity.CallUnary(ctx, req)
+}
+
+// DeleteCommunity calls involt.v1.AdminService.DeleteCommunity.
+func (c *adminServiceClient) DeleteCommunity(ctx context.Context, req *connect.Request[v1.DeleteCommunityRequest]) (*connect.Response[v1.DeleteCommunityResponse], error) {
+	return c.deleteCommunity.CallUnary(ctx, req)
 }
 
 // TogglePaymentStatus calls involt.v1.AdminService.TogglePaymentStatus.
@@ -390,6 +621,81 @@ func (c *adminServiceClient) TogglePaymentStatus(ctx context.Context, req *conne
 // GetCollections calls involt.v1.AdminService.GetCollections.
 func (c *adminServiceClient) GetCollections(ctx context.Context, req *connect.Request[v1.GetCollectionsRequest]) (*connect.Response[v1.GetCollectionsResponse], error) {
 	return c.getCollections.CallUnary(ctx, req)
+}
+
+// GetCustomerAccount calls involt.v1.AdminService.GetCustomerAccount.
+func (c *adminServiceClient) GetCustomerAccount(ctx context.Context, req *connect.Request[v1.GetCustomerAccountRequest]) (*connect.Response[v1.GetCustomerAccountResponse], error) {
+	return c.getCustomerAccount.CallUnary(ctx, req)
+}
+
+// RegisterPayment calls involt.v1.AdminService.RegisterPayment.
+func (c *adminServiceClient) RegisterPayment(ctx context.Context, req *connect.Request[v1.RegisterPaymentRequest]) (*connect.Response[v1.RegisterPaymentResponse], error) {
+	return c.registerPayment.CallUnary(ctx, req)
+}
+
+// VoidPayment calls involt.v1.AdminService.VoidPayment.
+func (c *adminServiceClient) VoidPayment(ctx context.Context, req *connect.Request[v1.VoidPaymentRequest]) (*connect.Response[v1.VoidPaymentResponse], error) {
+	return c.voidPayment.CallUnary(ctx, req)
+}
+
+// CreateFlatCharge calls involt.v1.AdminService.CreateFlatCharge.
+func (c *adminServiceClient) CreateFlatCharge(ctx context.Context, req *connect.Request[v1.CreateFlatChargeRequest]) (*connect.Response[v1.CreateFlatChargeResponse], error) {
+	return c.createFlatCharge.CallUnary(ctx, req)
+}
+
+// GetCashClosing calls involt.v1.AdminService.GetCashClosing.
+func (c *adminServiceClient) GetCashClosing(ctx context.Context, req *connect.Request[v1.GetCashClosingRequest]) (*connect.Response[v1.GetCashClosingResponse], error) {
+	return c.getCashClosing.CallUnary(ctx, req)
+}
+
+// GetCollectionsDashboard calls involt.v1.AdminService.GetCollectionsDashboard.
+func (c *adminServiceClient) GetCollectionsDashboard(ctx context.Context, req *connect.Request[v1.GetCollectionsDashboardRequest]) (*connect.Response[v1.GetCollectionsDashboardResponse], error) {
+	return c.getCollectionsDashboard.CallUnary(ctx, req)
+}
+
+// GetDebtors calls involt.v1.AdminService.GetDebtors.
+func (c *adminServiceClient) GetDebtors(ctx context.Context, req *connect.Request[v1.GetDebtorsRequest]) (*connect.Response[v1.GetDebtorsResponse], error) {
+	return c.getDebtors.CallUnary(ctx, req)
+}
+
+// GetCollectionPolicy calls involt.v1.AdminService.GetCollectionPolicy.
+func (c *adminServiceClient) GetCollectionPolicy(ctx context.Context, req *connect.Request[v1.GetCollectionPolicyRequest]) (*connect.Response[v1.GetCollectionPolicyResponse], error) {
+	return c.getCollectionPolicy.CallUnary(ctx, req)
+}
+
+// UpdateCollectionPolicy calls involt.v1.AdminService.UpdateCollectionPolicy.
+func (c *adminServiceClient) UpdateCollectionPolicy(ctx context.Context, req *connect.Request[v1.UpdateCollectionPolicyRequest]) (*connect.Response[v1.UpdateCollectionPolicyResponse], error) {
+	return c.updateCollectionPolicy.CallUnary(ctx, req)
+}
+
+// WaiveLateFee calls involt.v1.AdminService.WaiveLateFee.
+func (c *adminServiceClient) WaiveLateFee(ctx context.Context, req *connect.Request[v1.WaiveLateFeeRequest]) (*connect.Response[v1.WaiveLateFeeResponse], error) {
+	return c.waiveLateFee.CallUnary(ctx, req)
+}
+
+// PreviewAgreement calls involt.v1.AdminService.PreviewAgreement.
+func (c *adminServiceClient) PreviewAgreement(ctx context.Context, req *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.PreviewAgreementResponse], error) {
+	return c.previewAgreement.CallUnary(ctx, req)
+}
+
+// CreateAgreement calls involt.v1.AdminService.CreateAgreement.
+func (c *adminServiceClient) CreateAgreement(ctx context.Context, req *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.CreateAgreementResponse], error) {
+	return c.createAgreement.CallUnary(ctx, req)
+}
+
+// CancelAgreement calls involt.v1.AdminService.CancelAgreement.
+func (c *adminServiceClient) CancelAgreement(ctx context.Context, req *connect.Request[v1.CancelAgreementRequest]) (*connect.Response[v1.CancelAgreementResponse], error) {
+	return c.cancelAgreement.CallUnary(ctx, req)
+}
+
+// SetCustomerServiceStatus calls involt.v1.AdminService.SetCustomerServiceStatus.
+func (c *adminServiceClient) SetCustomerServiceStatus(ctx context.Context, req *connect.Request[v1.SetCustomerServiceStatusRequest]) (*connect.Response[v1.SetCustomerServiceStatusResponse], error) {
+	return c.setCustomerServiceStatus.CallUnary(ctx, req)
+}
+
+// GetCustomerStatusHistory calls involt.v1.AdminService.GetCustomerStatusHistory.
+func (c *adminServiceClient) GetCustomerStatusHistory(ctx context.Context, req *connect.Request[v1.GetCustomerStatusHistoryRequest]) (*connect.Response[v1.GetCustomerStatusHistoryResponse], error) {
+	return c.getCustomerStatusHistory.CallUnary(ctx, req)
 }
 
 // AdminServiceHandler is an implementation of the involt.v1.AdminService service.
@@ -428,12 +734,50 @@ type AdminServiceHandler interface {
 	ClosePeriod(context.Context, *connect.Request[v1.ClosePeriodRequest]) (*connect.Response[v1.ClosePeriodResponse], error)
 	// UpsertSector creates or updates a sector.
 	UpsertSector(context.Context, *connect.Request[v1.UpsertSectorRequest]) (*connect.Response[v1.UpsertSectorResponse], error)
+	// DeleteSector removes a sector.
+	DeleteSector(context.Context, *connect.Request[v1.DeleteSectorRequest]) (*connect.Response[v1.DeleteSectorResponse], error)
+	// MoveSector moves a sector, with all its supplies, to another community (admins only).
+	MoveSector(context.Context, *connect.Request[v1.MoveSectorRequest]) (*connect.Response[v1.MoveSectorResponse], error)
 	// UpsertCommunity creates or updates a community.
 	UpsertCommunity(context.Context, *connect.Request[v1.UpsertCommunityRequest]) (*connect.Response[v1.UpsertCommunityResponse], error)
+	// DeleteCommunity removes a community.
+	DeleteCommunity(context.Context, *connect.Request[v1.DeleteCommunityRequest]) (*connect.Response[v1.DeleteCommunityResponse], error)
 	// TogglePaymentStatus updates the payment status of a reading.
+	// Deprecated: use RegisterPayment / VoidPayment. Marking as paid registers a cash payment
+	// for the outstanding balance; marking as unpaid is rejected.
 	TogglePaymentStatus(context.Context, *connect.Request[v1.TogglePaymentStatusRequest]) (*connect.Response[v1.TogglePaymentStatusResponse], error)
 	// GetCollections returns the payment matrix for a sector across periods.
 	GetCollections(context.Context, *connect.Request[v1.GetCollectionsRequest]) (*connect.Response[v1.GetCollectionsResponse], error)
+	// GetCustomerAccount returns a customer's receipts with balances and payment history.
+	GetCustomerAccount(context.Context, *connect.Request[v1.GetCustomerAccountRequest]) (*connect.Response[v1.GetCustomerAccountResponse], error)
+	// RegisterPayment records a (possibly partial) payment applied oldest debt first.
+	RegisterPayment(context.Context, *connect.Request[v1.RegisterPaymentRequest]) (*connect.Response[v1.RegisterPaymentResponse], error)
+	// VoidPayment annuls a payment (admin/supervisor only), restoring the debt.
+	VoidPayment(context.Context, *connect.Request[v1.VoidPaymentRequest]) (*connect.Response[v1.VoidPaymentResponse], error)
+	// CreateFlatCharge bills a period without meter reading using the fixed fee.
+	CreateFlatCharge(context.Context, *connect.Request[v1.CreateFlatChargeRequest]) (*connect.Response[v1.CreateFlatChargeResponse], error)
+	// GetCashClosing summarizes payments collected in a date range (cierre de caja).
+	GetCashClosing(context.Context, *connect.Request[v1.GetCashClosingRequest]) (*connect.Response[v1.GetCashClosingResponse], error)
+	// GetCollectionsDashboard returns billed vs collected by sector and month, plus debt aging.
+	GetCollectionsDashboard(context.Context, *connect.Request[v1.GetCollectionsDashboardRequest]) (*connect.Response[v1.GetCollectionsDashboardResponse], error)
+	// GetDebtors lists customers with outstanding balance and service-cut candidates.
+	GetDebtors(context.Context, *connect.Request[v1.GetDebtorsRequest]) (*connect.Response[v1.GetDebtorsResponse], error)
+	// GetCollectionPolicy returns the late fee and agreement rules.
+	GetCollectionPolicy(context.Context, *connect.Request[v1.GetCollectionPolicyRequest]) (*connect.Response[v1.GetCollectionPolicyResponse], error)
+	// UpdateCollectionPolicy changes the late fee and agreement rules (admin only).
+	UpdateCollectionPolicy(context.Context, *connect.Request[v1.UpdateCollectionPolicyRequest]) (*connect.Response[v1.UpdateCollectionPolicyResponse], error)
+	// WaiveLateFee forgives the mora of receipts (admin/supervisor).
+	WaiveLateFee(context.Context, *connect.Request[v1.WaiveLateFeeRequest]) (*connect.Response[v1.WaiveLateFeeResponse], error)
+	// PreviewAgreement computes an agreement's totals and schedule without saving it.
+	PreviewAgreement(context.Context, *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.PreviewAgreementResponse], error)
+	// CreateAgreement signs a payment agreement and collects its initial payment.
+	CreateAgreement(context.Context, *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.CreateAgreementResponse], error)
+	// CancelAgreement cancels an active agreement (admin/supervisor).
+	CancelAgreement(context.Context, *connect.Request[v1.CancelAgreementRequest]) (*connect.Response[v1.CancelAgreementResponse], error)
+	// SetCustomerServiceStatus changes a supply's service status (admin only, reason required).
+	SetCustomerServiceStatus(context.Context, *connect.Request[v1.SetCustomerServiceStatusRequest]) (*connect.Response[v1.SetCustomerServiceStatusResponse], error)
+	// GetCustomerStatusHistory lists a supply's service status changes, newest first.
+	GetCustomerStatusHistory(context.Context, *connect.Request[v1.GetCustomerStatusHistoryRequest]) (*connect.Response[v1.GetCustomerStatusHistoryResponse], error)
 }
 
 // NewAdminServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -545,10 +889,28 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(adminServiceMethods.ByName("UpsertSector")),
 		connect.WithHandlerOptions(opts...),
 	)
+	adminServiceDeleteSectorHandler := connect.NewUnaryHandler(
+		AdminServiceDeleteSectorProcedure,
+		svc.DeleteSector,
+		connect.WithSchema(adminServiceMethods.ByName("DeleteSector")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceMoveSectorHandler := connect.NewUnaryHandler(
+		AdminServiceMoveSectorProcedure,
+		svc.MoveSector,
+		connect.WithSchema(adminServiceMethods.ByName("MoveSector")),
+		connect.WithHandlerOptions(opts...),
+	)
 	adminServiceUpsertCommunityHandler := connect.NewUnaryHandler(
 		AdminServiceUpsertCommunityProcedure,
 		svc.UpsertCommunity,
 		connect.WithSchema(adminServiceMethods.ByName("UpsertCommunity")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceDeleteCommunityHandler := connect.NewUnaryHandler(
+		AdminServiceDeleteCommunityProcedure,
+		svc.DeleteCommunity,
+		connect.WithSchema(adminServiceMethods.ByName("DeleteCommunity")),
 		connect.WithHandlerOptions(opts...),
 	)
 	adminServiceTogglePaymentStatusHandler := connect.NewUnaryHandler(
@@ -561,6 +923,96 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 		AdminServiceGetCollectionsProcedure,
 		svc.GetCollections,
 		connect.WithSchema(adminServiceMethods.ByName("GetCollections")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceGetCustomerAccountHandler := connect.NewUnaryHandler(
+		AdminServiceGetCustomerAccountProcedure,
+		svc.GetCustomerAccount,
+		connect.WithSchema(adminServiceMethods.ByName("GetCustomerAccount")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceRegisterPaymentHandler := connect.NewUnaryHandler(
+		AdminServiceRegisterPaymentProcedure,
+		svc.RegisterPayment,
+		connect.WithSchema(adminServiceMethods.ByName("RegisterPayment")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceVoidPaymentHandler := connect.NewUnaryHandler(
+		AdminServiceVoidPaymentProcedure,
+		svc.VoidPayment,
+		connect.WithSchema(adminServiceMethods.ByName("VoidPayment")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceCreateFlatChargeHandler := connect.NewUnaryHandler(
+		AdminServiceCreateFlatChargeProcedure,
+		svc.CreateFlatCharge,
+		connect.WithSchema(adminServiceMethods.ByName("CreateFlatCharge")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceGetCashClosingHandler := connect.NewUnaryHandler(
+		AdminServiceGetCashClosingProcedure,
+		svc.GetCashClosing,
+		connect.WithSchema(adminServiceMethods.ByName("GetCashClosing")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceGetCollectionsDashboardHandler := connect.NewUnaryHandler(
+		AdminServiceGetCollectionsDashboardProcedure,
+		svc.GetCollectionsDashboard,
+		connect.WithSchema(adminServiceMethods.ByName("GetCollectionsDashboard")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceGetDebtorsHandler := connect.NewUnaryHandler(
+		AdminServiceGetDebtorsProcedure,
+		svc.GetDebtors,
+		connect.WithSchema(adminServiceMethods.ByName("GetDebtors")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceGetCollectionPolicyHandler := connect.NewUnaryHandler(
+		AdminServiceGetCollectionPolicyProcedure,
+		svc.GetCollectionPolicy,
+		connect.WithSchema(adminServiceMethods.ByName("GetCollectionPolicy")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceUpdateCollectionPolicyHandler := connect.NewUnaryHandler(
+		AdminServiceUpdateCollectionPolicyProcedure,
+		svc.UpdateCollectionPolicy,
+		connect.WithSchema(adminServiceMethods.ByName("UpdateCollectionPolicy")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceWaiveLateFeeHandler := connect.NewUnaryHandler(
+		AdminServiceWaiveLateFeeProcedure,
+		svc.WaiveLateFee,
+		connect.WithSchema(adminServiceMethods.ByName("WaiveLateFee")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServicePreviewAgreementHandler := connect.NewUnaryHandler(
+		AdminServicePreviewAgreementProcedure,
+		svc.PreviewAgreement,
+		connect.WithSchema(adminServiceMethods.ByName("PreviewAgreement")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceCreateAgreementHandler := connect.NewUnaryHandler(
+		AdminServiceCreateAgreementProcedure,
+		svc.CreateAgreement,
+		connect.WithSchema(adminServiceMethods.ByName("CreateAgreement")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceCancelAgreementHandler := connect.NewUnaryHandler(
+		AdminServiceCancelAgreementProcedure,
+		svc.CancelAgreement,
+		connect.WithSchema(adminServiceMethods.ByName("CancelAgreement")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceSetCustomerServiceStatusHandler := connect.NewUnaryHandler(
+		AdminServiceSetCustomerServiceStatusProcedure,
+		svc.SetCustomerServiceStatus,
+		connect.WithSchema(adminServiceMethods.ByName("SetCustomerServiceStatus")),
+		connect.WithHandlerOptions(opts...),
+	)
+	adminServiceGetCustomerStatusHistoryHandler := connect.NewUnaryHandler(
+		AdminServiceGetCustomerStatusHistoryProcedure,
+		svc.GetCustomerStatusHistory,
+		connect.WithSchema(adminServiceMethods.ByName("GetCustomerStatusHistory")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/involt.v1.AdminService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -599,12 +1051,48 @@ func NewAdminServiceHandler(svc AdminServiceHandler, opts ...connect.HandlerOpti
 			adminServiceClosePeriodHandler.ServeHTTP(w, r)
 		case AdminServiceUpsertSectorProcedure:
 			adminServiceUpsertSectorHandler.ServeHTTP(w, r)
+		case AdminServiceDeleteSectorProcedure:
+			adminServiceDeleteSectorHandler.ServeHTTP(w, r)
+		case AdminServiceMoveSectorProcedure:
+			adminServiceMoveSectorHandler.ServeHTTP(w, r)
 		case AdminServiceUpsertCommunityProcedure:
 			adminServiceUpsertCommunityHandler.ServeHTTP(w, r)
+		case AdminServiceDeleteCommunityProcedure:
+			adminServiceDeleteCommunityHandler.ServeHTTP(w, r)
 		case AdminServiceTogglePaymentStatusProcedure:
 			adminServiceTogglePaymentStatusHandler.ServeHTTP(w, r)
 		case AdminServiceGetCollectionsProcedure:
 			adminServiceGetCollectionsHandler.ServeHTTP(w, r)
+		case AdminServiceGetCustomerAccountProcedure:
+			adminServiceGetCustomerAccountHandler.ServeHTTP(w, r)
+		case AdminServiceRegisterPaymentProcedure:
+			adminServiceRegisterPaymentHandler.ServeHTTP(w, r)
+		case AdminServiceVoidPaymentProcedure:
+			adminServiceVoidPaymentHandler.ServeHTTP(w, r)
+		case AdminServiceCreateFlatChargeProcedure:
+			adminServiceCreateFlatChargeHandler.ServeHTTP(w, r)
+		case AdminServiceGetCashClosingProcedure:
+			adminServiceGetCashClosingHandler.ServeHTTP(w, r)
+		case AdminServiceGetCollectionsDashboardProcedure:
+			adminServiceGetCollectionsDashboardHandler.ServeHTTP(w, r)
+		case AdminServiceGetDebtorsProcedure:
+			adminServiceGetDebtorsHandler.ServeHTTP(w, r)
+		case AdminServiceGetCollectionPolicyProcedure:
+			adminServiceGetCollectionPolicyHandler.ServeHTTP(w, r)
+		case AdminServiceUpdateCollectionPolicyProcedure:
+			adminServiceUpdateCollectionPolicyHandler.ServeHTTP(w, r)
+		case AdminServiceWaiveLateFeeProcedure:
+			adminServiceWaiveLateFeeHandler.ServeHTTP(w, r)
+		case AdminServicePreviewAgreementProcedure:
+			adminServicePreviewAgreementHandler.ServeHTTP(w, r)
+		case AdminServiceCreateAgreementProcedure:
+			adminServiceCreateAgreementHandler.ServeHTTP(w, r)
+		case AdminServiceCancelAgreementProcedure:
+			adminServiceCancelAgreementHandler.ServeHTTP(w, r)
+		case AdminServiceSetCustomerServiceStatusProcedure:
+			adminServiceSetCustomerServiceStatusHandler.ServeHTTP(w, r)
+		case AdminServiceGetCustomerStatusHistoryProcedure:
+			adminServiceGetCustomerStatusHistoryHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -682,8 +1170,20 @@ func (UnimplementedAdminServiceHandler) UpsertSector(context.Context, *connect.R
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.UpsertSector is not implemented"))
 }
 
+func (UnimplementedAdminServiceHandler) DeleteSector(context.Context, *connect.Request[v1.DeleteSectorRequest]) (*connect.Response[v1.DeleteSectorResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.DeleteSector is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) MoveSector(context.Context, *connect.Request[v1.MoveSectorRequest]) (*connect.Response[v1.MoveSectorResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.MoveSector is not implemented"))
+}
+
 func (UnimplementedAdminServiceHandler) UpsertCommunity(context.Context, *connect.Request[v1.UpsertCommunityRequest]) (*connect.Response[v1.UpsertCommunityResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.UpsertCommunity is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) DeleteCommunity(context.Context, *connect.Request[v1.DeleteCommunityRequest]) (*connect.Response[v1.DeleteCommunityResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.DeleteCommunity is not implemented"))
 }
 
 func (UnimplementedAdminServiceHandler) TogglePaymentStatus(context.Context, *connect.Request[v1.TogglePaymentStatusRequest]) (*connect.Response[v1.TogglePaymentStatusResponse], error) {
@@ -692,4 +1192,64 @@ func (UnimplementedAdminServiceHandler) TogglePaymentStatus(context.Context, *co
 
 func (UnimplementedAdminServiceHandler) GetCollections(context.Context, *connect.Request[v1.GetCollectionsRequest]) (*connect.Response[v1.GetCollectionsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetCollections is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) GetCustomerAccount(context.Context, *connect.Request[v1.GetCustomerAccountRequest]) (*connect.Response[v1.GetCustomerAccountResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetCustomerAccount is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) RegisterPayment(context.Context, *connect.Request[v1.RegisterPaymentRequest]) (*connect.Response[v1.RegisterPaymentResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.RegisterPayment is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) VoidPayment(context.Context, *connect.Request[v1.VoidPaymentRequest]) (*connect.Response[v1.VoidPaymentResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.VoidPayment is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) CreateFlatCharge(context.Context, *connect.Request[v1.CreateFlatChargeRequest]) (*connect.Response[v1.CreateFlatChargeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.CreateFlatCharge is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) GetCashClosing(context.Context, *connect.Request[v1.GetCashClosingRequest]) (*connect.Response[v1.GetCashClosingResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetCashClosing is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) GetCollectionsDashboard(context.Context, *connect.Request[v1.GetCollectionsDashboardRequest]) (*connect.Response[v1.GetCollectionsDashboardResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetCollectionsDashboard is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) GetDebtors(context.Context, *connect.Request[v1.GetDebtorsRequest]) (*connect.Response[v1.GetDebtorsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetDebtors is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) GetCollectionPolicy(context.Context, *connect.Request[v1.GetCollectionPolicyRequest]) (*connect.Response[v1.GetCollectionPolicyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetCollectionPolicy is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) UpdateCollectionPolicy(context.Context, *connect.Request[v1.UpdateCollectionPolicyRequest]) (*connect.Response[v1.UpdateCollectionPolicyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.UpdateCollectionPolicy is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) WaiveLateFee(context.Context, *connect.Request[v1.WaiveLateFeeRequest]) (*connect.Response[v1.WaiveLateFeeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.WaiveLateFee is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) PreviewAgreement(context.Context, *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.PreviewAgreementResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.PreviewAgreement is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) CreateAgreement(context.Context, *connect.Request[v1.AgreementRequest]) (*connect.Response[v1.CreateAgreementResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.CreateAgreement is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) CancelAgreement(context.Context, *connect.Request[v1.CancelAgreementRequest]) (*connect.Response[v1.CancelAgreementResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.CancelAgreement is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) SetCustomerServiceStatus(context.Context, *connect.Request[v1.SetCustomerServiceStatusRequest]) (*connect.Response[v1.SetCustomerServiceStatusResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.SetCustomerServiceStatus is not implemented"))
+}
+
+func (UnimplementedAdminServiceHandler) GetCustomerStatusHistory(context.Context, *connect.Request[v1.GetCustomerStatusHistoryRequest]) (*connect.Response[v1.GetCustomerStatusHistoryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("involt.v1.AdminService.GetCustomerStatusHistory is not implemented"))
 }

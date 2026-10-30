@@ -1,8 +1,9 @@
-import { useState, useCallback, useEffect, useTransition } from "react";
-import { adminClient } from "@/lib/rpc";
+import { useCallback, useEffect, useState, useTransition } from "react";
+import { toast } from "sonner";
 import { type User as AdminUser, UserRole } from "@/app/gen/involt/v1/admin_pb";
 import type { Sector } from "@/app/gen/involt/v1/models_pb";
-import { toast } from "sonner";
+import { adminClient } from "@/lib/rpc";
+import { generateUUID } from "@/lib/utils";
 
 export function useUsers() {
   const [isPending, startTransition] = useTransition();
@@ -51,13 +52,15 @@ export function useUsers() {
       if (!isMounted) return;
     };
     init();
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+    };
   }, [fetchData]);
 
   const handleOpenModal = useCallback((user: Partial<AdminUser> | null = null) => {
     setEditingUser(
       user || {
-        id: crypto.randomUUID(),
+        id: generateUUID(),
         email: "",
         role: UserRole.READER,
         assignedSectorIds: [],
@@ -67,25 +70,28 @@ export function useUsers() {
     setIsModalOpen(true);
   }, []);
 
-  const handleSave = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingUser) return;
-    setSaving(true);
-    try {
-      await adminClient.upsertUser({
-        user: editingUser as AdminUser,
-        password: password,
-      });
-      toast.success("Usuario guardado correctamente");
-      await fetchData();
-      setIsModalOpen(false);
-    } catch (err) {
-      console.error("Failed to save user:", err);
-      toast.error("Error al guardar usuario");
-    } finally {
-      setSaving(false);
-    }
-  }, [editingUser, password, fetchData]);
+  const handleSave = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!editingUser) return;
+      setSaving(true);
+      try {
+        await adminClient.upsertUser({
+          user: editingUser as AdminUser,
+          password: password,
+        });
+        toast.success("Usuario guardado correctamente");
+        await fetchData();
+        setIsModalOpen(false);
+      } catch (err) {
+        console.error("Failed to save user:", err);
+        toast.error("Error al guardar usuario");
+      } finally {
+        setSaving(false);
+      }
+    },
+    [editingUser, password, fetchData],
+  );
 
   const toggleSector = useCallback((sectorId: string) => {
     setEditingUser((prev) => {
