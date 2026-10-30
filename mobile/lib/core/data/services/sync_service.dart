@@ -330,7 +330,33 @@ class SyncService {
     print('✅ Sync: Local database cleared.');
   }
 
-  Future<String?> uploadPhoto(io.File photo) async {
+  /// Photos still on the device whose readings are already on the server.
+  Future<List<PendingPhoto>> pendingPhotos() async {
+    final rows =
+        await (db.select(db.readings)..where(
+              (r) => r.isSynced.equals(true) & r.photoUrl.like('/%'),
+            ))
+            .get();
+    return [for (final r in rows) PendingPhoto(r.id, r.photoUrl!)];
+  }
+
+  /// Uploads the pending photos (after their readings), attaching each one to its reading
+  /// on the server and freeing the device copy. Returns how many are still pending.
+  Future<int> uploadPhotos() async {
+    return uploadPendingPhotos(
+      await pendingPhotos(),
+      upload: (photo) =>
+          uploadPhoto(io.File(photo.path), readingId: photo.readingId),
+      uploaded: (photo, url) async {
+        await (db.update(db.readings)
+              ..where((t) => t.id.equals(photo.readingId)))
+            .write(ReadingsCompanion(photoUrl: Value(url)));
+        await _photos.discard(photo.path);
+      },
+    );
+  }
+
+  Future<String?> uploadPhoto(io.File photo, {String readingId = ''}) async {
     final transport = _getTransport();
 
     try {
@@ -346,9 +372,15 @@ class SyncService {
             pb.UploadPhotoRequest(
               fileName: p.basename(photo.path),
               data: bytes,
+              readingId: readingId,
             ),
             _authOptions(),
           );
+      // A photo for a reading only counts once the server says it is attached to it.
+      if (readingId.isNotEmpty && !response.message.attached) {
+        debugPrint('⚠️ Sync: server did not attach the photo of $readingId');
+        return null;
+      }
       return response.message.url;
     } catch (e) {
       print('❌ Sync Error (Photo Upload): $e');
@@ -371,26 +403,10 @@ class SyncService {
 
       print('📤 Sync: Pushing ${unsynced.length} readings...');
 
-      // 2. Prepare Protobuf request. Photos still on the device are uploaded first; a reading
-      // whose photo fails to upload stays unsynced and is retried on the next sync.
+      // 2. Prepare Protobuf request. Readings go first, without waiting for their photos:
+      // photos still on the device are uploaded afterwards by uploadPhotos().
       final request = pb.PushReadingsRequest();
-      final pushed = <Reading>[];
-      var pendingPhotos = 0;
       for (final r in unsynced) {
-        final photo = await preparePhoto(r.photoUrl, uploadPhoto);
-        if (photo.retry) {
-          pendingPhotos++;
-          continue;
-        }
-        if (photo.uploaded) {
-          // Keep the server copy now, so a failed push does not upload the photo again.
-          await (db.update(db.readings)..where((t) => t.id.equals(r.id))).write(
-            ReadingsCompanion(photoUrl: Value(photo.url)),
-          );
-          await _photos.discard(r.photoUrl);
-        }
-        pushed.add(r);
-
         request.readings.add(
           models.Reading(
             id: r.id,
@@ -398,7 +414,7 @@ class SyncService {
             previousValue: r.previousValue,
             currentValue: r.currentValue,
             consumption: r.consumptionKwh,
-            photoUrl: photo.url,
+            photoUrl: PhotoStore.isLocal(r.photoUrl) ? '' : (r.photoUrl ?? ''),
             timestamp: r.timestamp.toIso8601String(),
             latitude: r.latitude,
             longitude: r.longitude,
@@ -410,13 +426,6 @@ class SyncService {
           ),
         );
       }
-      final photosError = pendingPhotos == 0
-          ? null
-          : Exception(
-              'No se pudieron subir $pendingPhotos fotos; esas lecturas se enviarán '
-              'en la próxima sincronización.',
-            );
-      if (pushed.isEmpty) throw photosError!;
 
       // 3. Call RPC
       final response = await transport
@@ -438,7 +447,7 @@ class SyncService {
 
         // 4. Mark as synced in local DB
         await db.batch((batch) {
-          for (final r in pushed) {
+          for (final r in unsynced) {
             batch.update(
               db.readings,
               ReadingsCompanion(isSynced: const Value(true)),
@@ -447,7 +456,6 @@ class SyncService {
           }
         });
         await _normalizeLocalReadingPeriodsFromIds();
-        if (photosError != null) throw photosError;
       } else {
         debugPrint('⚠️ Sync: Server reported failure during push');
       }

@@ -13,6 +13,8 @@ type ReadingRepository interface {
 	ListByCustomer(ctx context.Context, customerID string) ([]domain.Reading, error)
 	GetLatestByCustomer(ctx context.Context, customerID string) (*domain.Reading, error)
 	GetLatestByCustomerExcludingID(ctx context.Context, customerID, excludeID string) (*domain.Reading, error)
+	// SetPhotoURL attaches an uploaded photo to a reading; errors when the reading is missing.
+	SetPhotoURL(ctx context.Context, id, photoURL string) error
 	ListBySectorAndPeriod(ctx context.Context, sectorID string, start, end string) ([]domain.Reading, error)
 	CountByPeriod(ctx context.Context, period string) (int, error)
 	CountPendingByPeriod(ctx context.Context, period string) (int, error)

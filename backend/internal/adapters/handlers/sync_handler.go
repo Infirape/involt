@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 
 	"connectrpc.com/connect"
@@ -320,21 +321,39 @@ func (h *SyncHandler) PushReadings(
 	}), nil
 }
 
+// uploadsDir is where reading photos are stored (served by nothing yet; kept for audit).
+var uploadsDir = "uploads"
+
 func (h *SyncHandler) UploadPhoto(
 	ctx context.Context,
 	req *connect.Request[involtv1.UploadPhotoRequest],
 ) (*connect.Response[involtv1.UploadPhotoResponse], error) {
-	fileName := fmt.Sprintf("%d_%s", time.Now().UnixNano(), req.Msg.FileName)
-	filePath := fmt.Sprintf("uploads/%s", fileName)
+	// Only the base name: the client must not choose where the file goes.
+	name := filepath.Base(filepath.Clean("/" + req.Msg.FileName))
+	if name == "/" || name == "." {
+		name = "photo.jpg"
+	}
+	filePath := filepath.ToSlash(filepath.Join(uploadsDir, fmt.Sprintf("%d_%s", time.Now().UnixNano(), name)))
 
-	err := os.WriteFile(filePath, req.Msg.Data, 0644)
-	if err != nil {
+	if err := os.MkdirAll(uploadsDir, 0o755); err != nil {
+		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("failed to prepare uploads: %w", err))
+	}
+	if err := os.WriteFile(filePath, req.Msg.Data, 0644); err != nil {
 		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("failed to save photo: %w", err))
 	}
 
-	// For now, returning a local path. In production, this would be a full URL (S3/CDN).
+	attached := false
+	if req.Msg.ReadingId != "" {
+		if err := h.readingRepo.SetPhotoURL(ctx, req.Msg.ReadingId, filePath); err != nil {
+			_ = os.Remove(filePath)
+			return nil, connect.NewError(connect.CodeNotFound, err)
+		}
+		attached = true
+	}
+
 	return connect.NewResponse(&involtv1.UploadPhotoResponse{
-		Url: filePath,
+		Url:      filePath,
+		Attached: attached,
 	}), nil
 }
 

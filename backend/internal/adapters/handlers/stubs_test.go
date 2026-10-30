@@ -56,6 +56,7 @@ type collectionsReadingRepoStub struct {
 	listByCustomerFunc         func(context.Context, string) ([]domain.Reading, error)
 	getByCustomerAndPeriodFunc func(context.Context, string, string) (*domain.Reading, error)
 	saved                      []*domain.Reading
+	photos                     map[string]string // reading id -> photo url, from SetPhotoURL
 }
 
 func (s *collectionsReadingRepoStub) Save(_ context.Context, r *domain.Reading) error {
@@ -73,6 +74,13 @@ func (s *collectionsReadingRepoStub) GetByID(ctx context.Context, id string) (*d
 }
 func (s *collectionsReadingRepoStub) ListByCustomer(ctx context.Context, customerID string) ([]domain.Reading, error) {
 	return s.listByCustomerFunc(ctx, customerID)
+}
+func (s *collectionsReadingRepoStub) SetPhotoURL(_ context.Context, id, photoURL string) error {
+	if s.photos == nil {
+		s.photos = map[string]string{}
+	}
+	s.photos[id] = photoURL
+	return nil
 }
 func (s *collectionsReadingRepoStub) GetLatestByCustomer(context.Context, string) (*domain.Reading, error) {
 	panic("not implemented")

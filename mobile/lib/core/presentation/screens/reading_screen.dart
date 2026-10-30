@@ -1,13 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../data/database.dart';
 import '../../data/repositories/drift_reading_repository.dart';
 import '../../data/services/photo_store.dart';
 import '../theme/app_colors.dart';
 import '../widgets/glass_card.dart';
+import 'meter_camera_screen.dart';
+import '../providers/photo_sync_provider.dart';
+import '../providers/storage_provider.dart';
 import '../widgets/numeric_keypad.dart';
 import '../providers/app_state_provider.dart';
 
@@ -157,17 +159,29 @@ class _ReadingScreenState extends State<ReadingScreen> {
   }
 
   Future<void> _takePhoto() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(
-      source: ImageSource.camera,
-      // Enough to read a meter, ~300 KB instead of a full-size camera photo.
-      maxWidth: 1600,
-      maxHeight: 1600,
-      imageQuality: 70,
+    final storage = context.read<StorageProvider>();
+    await storage.refresh();
+    if (storage.isLow && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColors.amber,
+          content: Text(
+            'Poco almacenamiento: quedan ${formatBytes(storage.freeBytes!)}. '
+            'Sincroniza pronto para liberar las fotos.',
+            style: const TextStyle(color: Colors.black),
+          ),
+        ),
+      );
+    }
+    if (!mounted) return;
+    // In-app camera: the photo stays private to the app, out of the phone's gallery.
+    final path = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(builder: (_) => const MeterCameraScreen()),
     );
-    if (pickedFile != null) {
+    if (path != null) {
       setState(() {
-        _image = File(pickedFile.path);
+        _image = File(path);
         _newPhoto = true;
       });
     }
@@ -254,7 +268,10 @@ class _ReadingScreenState extends State<ReadingScreen> {
 
       await repo.saveReading(reading);
       if (_newPhoto) await _photos.discard(_savedPhotoUrl); // replaced
-      if (mounted) Navigator.pop(context);
+      if (mounted) {
+        context.read<PhotoSyncProvider>().refresh();
+        Navigator.pop(context);
+      }
     } catch (e) {
       ScaffoldMessenger.of(
         context,

@@ -303,6 +303,7 @@ class UploadPhotoRequest extends $pb.GeneratedMessage {
   factory UploadPhotoRequest({
     $core.String? fileName,
     $core.List<$core.int>? data,
+    $core.String? readingId,
   }) {
     final $result = create();
     if (fileName != null) {
@@ -310,6 +311,9 @@ class UploadPhotoRequest extends $pb.GeneratedMessage {
     }
     if (data != null) {
       $result.data = data;
+    }
+    if (readingId != null) {
+      $result.readingId = readingId;
     }
     return $result;
   }
@@ -320,6 +324,7 @@ class UploadPhotoRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UploadPhotoRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'fileName')
     ..a<$core.List<$core.int>>(2, _omitFieldNames ? '' : 'data', $pb.PbFieldType.OY)
+    ..aOS(3, _omitFieldNames ? '' : 'readingId')
     ..hasRequiredFields = false
   ;
 
@@ -361,15 +366,30 @@ class UploadPhotoRequest extends $pb.GeneratedMessage {
   $core.bool hasData() => $_has(1);
   @$pb.TagNumber(2)
   void clearData() => clearField(2);
+
+  /// When set, the photo is attached to this (already synced) reading. Photos are uploaded
+  /// after their readings, in the background.
+  @$pb.TagNumber(3)
+  $core.String get readingId => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set readingId($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasReadingId() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearReadingId() => clearField(3);
 }
 
 class UploadPhotoResponse extends $pb.GeneratedMessage {
   factory UploadPhotoResponse({
     $core.String? url,
+    $core.bool? attached,
   }) {
     final $result = create();
     if (url != null) {
       $result.url = url;
+    }
+    if (attached != null) {
+      $result.attached = attached;
     }
     return $result;
   }
@@ -379,6 +399,7 @@ class UploadPhotoResponse extends $pb.GeneratedMessage {
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UploadPhotoResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'involt.v1'), createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'url')
+    ..aOB(2, _omitFieldNames ? '' : 'attached')
     ..hasRequiredFields = false
   ;
 
@@ -411,6 +432,17 @@ class UploadPhotoResponse extends $pb.GeneratedMessage {
   $core.bool hasUrl() => $_has(0);
   @$pb.TagNumber(1)
   void clearUrl() => clearField(1);
+
+  /// True when the photo was attached to the requested reading. Older servers never set it,
+  /// so the app keeps its copy instead of losing the photo.
+  @$pb.TagNumber(2)
+  $core.bool get attached => $_getBF(1);
+  @$pb.TagNumber(2)
+  set attached($core.bool v) { $_setBool(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasAttached() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearAttached() => clearField(2);
 }
 
 class DownloadReceiptRequest extends $pb.GeneratedMessage {

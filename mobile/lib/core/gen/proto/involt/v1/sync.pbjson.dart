@@ -87,25 +87,28 @@ const UploadPhotoRequest$json = {
   '2': [
     {'1': 'file_name', '3': 1, '4': 1, '5': 9, '10': 'fileName'},
     {'1': 'data', '3': 2, '4': 1, '5': 12, '10': 'data'},
+    {'1': 'reading_id', '3': 3, '4': 1, '5': 9, '10': 'readingId'},
   ],
 };
 
 /// Descriptor for `UploadPhotoRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List uploadPhotoRequestDescriptor = $convert.base64Decode(
     'ChJVcGxvYWRQaG90b1JlcXVlc3QSGwoJZmlsZV9uYW1lGAEgASgJUghmaWxlTmFtZRISCgRkYX'
-    'RhGAIgASgMUgRkYXRh');
+    'RhGAIgASgMUgRkYXRhEh0KCnJlYWRpbmdfaWQYAyABKAlSCXJlYWRpbmdJZA==');
 
 @$core.Deprecated('Use uploadPhotoResponseDescriptor instead')
 const UploadPhotoResponse$json = {
   '1': 'UploadPhotoResponse',
   '2': [
     {'1': 'url', '3': 1, '4': 1, '5': 9, '10': 'url'},
+    {'1': 'attached', '3': 2, '4': 1, '5': 8, '10': 'attached'},
   ],
 };
 
 /// Descriptor for `UploadPhotoResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List uploadPhotoResponseDescriptor = $convert.base64Decode(
-    'ChNVcGxvYWRQaG90b1Jlc3BvbnNlEhAKA3VybBgBIAEoCVIDdXJs');
+    'ChNVcGxvYWRQaG90b1Jlc3BvbnNlEhAKA3VybBgBIAEoCVIDdXJsEhoKCGF0dGFjaGVkGAIgAS'
+    'gIUghhdHRhY2hlZA==');
 
 @$core.Deprecated('Use downloadReceiptRequestDescriptor instead')
 const DownloadReceiptRequest$json = {

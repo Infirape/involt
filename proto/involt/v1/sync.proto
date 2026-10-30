@@ -48,10 +48,16 @@ message PullMetadataResponse {
 message UploadPhotoRequest {
   string file_name = 1;
   bytes data = 2;
+  // When set, the photo is attached to this (already synced) reading. Photos are uploaded
+  // after their readings, in the background.
+  string reading_id = 3;
 }
 
 message UploadPhotoResponse {
   string url = 1;
+  // True when the photo was attached to the requested reading. Older servers never set it,
+  // so the app keeps its copy instead of losing the photo.
+  bool attached = 2;
 }
 
 message DownloadReceiptRequest {

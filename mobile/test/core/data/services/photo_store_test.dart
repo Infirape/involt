@@ -39,46 +39,59 @@ void main() {
     expect(await io.File(kept).exists(), isFalse);
   });
 
-  group('preparePhoto', () {
-    test('uploads a device photo', () async {
-      final kept = await store.keep(await picked(), 'read-1');
-      final result = await preparePhoto(kept, (_) async => 'uploads/1_x.jpg');
+  group('uploadPendingPhotos', () {
+    test('uploads each photo and records its server path', () async {
+      final a = await store.keep(await picked(), 'read-a');
+      final b = await store.keep(await picked(), 'read-b');
+      final done = <String, String>{};
 
-      expect(result.url, 'uploads/1_x.jpg');
-      expect(result.uploaded, isTrue);
-      expect(result.retry, isFalse);
-    });
-
-    test('asks to retry when the upload fails', () async {
-      final kept = await store.keep(await picked(), 'read-1');
-      final result = await preparePhoto(kept, (_) async => null);
-
-      expect(result.retry, isTrue);
-    });
-
-    test('does not upload photos already on the server, or none', () async {
-      var calls = 0;
-      Future<String?> upload(io.File _) async {
-        calls++;
-        return 'x';
-      }
-
-      expect(
-        (await preparePhoto('uploads/1_x.jpg', upload)).url,
-        'uploads/1_x.jpg',
-      );
-      expect((await preparePhoto(null, upload)).url, '');
-      expect(calls, 0);
-    });
-
-    test('pushes without the photo when the file is gone', () async {
-      final result = await preparePhoto(
-        '${tmp.path}/gone.jpg',
-        (_) async => 'x',
+      final left = await uploadPendingPhotos(
+        [PendingPhoto('read-a', a), PendingPhoto('read-b', b)],
+        upload: (p) async => 'uploads/${p.readingId}.jpg',
+        uploaded: (p, url) async => done[p.readingId] = url,
       );
 
-      expect(result.url, '');
-      expect(result.retry, isFalse);
+      expect(left, 0);
+      expect(done, {
+        'read-a': 'uploads/read-a.jpg',
+        'read-b': 'uploads/read-b.jpg',
+      });
     });
+
+    test('keeps failed uploads pending and goes on with the rest', () async {
+      final a = await store.keep(await picked(), 'read-a');
+      final b = await store.keep(await picked(), 'read-b');
+      final done = <String>[];
+
+      final left = await uploadPendingPhotos(
+        [PendingPhoto('read-a', a), PendingPhoto('read-b', b)],
+        upload: (p) async => p.readingId == 'read-a' ? null : 'uploads/b.jpg',
+        uploaded: (p, url) async => done.add(p.readingId),
+      );
+
+      expect(left, 1);
+      expect(done, ['read-b']);
+    });
+
+    test(
+      'drops photos whose file is gone instead of retrying forever',
+      () async {
+        final done = <String, String>{};
+        var uploads = 0;
+
+        final left = await uploadPendingPhotos(
+          [PendingPhoto('read-a', '${tmp.path}/gone.jpg')],
+          upload: (_) async {
+            uploads++;
+            return 'x';
+          },
+          uploaded: (p, url) async => done[p.readingId] = url,
+        );
+
+        expect(left, 0);
+        expect(uploads, 0);
+        expect(done, {'read-a': ''});
+      },
+    );
   });
 }

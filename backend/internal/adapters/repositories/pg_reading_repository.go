@@ -65,6 +65,17 @@ func (r *PostgresReadingRepository) Save(ctx context.Context, reading *domain.Re
 	return tx.Commit()
 }
 
+func (r *PostgresReadingRepository) SetPhotoURL(ctx context.Context, id, photoURL string) error {
+	res, err := r.db.ExecContext(ctx, `UPDATE readings SET photo_url = $2 WHERE id = $1`, id, photoURL)
+	if err != nil {
+		return fmt.Errorf("error setting reading photo: %w", err)
+	}
+	if n, _ := res.RowsAffected(); n == 0 {
+		return fmt.Errorf("reading %s not found", id)
+	}
+	return nil
+}
+
 func (r *PostgresReadingRepository) ListByCustomer(ctx context.Context, customerID string) ([]domain.Reading, error) {
 	var readings []domain.Reading
 	query := `SELECT * FROM readings WHERE customer_id = $1 ORDER BY timestamp DESC`

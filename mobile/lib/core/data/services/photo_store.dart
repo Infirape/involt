@@ -38,34 +38,35 @@ class PhotoStore {
   }
 }
 
-/// Outcome of preparing a reading's photo for a push.
-class PhotoUpload {
-  const PhotoUpload._(this.url, {required this.uploaded, required this.retry});
+/// A photo still on the device whose reading is already on the server.
+class PendingPhoto {
+  const PendingPhoto(this.readingId, this.path);
 
-  /// The photo is on the server (or there is none): push the reading with [url].
-  const PhotoUpload.ready(String url, {bool uploaded = false})
-    : this._(url, uploaded: uploaded, retry: false);
-
-  /// The upload failed: keep the reading unsynced and try again on the next sync.
-  const PhotoUpload.later() : this._('', uploaded: false, retry: true);
-
-  final String url;
-
-  /// True when this push uploaded the photo (so the device copy can go).
-  final bool uploaded;
-  final bool retry;
+  final String readingId;
+  final String path;
 }
 
-/// Uploads the reading photo when it is still on the device.
-Future<PhotoUpload> preparePhoto(
-  String? photoUrl,
-  Future<String?> Function(io.File photo) upload,
-) async {
-  if (!PhotoStore.isLocal(photoUrl)) return PhotoUpload.ready(photoUrl ?? '');
-  final file = io.File(photoUrl!);
-  // The file is gone (e.g. app data cleared): push the reading without its photo.
-  if (!await file.exists()) return const PhotoUpload.ready('');
-  final remote = await upload(file);
-  if (remote == null || remote.isEmpty) return const PhotoUpload.later();
-  return PhotoUpload.ready(remote, uploaded: true);
+/// Uploads pending photos one by one, after their readings were synced. [upload] returns the
+/// server path, or null when it failed (the photo stays pending for the next run);
+/// [uploaded] records the result, with '' when the file is gone so it is not retried.
+/// Returns how many photos are still pending.
+Future<int> uploadPendingPhotos(
+  List<PendingPhoto> photos, {
+  required Future<String?> Function(PendingPhoto photo) upload,
+  required Future<void> Function(PendingPhoto photo, String url) uploaded,
+}) async {
+  var pending = 0;
+  for (final photo in photos) {
+    if (!await io.File(photo.path).exists()) {
+      await uploaded(photo, '');
+      continue;
+    }
+    final url = await upload(photo);
+    if (url == null || url.isEmpty) {
+      pending++;
+    } else {
+      await uploaded(photo, url);
+    }
+  }
+  return pending;
 }

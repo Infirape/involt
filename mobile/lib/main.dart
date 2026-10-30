@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:drift/drift.dart' as drift;
@@ -9,6 +11,9 @@ import 'package:involt/core/presentation/screens/search_screen.dart';
 import 'package:involt/core/presentation/screens/sync_screen.dart';
 import 'package:involt/core/presentation/screens/profile_screen.dart';
 import 'package:involt/core/presentation/providers/app_state_provider.dart';
+import 'package:involt/core/presentation/providers/photo_sync_provider.dart';
+import 'package:involt/core/presentation/providers/storage_provider.dart';
+import 'package:involt/core/presentation/widgets/status_bar.dart';
 import 'package:involt/core/data/services/sync_service.dart';
 import 'package:involt/core/config/app_config.dart';
 import 'package:involt/core/presentation/screens/splash_screen.dart';
@@ -19,7 +24,11 @@ void main() async {
   final db = AppDatabase();
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => AppStateProvider(db))],
+      providers: [
+        ChangeNotifierProvider(create: (_) => AppStateProvider(db)),
+        ChangeNotifierProvider(create: (_) => PhotoSyncProvider(db)),
+        ChangeNotifierProvider(create: (_) => StorageProvider()),
+      ],
       child: MyApp(db: db),
     ),
   );
@@ -54,9 +63,43 @@ class MainNavigationScreen extends StatefulWidget {
   State<MainNavigationScreen> createState() => _MainNavigationScreenState();
 }
 
-class _MainNavigationScreenState extends State<MainNavigationScreen> {
+class _MainNavigationScreenState extends State<MainNavigationScreen>
+    with WidgetsBindingObserver {
   int _currentIndex = 0;
   String? _pendingSectorId;
+  Timer? _backgroundTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _backgroundWork());
+    _backgroundTimer = Timer.periodic(
+      const Duration(minutes: 5),
+      (_) => _backgroundWork(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _backgroundTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _backgroundWork();
+  }
+
+  /// Checks the free space and keeps uploading pending photos while the app is open.
+  void _backgroundWork() {
+    if (!mounted) return;
+    context.read<StorageProvider>().refresh();
+    final photos = context.read<PhotoSyncProvider>();
+    photos.refresh();
+    photos.upload(context.read<AppStateProvider>().authToken);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +144,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       extendBody: true,
       body: Container(
         decoration: const BoxDecoration(gradient: AppColors.mainGradient),
-        child: IndexedStack(index: _currentIndex, children: screens),
+        child: Column(
+          children: [
+            const StatusBar(),
+            Expanded(
+              child: IndexedStack(index: _currentIndex, children: screens),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: CurvedNavigationBar(
         currentIndex: _currentIndex,

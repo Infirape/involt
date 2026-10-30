@@ -262,9 +262,12 @@ func (x *PullMetadataResponse) GetOperators() []*Operator {
 }
 
 type UploadPhotoRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	FileName      string                 `protobuf:"bytes,1,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
-	Data          []byte                 `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	FileName string                 `protobuf:"bytes,1,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
+	Data     []byte                 `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	// When set, the photo is attached to this (already synced) reading. Photos are uploaded
+	// after their readings, in the background.
+	ReadingId     string `protobuf:"bytes,3,opt,name=reading_id,json=readingId,proto3" json:"reading_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -313,9 +316,19 @@ func (x *UploadPhotoRequest) GetData() []byte {
 	return nil
 }
 
+func (x *UploadPhotoRequest) GetReadingId() string {
+	if x != nil {
+		return x.ReadingId
+	}
+	return ""
+}
+
 type UploadPhotoResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Url           string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Url   string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	// True when the photo was attached to the requested reading. Older servers never set it,
+	// so the app keeps its copy instead of losing the photo.
+	Attached      bool `protobuf:"varint,2,opt,name=attached,proto3" json:"attached,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -355,6 +368,13 @@ func (x *UploadPhotoResponse) GetUrl() string {
 		return x.Url
 	}
 	return ""
+}
+
+func (x *UploadPhotoResponse) GetAttached() bool {
+	if x != nil {
+		return x.Attached
+	}
+	return false
 }
 
 type DownloadReceiptRequest struct {
@@ -465,12 +485,15 @@ const file_involt_v1_sync_proto_rawDesc = "" +
 	"\x06config\x18\x05 \x01(\v2\x14.involt.v1.AppConfigR\x06config\x12/\n" +
 	"\bsettings\x18\x06 \x01(\v2\x13.involt.v1.SettingsR\bsettings\x128\n" +
 	"\x0ecurrent_period\x18\a \x01(\v2\x11.involt.v1.PeriodR\rcurrentPeriod\x121\n" +
-	"\toperators\x18\b \x03(\v2\x13.involt.v1.OperatorR\toperators\"E\n" +
+	"\toperators\x18\b \x03(\v2\x13.involt.v1.OperatorR\toperators\"d\n" +
 	"\x12UploadPhotoRequest\x12\x1b\n" +
 	"\tfile_name\x18\x01 \x01(\tR\bfileName\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\fR\x04data\"'\n" +
+	"\x04data\x18\x02 \x01(\fR\x04data\x12\x1d\n" +
+	"\n" +
+	"reading_id\x18\x03 \x01(\tR\treadingId\"C\n" +
 	"\x13UploadPhotoResponse\x12\x10\n" +
-	"\x03url\x18\x01 \x01(\tR\x03url\"7\n" +
+	"\x03url\x18\x01 \x01(\tR\x03url\x12\x1a\n" +
+	"\battached\x18\x02 \x01(\bR\battached\"7\n" +
 	"\x16DownloadReceiptRequest\x12\x1d\n" +
 	"\n" +
 	"reading_id\x18\x01 \x01(\tR\treadingId\"4\n" +
