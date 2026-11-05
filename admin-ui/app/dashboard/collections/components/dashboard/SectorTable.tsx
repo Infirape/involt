@@ -50,7 +50,12 @@ export function SectorTable({ sectors }: { sectors: SectorCollectionSummary[] })
                 <th className="text-right py-2 font-semibold">Facturado</th>
                 <th className="text-right py-2 font-semibold">Cobrado</th>
                 <th className="py-2 font-semibold w-40">% cobranza</th>
-                <th className="text-right py-2 font-semibold">Deuda</th>
+                <th
+                  className="text-right py-2 font-semibold"
+                  title="Todo lo pendiente, sin importar los meses elegidos. No incluye corte temporal."
+                >
+                  Deuda total
+                </th>
                 <th className="text-right py-2 font-semibold">Morosos</th>
               </tr>
             </thead>

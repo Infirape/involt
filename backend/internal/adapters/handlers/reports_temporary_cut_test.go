@@ -62,3 +62,21 @@ func TestGetDebtorsHidesTemporaryCutUnlessRequested(t *testing.T) {
 		t.Fatalf("cut filter = %+v, want the cut customer's debt", cut.Msg)
 	}
 }
+
+func TestGetCollectionsDashboardSectorDebtCoversAllPeriods(t *testing.T) {
+	h, repo := newReportsHandler()
+	repo.lines = append(temporaryCutLines(), domain.ReceiptLine{
+		ReadingID: "a2", CustomerID: "ana", SectorID: "s1", SectorName: "Otro", Period: "2026-10", Total: 40,
+		ExpirationDate: time.Date(2026, 10, 20, 0, 0, 0, 0, time.UTC), ServiceStatus: string(domain.ServiceActive),
+	})
+
+	resp, err := h.GetCollectionsDashboard(contextWithUser("admin", "ADMIN"), connect.NewRequest(&involtv1.GetCollectionsDashboardRequest{FromPeriod: "2026-09", ToPeriod: "2026-09"}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, s := range resp.Msg.BySector {
+		if s.SectorId == "s1" && (s.Debt != 80 || s.Billed != 40) {
+			t.Fatalf("sector = %+v, want debt 80 across all periods and billed 40 in range", s)
+		}
+	}
+}

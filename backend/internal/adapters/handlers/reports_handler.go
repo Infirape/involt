@@ -63,7 +63,7 @@ func (h *AdminHandler) GetCollectionsDashboard(
 	today := h.now()
 	resp := &involtv1.GetCollectionsDashboardResponse{FromPeriod: from, ToPeriod: to, Totals: &involtv1.CollectionsDashboardTotals{}}
 
-	for _, s := range domain.SummarizeBySector(lines) {
+	for _, s := range domain.WithTotalDebt(domain.SummarizeBySector(lines), debtLines) {
 		resp.BySector = append(resp.BySector, &involtv1.SectorCollectionSummary{
 			SectorId: s.SectorID, SectorName: s.SectorName, CommunityId: s.CommunityID, CommunityName: s.CommunityName,
 			Billed: s.Billed, Collected: s.Collected, Debt: s.Debt,

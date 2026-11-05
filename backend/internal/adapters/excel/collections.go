@@ -121,7 +121,7 @@ func writeSectorSheet(b *book, sectors []*involtv1.SectorCollectionSummary, cust
 	const sheet = "PorCaserio"
 	cols := []column{
 		{"Comunidad", 16, 0}, {"Caserío", 22, 0}, {"Facturado", 13, b.money}, {"Cobrado", 13, b.money},
-		{"% cobranza", 11, b.pct}, {"Deuda", 13, b.money}, {"Clientes", 10, b.int}, {"Morosos", 10, b.int},
+		{"% cobranza", 11, b.pct}, {"Deuda total", 13, b.money}, {"Clientes", 10, b.int}, {"Morosos", 10, b.int},
 		{"En corte", 10, b.int}, {"Sin energía", 11, b.int},
 	}
 	rows := make([][]any, len(sectors))
