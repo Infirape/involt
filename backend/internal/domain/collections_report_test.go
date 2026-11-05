@@ -110,3 +110,35 @@ func TestBuildDebtors(t *testing.T) {
 		t.Fatalf("caro = %+v", caro)
 	}
 }
+
+func cutFixture() []ReceiptLine {
+	return []ReceiptLine{
+		{ReadingID: "a1", CustomerID: "ana", SectorID: "s1", Period: "2026-09", Total: 20, Paid: 20, ServiceStatus: string(ServiceActive)},
+		{ReadingID: "c1", CustomerID: "cut", SectorID: "s1", Period: "2026-09", Total: 100, Paid: 0, ServiceStatus: string(ServiceTemporaryCut)},
+	}
+}
+
+func TestSummarizeBySectorLeavesTemporaryCutOutOfDebt(t *testing.T) {
+	s := SummarizeBySector(cutFixture())[0]
+	if s.Debt != 0 || s.Debtors != 0 {
+		t.Fatalf("debt = %v, debtors = %d, want 0 for a sector whose only debtor is cut", s.Debt, s.Debtors)
+	}
+	if s.Billed != 120 || s.Collected != 20 || s.Customers != 2 {
+		t.Fatalf("billing must still include cut customers: %+v", s)
+	}
+}
+
+func TestSummarizeBySectorKeepsNoPowerInDebt(t *testing.T) {
+	lines := cutFixture()
+	lines[1].ServiceStatus = string(ServiceNoPower)
+	if s := SummarizeBySector(lines)[0]; s.Debt != 100 || s.Debtors != 1 {
+		t.Fatalf("NO_POWER is not a temporary cut, got %+v", s)
+	}
+}
+
+func TestExcludeTemporaryCut(t *testing.T) {
+	got := ExcludeTemporaryCut(cutFixture())
+	if len(got) != 1 || got[0].CustomerID != "ana" {
+		t.Fatalf("got %+v", got)
+	}
+}

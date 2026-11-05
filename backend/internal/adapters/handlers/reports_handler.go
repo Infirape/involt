@@ -11,7 +11,6 @@ import (
 	"github.com/infira/involt/backend/internal/adapters/auth"
 	"github.com/infira/involt/backend/internal/domain"
 	involtv1 "github.com/infira/involt/backend/internal/gen/involt/v1"
-	"github.com/infira/involt/backend/internal/ports"
 )
 
 const (
@@ -59,6 +58,7 @@ func (h *AdminHandler) GetCollectionsDashboard(
 	if err != nil {
 		return nil, err
 	}
+	debtLines = domain.ExcludeTemporaryCut(debtLines)
 
 	today := h.now()
 	resp := &involtv1.GetCollectionsDashboardResponse{FromPeriod: from, ToPeriod: to, Totals: &involtv1.CollectionsDashboardTotals{}}
@@ -134,6 +134,10 @@ func (h *AdminHandler) GetDebtors(
 	if err != nil {
 		return nil, err
 	}
+	// Customers under a temporary cut only show up when that status is asked for explicitly.
+	if req.Msg.ServiceStatus == involtv1.ServiceStatus_SERVICE_STATUS_UNSPECIFIED {
+		lines = domain.ExcludeTemporaryCut(lines)
+	}
 	debtors := domain.BuildDebtors(lines, nil, h.now(), cutThresholdOrDefault(req.Msg.CutThreshold))
 
 	search := strings.ToLower(strings.TrimSpace(req.Msg.Search))
@@ -185,22 +189,6 @@ func (h *AdminHandler) GetDebtors(
 		}
 	}
 	return connect.NewResponse(resp), nil
-}
-
-// reportScope restricts non-admin users to their assigned sectors.
-func reportScope(user *auth.UserContext) ports.ReceiptLineFilter {
-	if user.Role == string(domain.RoleAdmin) {
-		return ports.ReceiptLineFilter{}
-	}
-	allowed := append([]string{}, user.AssignedSectorIDs...)
-	return ports.ReceiptLineFilter{AllowedSectorIDs: allowed}
-}
-
-func cutThresholdOrDefault(v int32) int {
-	if v <= 0 {
-		return defaultCutThreshold
-	}
-	return int(v)
 }
 
 // dashboardMonths expands a YYYY-MM range (default: the 12 months ending this month).

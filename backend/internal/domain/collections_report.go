@@ -31,6 +31,10 @@ func (l ReceiptLine) balanceCents() int64 {
 	return b
 }
 
+func (l ReceiptLine) underTemporaryCut() bool {
+	return ServiceStatus(l.ServiceStatus) == ServiceTemporaryCut
+}
+
 func (l ReceiptLine) collectedCents() int64 {
 	return min(toCents(l.Paid), toCents(l.Total))
 }
@@ -125,7 +129,8 @@ type SectorSummary struct {
 	Debtors       int // customers with outstanding balance in range
 }
 
-// SummarizeBySector aggregates billed/collected/debt per sector, highest billed first.
+// SummarizeBySector aggregates billed/collected/debt per sector, highest billed first. Customers
+// under a temporary cut count as billed but not towards the sector's debt or debtors.
 func SummarizeBySector(lines []ReceiptLine) []SectorSummary {
 	type acc struct {
 		summary                SectorSummary
@@ -144,8 +149,11 @@ func SummarizeBySector(lines []ReceiptLine) []SectorSummary {
 		}
 		a.billed += toCents(l.Total)
 		a.collected += l.collectedCents()
-		a.due += l.balanceCents()
 		a.customers[l.CustomerID] = true
+		if l.underTemporaryCut() {
+			continue
+		}
+		a.due += l.balanceCents()
 		if l.balanceCents() > 0 {
 			a.debtors[l.CustomerID] = true
 		}
@@ -260,30 +268,14 @@ func BuildDebtors(lines []ReceiptLine, lastPayments map[string]time.Time, today 
 	return out
 }
 
-// CustomerLine is a supply (suministro) with its location, for exhaustive reports.
-type CustomerLine struct {
-	CustomerID    string `db:"customer_id"`
-	CustomerCode  string `db:"customer_code"`
-	CustomerName  string `db:"customer_name"`
-	CommunityName string `db:"community_name"`
-	SectorName    string `db:"sector_name"`
-	ServiceStatus string `db:"service_status"`
-	// ServiceStatusChangedAt is when the current status was set (nil = never changed).
-	ServiceStatusChangedAt *time.Time `db:"service_status_changed_at"`
-}
-
-// PaymentLine is one non-voided payment allocation with its payment and customer context.
-type PaymentLine struct {
-	ReceiptNumber    int64     `db:"receipt_number"`
-	PaidAt           time.Time `db:"paid_at"`
-	Method           string    `db:"method"`
-	CollectedByEmail string    `db:"collected_by_email"`
-	CustomerCode     string    `db:"customer_code"`
-	CustomerName     string    `db:"customer_name"`
-	CommunityName    string    `db:"community_name"`
-	SectorName       string    `db:"sector_name"`
-	Period           string    `db:"period"`
-	Amount           float64   `db:"amount"`
-	LateFee          float64   `db:"late_fee"`
-	ServiceStatus    string    `db:"service_status"`
+// ExcludeTemporaryCut drops receipts of customers under a temporary cut: their balance is still
+// owed on their own account, but it does not count towards collection debt totals.
+func ExcludeTemporaryCut(lines []ReceiptLine) []ReceiptLine {
+	out := make([]ReceiptLine, 0, len(lines))
+	for _, l := range lines {
+		if !l.underTemporaryCut() {
+			out = append(out, l)
+		}
+	}
+	return out
 }

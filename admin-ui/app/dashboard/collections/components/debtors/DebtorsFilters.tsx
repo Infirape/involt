@@ -112,7 +112,7 @@ export function DebtorsFilters({ filters, onChange, communities }: DebtorsFilter
           onChange={(e) => onChange({ serviceStatus: Number(e.target.value) as ServiceStatus })}
           className={inputClass}
         >
-          <option value={ServiceStatus.UNSPECIFIED}>Todos</option>
+          <option value={ServiceStatus.UNSPECIFIED}>Todos (sin corte temporal)</option>
           {SERVICE_STATUS_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
               {o.label}
