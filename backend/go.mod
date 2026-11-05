@@ -25,7 +25,7 @@ require (
 	github.com/hhrutter/lzw v1.0.0 // indirect
 	github.com/hhrutter/pkcs7 v0.2.0 // indirect
 	github.com/hhrutter/tiff v1.0.2 // indirect
-	github.com/johnfercher/go-tree v1.1.0 // indirect
+	github.com/johnfercher/go-tree v1.1.0
 	github.com/mattn/go-runewidth v0.0.21 // indirect
 	github.com/pdfcpu/pdfcpu v0.11.1 // indirect
 	github.com/phpdave11/gofpdf v1.4.3 // indirect

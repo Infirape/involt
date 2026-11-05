@@ -269,6 +269,18 @@ func (g *MarotoGenerator) GenerateBatch(ctx context.Context, readings []domain.R
 		return nil, nil
 	}
 
+	m := g.buildBatch(readings, customers, settings, historyMap)
+
+	document, err := m.Generate()
+	if err != nil {
+		return nil, err
+	}
+
+	return g.applyWatermark(document.GetBytes())
+}
+
+// buildBatch lays out the copies of every reading, one customer after another.
+func (g *MarotoGenerator) buildBatch(readings []domain.Reading, customers map[string]*domain.Customer, settings *domain.Settings, historyMap map[string][]domain.Reading) core.Maroto {
 	cfg := config.NewBuilder().
 		WithPageSize(pagesize.A4).
 		WithLeftMargin(31).
@@ -292,20 +304,19 @@ func (g *MarotoGenerator) GenerateBatch(ctx context.Context, readings []domain.R
 		}
 	}
 
-	document, err := m.Generate()
-	if err != nil {
-		return nil, err
-	}
-
-	return g.applyWatermark(document.GetBytes())
+	return m
 }
 
 // addReceiptCopies prints the copies configured in settings (usuario, and administrativo when
 // receipts are duplicated), separated by a cut line.
 func (g *MarotoGenerator) addReceiptCopies(m core.Maroto, reading *domain.Reading, customer *domain.Customer, settings *domain.Settings, community, sector string, history []domain.Reading) {
 	for i, label := range settings.ReceiptCopyLabels() {
+		height := receiptCopyHeight
 		if i > 0 {
-			m.AddRows(row.New(8).Add(
+			height += receiptCutLineHeight
+		}
+		if fitsOrBreaksPage(m, height) && i > 0 {
+			m.AddRows(row.New(receiptCutLineHeight).Add(
 				col.New(12).WithStyle(&props.Cell{BorderType: border.Bottom, BorderThickness: 0.1, BorderColor: defaultBorderColor}),
 			))
 		}
