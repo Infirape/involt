@@ -1,8 +1,10 @@
 import { FileText, Plus } from "lucide-react";
+import { ServiceStatus } from "@/app/gen/involt/v1/models_pb";
 import { ReceiptStatus } from "@/app/gen/involt/v1/payments_pb";
 import { ServiceStatusBadge } from "@/components/dashboard/service-status/ServiceStatusBadge";
 import { openReceiptPdf } from "../../lib/api";
-import { formatPeriod, RECEIPT_STATUS_STYLES } from "../../lib/labels";
+import { hidesDebtUnderCut } from "../../lib/cutCell";
+import { CUT_CELL_STYLE, formatPeriod, RECEIPT_STATUS_STYLES } from "../../lib/labels";
 import { formatSoles } from "../../lib/money";
 import type { CustomerRow, MatrixCell } from "../../types";
 
@@ -62,6 +64,7 @@ export function MatrixTable({ rows, periods, onOpenCustomer, onEmptyCell }: Matr
               <MatrixCellView
                 key={period}
                 cell={row.cells[period]}
+                underCut={row.serviceStatus === ServiceStatus.TEMPORARY_CUT}
                 onOpen={(c) => onOpenCustomer(c.customerId, c.readingId)}
                 onEmpty={onEmptyCell}
               />
@@ -82,10 +85,12 @@ export function MatrixTable({ rows, periods, onOpenCustomer, onEmptyCell }: Matr
 
 function MatrixCellView({
   cell,
+  underCut,
   onOpen,
   onEmpty,
 }: {
   cell: MatrixCell;
+  underCut: boolean;
   onOpen: (cell: MatrixCell) => void;
   onEmpty: (cell: MatrixCell) => void;
 }) {
@@ -104,9 +109,11 @@ function MatrixCellView({
     );
   }
 
-  const style = RECEIPT_STATUS_STYLES[cell.status];
-  const detail =
-    cell.status === ReceiptStatus.PAID
+  const hideDebt = hidesDebtUnderCut(underCut, cell.balance);
+  const style = hideDebt ? CUT_CELL_STYLE : RECEIPT_STATUS_STYLES[cell.status];
+  const detail = hideDebt
+    ? "no debe"
+    : cell.status === ReceiptStatus.PAID
       ? formatSoles(cell.total)
       : `debe ${formatSoles(cell.balance)}`;
 

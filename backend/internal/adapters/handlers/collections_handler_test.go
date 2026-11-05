@@ -147,6 +147,49 @@ func TestGetCollectionsReportsReceiptBalancesDebtAndTotals(t *testing.T) {
 	}
 }
 
+func TestGetCollectionsLeavesTemporaryCutOutOfDebtAndTotals(t *testing.T) {
+	customerRepo := &collectionsCustomerRepoStub{
+		listBySectorFunc: func(_ context.Context, sectorID string) ([]domain.Customer, error) {
+			return []domain.Customer{
+				{ID: "active", Name: "Ana", SectorID: sectorID, ServiceStatus: string(domain.ServiceActive)},
+				{ID: "cut", Name: "Beto", SectorID: sectorID, ServiceStatus: string(domain.ServiceTemporaryCut)},
+			}, nil
+		},
+	}
+	readingRepo := &collectionsReadingRepoStub{
+		listBySectorFunc: func(context.Context, string, []string) ([]domain.Reading, error) {
+			return []domain.Reading{
+				{ID: "a", CustomerID: "active", Period: "2026-09", TotalToPay: 10},
+				{ID: "c-paid", CustomerID: "cut", Period: "2026-08", TotalToPay: 10},
+				{ID: "c-due", CustomerID: "cut", Period: "2026-09", TotalToPay: 10},
+			}, nil
+		},
+	}
+	payments := &fakePaymentRepo{
+		payments: []*domain.Payment{{ID: "p", Amount: 10, Allocations: []domain.PaymentAllocation{{ReadingID: "c-paid", Amount: 10}}}},
+		debts:    map[string]float64{"active": 10, "cut": 10},
+	}
+	handler := &AdminHandler{customerRepo: customerRepo, readingRepo: readingRepo, paymentRepo: payments,
+		clock: func() time.Time { return fixedNow }}
+
+	resp, err := handler.GetCollections(authenticatedTestContext(), connect.NewRequest(&involtv1.GetCollectionsRequest{
+		SectorId: "sec-1", Periods: []string{"2026-08", "2026-09"},
+	}))
+	if err != nil {
+		t.Fatalf("GetCollections: %v", err)
+	}
+	if resp.Msg.GetTotalBilled() != 20 || resp.Msg.GetTotalCollected() != 10 {
+		t.Fatalf("totals = %v / %v, want 20 / 10 (only the active customer left to collect)", resp.Msg.GetTotalBilled(), resp.Msg.GetTotalCollected())
+	}
+	cut := resp.Msg.GetCustomers()[1]
+	if cut.GetTotalDebt() != 0 {
+		t.Fatalf("cut customer debt = %v, want 0", cut.GetTotalDebt())
+	}
+	if cut.GetReceipts()[1].GetBalance() != 10 {
+		t.Fatalf("the receipt must keep its real balance for the account: %+v", cut.GetReceipts()[1])
+	}
+}
+
 func TestGetCollectionsDeniesUnassignedSector(t *testing.T) {
 	handler := &AdminHandler{}
 	_, err := handler.GetCollections(contextWithUser("s", "SUPERVISOR", "sec-2"), connect.NewRequest(&involtv1.GetCollectionsRequest{SectorId: "sec-1"}))

@@ -1,5 +1,5 @@
 import { ReceiptStatus } from "@/app/gen/involt/v1/payments_pb";
-import { RECEIPT_STATUS_STYLES } from "../../lib/labels";
+import { CUT_CELL_STYLE, RECEIPT_STATUS_STYLES } from "../../lib/labels";
 import { collectionRate, formatSoles } from "../../lib/money";
 import type { MatrixTotals } from "../../types";
 
@@ -36,6 +36,10 @@ export function MatrixFooter({ totals }: { totals: MatrixTotals }) {
             {RECEIPT_STATUS_STYLES[status].label}
           </span>
         ))}
+        <span className="flex items-center gap-1.5">
+          <span className={`w-3 h-3 rounded border ${CUT_CELL_STYLE.swatch}`} />
+          {CUT_CELL_STYLE.label}
+        </span>
         <span className="flex items-center gap-1.5">
           <span className="text-zinc-600 font-bold">+</span> Sin recibo
         </span>

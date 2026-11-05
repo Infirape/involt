@@ -123,8 +123,8 @@ func TestSummarizeBySectorLeavesTemporaryCutOutOfDebt(t *testing.T) {
 	if s.Debt != 0 || s.Debtors != 0 {
 		t.Fatalf("debt = %v, debtors = %d, want 0 for a sector whose only debtor is cut", s.Debt, s.Debtors)
 	}
-	if s.Billed != 120 || s.Collected != 20 || s.Customers != 2 {
-		t.Fatalf("billing must still include cut customers: %+v", s)
+	if s.Billed != 20 || s.Collected != 20 || s.Customers != 2 {
+		t.Fatalf("a cut customer's unpaid balance must not count as billed: %+v", s)
 	}
 }
 
@@ -140,5 +140,16 @@ func TestExcludeTemporaryCut(t *testing.T) {
 	got := ExcludeTemporaryCut(cutFixture())
 	if len(got) != 1 || got[0].CustomerID != "ana" {
 		t.Fatalf("got %+v", got)
+	}
+}
+
+func TestSummarizeLeavesUnpaidCutBalanceOutOfBilled(t *testing.T) {
+	lines := append(cutFixture(), ReceiptLine{ReadingID: "c2", CustomerID: "cut", SectorID: "s1", Period: "2026-09", Total: 50, Paid: 30, ServiceStatus: string(ServiceTemporaryCut)})
+
+	if s := SummarizeBySector(lines)[0]; s.Billed != 50 || s.Collected != 50 || s.Debt != 0 {
+		t.Fatalf("sector = %+v, want what a cut customer paid to stay billed and collected", s)
+	}
+	if p := SummarizeByPeriod(lines)[0]; p.Billed != 50 || p.Collected != 50 {
+		t.Fatalf("period = %+v", p)
 	}
 }

@@ -35,6 +35,15 @@ func (l ReceiptLine) underTemporaryCut() bool {
 	return ServiceStatus(l.ServiceStatus) == ServiceTemporaryCut
 }
 
+// billedCents leaves out what a customer under a temporary cut has not paid, so that billed minus
+// collected is what is really left to collect.
+func (l ReceiptLine) billedCents() int64 {
+	if l.underTemporaryCut() {
+		return l.collectedCents()
+	}
+	return toCents(l.Total)
+}
+
 func (l ReceiptLine) collectedCents() int64 {
 	return min(toCents(l.Paid), toCents(l.Total))
 }
@@ -130,7 +139,7 @@ type SectorSummary struct {
 }
 
 // SummarizeBySector aggregates billed/collected/debt per sector, highest billed first. Customers
-// under a temporary cut count as billed but not towards the sector's debt or debtors.
+// under a temporary cut only count for what they paid, not towards the sector's debt or debtors.
 func SummarizeBySector(lines []ReceiptLine) []SectorSummary {
 	type acc struct {
 		summary                SectorSummary
@@ -147,7 +156,7 @@ func SummarizeBySector(lines []ReceiptLine) []SectorSummary {
 			}
 			bySector[l.SectorID] = a
 		}
-		a.billed += toCents(l.Total)
+		a.billed += l.billedCents()
 		a.collected += l.collectedCents()
 		a.customers[l.CustomerID] = true
 		if l.underTemporaryCut() {
@@ -185,7 +194,7 @@ func SummarizeByPeriod(lines []ReceiptLine) []PeriodSummary {
 	billed := map[string]int64{}
 	collected := map[string]int64{}
 	for _, l := range lines {
-		billed[l.Period] += toCents(l.Total)
+		billed[l.Period] += l.billedCents()
 		collected[l.Period] += l.collectedCents()
 	}
 	out := make([]PeriodSummary, 0, len(billed))

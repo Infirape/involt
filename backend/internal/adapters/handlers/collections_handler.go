@@ -69,6 +69,7 @@ func (h *AdminHandler) TogglePaymentStatus(
 
 // GetCollections returns the payment matrix for a sector across the given periods, with each
 // receipt's balance and status, every customer's total debt and the billed/collected totals.
+// Customers under a temporary cut show no debt; their receipts keep the real balance.
 func (h *AdminHandler) GetCollections(
 	ctx context.Context,
 	req *connect.Request[involtv1.GetCollectionsRequest],
@@ -107,8 +108,10 @@ func (h *AdminHandler) GetCollections(
 	}
 
 	customerNamesByID := make(map[string]string, len(customers))
+	underCut := make(map[string]bool, len(customers))
 	for _, customer := range customers {
 		customerNamesByID[customer.ID] = customer.Name
+		underCut[customer.ID] = customer.EffectiveServiceStatus() == domain.ServiceTemporaryCut
 	}
 
 	resp := &involtv1.GetCollectionsResponse{}
@@ -125,19 +128,29 @@ func (h *AdminHandler) GetCollections(
 		readingsByCustomer[r.CustomerID] = append(readingsByCustomer[r.CustomerID], *r)
 		protoByCustomer[r.CustomerID] = append(protoByCustomer[r.CustomerID], protoReading)
 
-		billedCents += toCentsRounded(r.TotalToPay)
-		collectedCents += toCentsRounded(min(paid[r.ID], r.TotalToPay))
+		// What a customer under a temporary cut has not paid is not left to collect.
+		collected := toCentsRounded(min(paid[r.ID], r.TotalToPay))
+		collectedCents += collected
+		if underCut[r.CustomerID] {
+			billedCents += collected
+		} else {
+			billedCents += toCentsRounded(r.TotalToPay)
+		}
 	}
 	resp.TotalBilled = float64(billedCents) / 100
 	resp.TotalCollected = float64(collectedCents) / 100
 
 	for i := range customers {
 		customer := &customers[i]
+		totalDebt := debts[customer.ID]
+		if underCut[customer.ID] {
+			totalDebt = 0
+		}
 		resp.Customers = append(resp.Customers, &involtv1.CollectionCustomer{
 			Customer:  domain.MapCustomerToProto(customer),
 			Readings:  protoByCustomer[customer.ID],
 			Receipts:  state.receiptBalances(readingsByCustomer[customer.ID]),
-			TotalDebt: debts[customer.ID],
+			TotalDebt: totalDebt,
 		})
 	}
 	return connect.NewResponse(resp), nil

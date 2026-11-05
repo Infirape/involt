@@ -59,6 +59,13 @@ export const RECEIPT_STATUS_STYLES: Record<ReceiptStatus, StatusStyle> = {
   },
 };
 
+/** Receipt of a customer under a temporary cut: it no longer counts as debt. */
+export const CUT_CELL_STYLE: StatusStyle = {
+  label: "En corte",
+  className: "bg-amber-500/10 text-amber-200/70 border-amber-500/20 hover:bg-amber-500/20",
+  swatch: "bg-amber-500/10 border-amber-500/20",
+};
+
 const MONTHS = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
 export function formatPeriod(period: string): string {
