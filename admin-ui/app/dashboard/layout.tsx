@@ -18,6 +18,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { visiblePeriods } from "@/app/dashboard/collections/lib/periods";
 import { PeriodStatus } from "@/app/gen/involt/v1/models_pb";
 import { InvoltAlly } from "@/components/brand/InvoltAlly";
 import { PeriodSelector } from "@/components/dashboard/layout/PeriodSelector";
@@ -52,14 +53,17 @@ export default function DashboardLayout({
     const initConfig = async () => {
       try {
         const resp = await adminClient.listPeriods({});
-        const dbPeriods = resp.periods.map((p) => ({
-          id: p.id,
-          status: p.status === PeriodStatus.OPEN ? "OPEN" : "CLOSED",
-        }));
+        const dbPeriods = visiblePeriods(
+          resp.periods.map((p) => ({
+            id: p.id,
+            status: p.status === PeriodStatus.OPEN ? "OPEN" : "CLOSED",
+          })),
+        );
         setPeriods(dbPeriods);
 
-        // If no period selected yet, pick the open one or the first one
-        if (!useConfigStore.getState().selectedPeriod && dbPeriods.length > 0) {
+        // If nothing valid is selected (none yet, or a saved month now hidden), pick the open one or the first one
+        const selected = useConfigStore.getState().selectedPeriod;
+        if (!dbPeriods.some((p) => p.id === selected) && dbPeriods.length > 0) {
           const open = dbPeriods.find((p) => p.status === "OPEN");
           setSelectedPeriod(open?.id || dbPeriods[0].id);
         }

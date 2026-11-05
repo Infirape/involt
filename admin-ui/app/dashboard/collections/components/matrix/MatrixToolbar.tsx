@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight, Loader2, Search } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
+import { COLLECTIONS_FIRST_YEAR, isFirstSemester } from "../../lib/periods";
 import type { Half, SectorTab } from "../../types";
 
 interface MatrixToolbarProps {
@@ -20,7 +21,9 @@ interface MatrixToolbarProps {
 export function MatrixToolbar(props: MatrixToolbarProps) {
   const { selectedHalf, setSelectedHalf, setSelectedYear } = props;
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
+  const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i).filter(
+    (y) => y >= COLLECTIONS_FIRST_YEAR,
+  );
 
   const previous = () => {
     if (selectedHalf === "H2") setSelectedHalf("H1");
@@ -88,8 +91,9 @@ export function MatrixToolbar(props: MatrixToolbarProps) {
           <button
             type="button"
             onClick={previous}
+            disabled={isFirstSemester(props.selectedYear, selectedHalf)}
             title="Semestre anterior"
-            className="p-1 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800"
+            className="p-1 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 disabled:opacity-30 disabled:pointer-events-none"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
           </button>

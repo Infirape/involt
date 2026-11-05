@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { type CollectionCustomer, GetCollectionsRequestSchema } from "@/app/gen/involt/v1/admin_pb";
 import { ReceiptStatus } from "@/app/gen/involt/v1/payments_pb";
 import { adminClient } from "@/lib/rpc";
+import { clampSemester, semesterMonths } from "../lib/periods";
 import type { CustomerRow, Half, MatrixCell, MatrixTotals } from "../types";
 
 const YEAR_KEY = "involt_collections_year";
@@ -99,10 +100,13 @@ export function useCollections(selectedSectorId: string) {
   useEffect(() => writeStorage(YEAR_KEY, String(selectedYear)), [selectedYear]);
   useEffect(() => writeStorage(HALF_KEY, selectedHalf), [selectedHalf]);
 
-  const periods = useMemo<string[]>(() => {
-    const months = selectedHalf === "H1" ? [1, 2, 3, 4, 5, 6] : [7, 8, 9, 10, 11, 12];
-    return months.map((m) => `${selectedYear}-${String(m).padStart(2, "0")}`);
-  }, [selectedYear, selectedHalf]);
+  // A saved or picked semester before the floor shows the first semester that has data.
+  const { year: shownYear, half: shownHalf } = clampSemester(selectedYear, selectedHalf);
+
+  const periods = useMemo<string[]>(
+    () => semesterMonths(shownYear, shownHalf),
+    [shownYear, shownHalf],
+  );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: reloadToken forces a refetch after payments
   useEffect(() => {
@@ -143,9 +147,9 @@ export function useCollections(selectedSectorId: string) {
     totals,
     loading,
     reload,
-    selectedYear,
+    selectedYear: shownYear,
     setSelectedYear,
-    selectedHalf,
+    selectedHalf: shownHalf,
     setSelectedHalf,
   };
 }
